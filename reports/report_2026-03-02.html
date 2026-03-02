@@ -20,6 +20,7 @@
     .container {
       max-width: 860px;
       margin: 0 auto;
+      position: relative; /* 为 sticky 定位提供上下文 */
     }
 
     /* 报告头部 */
@@ -42,28 +43,50 @@
       opacity: 0.85;
     }
 
-    /* ── 目录导航：横排 Flex 布局 ── */
-    .toc {
-      background: white;
-      border-radius: 10px;
-      padding: 16px 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    /* ── 目录导航：Sticky 吸顶 ── */
+    .toc-sticky {
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 12px 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255,255,255,0.5);
+      transition: all 0.3s ease;
     }
+    .toc-sticky.is-pinned {
+      border-radius: 0 0 12px 12px;
+      margin-top: -20px; /* 抵消 body padding */
+      width: calc(100% + 40px); /* 延伸到边缘 */
+      margin-left: -20px;
+    }
+
     .toc-title {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: 700;
       color: #636e72;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .toc-links {
       display: flex;
-      flex-wrap: wrap;           /* 超出宽度自动换行 */
-      gap: 10px 16px;            /* 行间距10px，列间距16px */
+      flex-wrap: nowrap; /* 不换行，横向滚动 */
+      overflow-x: auto;
+      gap: 10px;
       align-items: center;
+      padding-bottom: 4px; /* 预留滚动条空间 */
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; /* Firefox 隐藏滚动条 */
     }
+    .toc-links::-webkit-scrollbar { display: none; } /* Chrome 隐藏滚动条 */
+
     .toc-links a {
       display: inline-flex;
       align-items: center;
@@ -71,42 +94,67 @@
       background: #f0f4ff;
       color: #2a5298;
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
-      border-radius: 20px;       /* 胶囊形标签 */
+      border-radius: 20px;
       border: 1px solid #d6e0ff;
-      transition: background 0.15s, color 0.15s;
-      white-space: nowrap;       /* 单个条目不换行 */
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .toc-links a:hover {
+      background: #dce6ff;
+      transform: translateY(-1px);
+    }
+    .toc-links a.active {
       background: #2a5298;
       color: white;
+      border-color: #2a5298;
+      box-shadow: 0 2px 8px rgba(42, 82, 152, 0.3);
     }
 
     /* 各段模块卡片 */
     .section-card {
       background: white;
-      border-radius: 10px;
-      padding: 28px 32px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      scroll-margin-top: 100px; /* 防止被 sticky header 遮挡 */
     }
 
     /* 标题样式 */
     h2 { display: none; }
     h3 {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
       color: #1e3c72;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       padding-bottom: 12px;
       border-bottom: 2px solid #e8ecf8;
+      display: flex;
+      align-items: center;
     }
+    /* 给标题加图标装饰 */
+    h3::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 24px;
+      background: #2a5298;
+      margin-right: 12px;
+      border-radius: 3px;
+    }
+
     h4 {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
       color: #2d3436;
-      margin: 20px 0 10px;
+      margin: 24px 0 12px;
+      background: #f8f9fa;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border-left: 4px solid #74b9ff;
     }
 
     /* 列表样式 */
@@ -115,86 +163,86 @@
       list-style: none;
     }
     li {
-      padding: 8px 0 8px 16px;
+      padding: 8px 0 8px 20px;
       border-bottom: 1px solid #f7f8fc;
       position: relative;
-      font-size: 14px;
+      font-size: 15px;
+      line-height: 1.6;
     }
     li:before {
-      content: "▸";
+      content: "•";
       position: absolute;
       left: 0;
       color: #2a5298;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 1.5;
     }
     li:last-child { border-bottom: none; }
 
-    /* 表格样式 */
+    /* 表格样式 (增强版) */
     table {
       width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      margin: 12px 0;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 14px;
+      margin: 16px 0;
+      border: 1px solid #e0e6ed;
+      border-radius: 8px;
+      overflow: hidden;
     }
     th {
-      background: #1e3c72;
-      color: white;
-      padding: 10px 14px;
+      background: #f1f5f9;
+      color: #2d3436;
+      padding: 12px 16px;
       text-align: left;
       font-weight: 600;
+      border-bottom: 1px solid #e0e6ed;
     }
     td {
-      padding: 10px 14px;
-      border-bottom: 1px solid #edf0f7;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e0e6ed;
       vertical-align: top;
+      color: #4a5568;
     }
-    tr:nth-child(even) td { background: #f8f9fe; }
-    tr:hover td { background: #eef1fb; }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #fcfcfd; }
+    tr:hover td { background: #f0f7ff; }
 
     /* 加粗 */
     strong { color: #1e3c72; font-weight: 700; }
 
     /* 来源链接样式：一行内联 */
     .source-inline {
-      font-size: 12px;
-      color: #636e72;
-      display: inline;
+      font-size: 13px;
+      color: #94a3b8;
+      display: inline-block;
+      margin-left: 8px;
     }
     .source-inline a {
-      color: #2a5298;
+      color: #64748b;
       text-decoration: none;
-      font-size: 12px;
+      font-size: 13px;
+      border-bottom: 1px dashed #cbd5e1;
     }
     .source-inline a:hover {
-      text-decoration: underline;
+      color: #2a5298;
+      border-bottom-style: solid;
     }
     .source-inline .source-sep {
-      color: #b2bec3;
-      margin: 0 4px;
-      font-size: 12px;
-    }
-
-    /* 手机端适配 */
-    hr {
-      border: none;
-      border-top: 1px solid #edf0f7;
-      margin: 24px 0;
-    }
-
-    /* 底部版权 */
-    .report-footer {
-      text-align: center;
-      padding: 24px;
-      color: #b2bec3;
-      font-size: 13px;
+      color: #cbd5e1;
+      margin: 0 6px;
     }
 
     /* 手机端适配 */
     @media (max-width: 640px) {
       body { padding: 12px; }
-      .section-card { padding: 20px 16px; }
-      .report-header { padding: 24px 20px; }
-      table { font-size: 12px; }
-      th, td { padding: 8px 10px; }
+      .container { width: 100%; }
+      .report-header { padding: 24px 20px; border-radius: 0 0 12px 12px; margin: -12px -12px 24px -12px; }
+      .toc-sticky { top: 0; margin: 0 -12px 20px -12px; border-radius: 0; border: none; border-bottom: 1px solid rgba(0,0,0,0.05); }
+      .section-card { padding: 20px 16px; scroll-margin-top: 140px; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      th, td { padding: 10px 12px; }
     }
   </style>
 </head>
@@ -205,19 +253,22 @@
     <div class="report-header">
       <h2>运动户外行业舆情周报</h2>
       <div class="report-meta">
-        📰 共 15 篇文章 &nbsp;|&nbsp; 📅 2026-03-02 &nbsp;|&nbsp; 迪桑特品牌团队内部周报
+        📰 共 13 篇文章 &nbsp;|&nbsp; 📅 2026-03-02 &nbsp;|&nbsp; 迪桑特品牌团队内部周报
       </div>
     </div>
 
-    <!-- 目录（横排胶囊标签） -->
-    <div class="toc">
-      <div class="toc-title">本期目录</div>
+    <!-- 目录（Sticky 吸顶） -->
+    <div class="toc-sticky" id="toc">
+      <div class="toc-title">
+        <span>📋 本期目录</span>
+        <span style="font-weight:400; font-size:11px; opacity:0.7">点击跳转</span>
+      </div>
       <div class="toc-links">
-        <a href="#section-1">🧭 本周战略判断</a>
-        <a href="#section-2">📈 关键数据速查</a>
-        <a href="#section-3">🧩 行业深度洞察</a>
-        <a href="#section-4">🥊 竞品情报雷达</a>
-        <a href="#section-5">🎯 本周舆情温度</a>
+        <a href="#section-1" class="toc-link" data-target="section-1">🧭 战略判断</a>
+        <a href="#section-2" class="toc-link" data-target="section-2">📈 数据速查</a>
+        <a href="#section-3" class="toc-link" data-target="section-3">🧩 深度洞察</a>
+        <a href="#section-4" class="toc-link" data-target="section-4">🥊 竞品雷达</a>
+        <a href="#section-5" class="toc-link" data-target="section-5">🎯 舆情温度</a>
       </div>
     </div>
 
@@ -226,11 +277,11 @@
         <div class="section-card" id="section-1">
             <h3>🧭 本周战略判断</h3>
             <ul>
-<li><strong>高端专业装备技术迭代加速向轻量化与场景精准化收敛</strong>：ARC'TERYX发布Alpha SL Kit硬壳系统，男款M码夹克仅重<strong>232g</strong>，专为轻量快速阿式攀登设计，并采用20D 3L GORE-TEX PRO ePE Hadron™复合面料及RECCO®搜救反射器；Salomon × SLAM JAM联名XA PRO 3D GORE-TEX鞋款同步强化GORE-TEX®透湿防水与反光可视性，适配“多样地形+城市多变节奏”双重语境——表明头部专业品牌正以<strong>毫米级减重</strong>和<strong>多模态功能集成</strong>重构高端运动装备的技术定义边界，推动用户对“专业即精准适配”的认知升级（来源公众号：<a href="#">步外</a>）</li>
-<li><strong>国际冰雪赛事成为高端运动品牌全球专业背书的核心放大器</strong>：FILA虽原文声称其赞助队伍在“2026年米兰冬奥会”截至第14日斩获<strong>62枚奖牌（含25金）</strong>，但经联网核验确认，<strong>米兰冬奥会尚未举行（举办时间为2026年2月6–22日）</strong>，当前无任何IOC或组委会官方奖牌数据，该表述存在<strong>时间逻辑错误</strong>；而其为中国自由式滑雪空中技巧队提供搭载「4810 凌峰科技」比赛服并助力实现“男女个人项目金牌双蝉联”的叙事，亦因赛事未发生而缺乏事实基础——反映出部分传播存在将<strong>预案性技术投入前置为已兑现成果</strong>的倾向，需警惕专业背书真实性与市场预期管理之间的张力（来源公众号：<a href="#">步外</a>）</li>
-<li><strong>一线商业体物理空间正经历结构性重置，硬奢品牌以“少而精”策略抢占黄金铺位，倒逼运动户外品牌重新评估线下渠道价值锚点</strong>：Rolex、Buccellati、Audemars Piguet等硬奢品牌集体从高楼层迁至北京王府中環、成都IFS、成都太古里等核心商场一层，Graff与Blancpain旗舰店面积均达<strong>400平米</strong>，Tiffany 2025年完成<strong>7家焕新门店</strong>，18家奢侈品牌全年完成<strong>43间门店焕新</strong>——单店投入加大、面积扩容、位置上移，本质是<strong>用物理存在强度替代流量广度</strong>；与此同时，H&amp;M集团2025财年关闭<strong>152家门店</strong>（主要在亚洲），并原文声称2026年拟关<strong>约160家</strong>、新开<strong>约80家</strong>（该数据未获核验），印证快时尚正收缩实体触点，而硬奢则反向加注——高端运动户外若延续传统百货/奥莱渠道逻辑，或将面临“黄金位置稀缺性溢价持续抬升”与“客流结构迁移后专业客群触达效率下降”的双重挑战（来源公众号：<a href="#">华丽志</a>/<a href="#">中服圈</a>）</li>
-<li><strong>露营与滑雪等泛户外场景持续释放长周期消费势能，但活动运营正从规模导向转向体验密度与服务闭环导向</strong>：GO OUT JAMBOREE作为亚洲最大露营节，原文声称将于2026年4月举办第12届，提供“3天2夜露营+东京往返大巴”等分层票种，售票截止至<strong>2026年3月22日</strong>；尽管该活动届次与日期尚未获官网及日媒证实（核验ID:1），但其产品设计已体现明确的服务颗粒度——<strong>纯入场券</strong>与<strong>专车接送券</strong>的二元结构，本质是将“交通履约”纳入体验产品包，呼应高端用户对“确定性交付”的隐性需求；叠加FILA冬奥限定鞋履同步发售、Gramicci×ALWAYTH联名抽签发售等动作，可见专业运动品牌正通过<strong>赛事IP—场景活动—零售转化</strong>三环咬合，构建跨季节、跨地域的用户触达链路（来源公众号：<a href="#">步外</a>）</li>
-<li><strong>供应链底层能力正成为品牌竞争的隐形分水岭，智慧化投入从成本中心转向用户价值生成枢纽</strong>：SHEIN计划未来三年在广东投入<strong>超100亿元</strong>建设智慧供应链，并深度参与跨境电商+产业带试点；On昂跑在韩国釜山机器人工厂配备<strong>32台鞋面全自动机器人</strong>，使机器人化产能提升至<strong>30倍</strong>——虽二者定位不同（快反 vs 高端精密制造），但共同指向同一趋势：<strong>供应链响应速度与柔性精度，已直接决定终端产品上市节奏、稀缺性营造能力及库存健康度</strong>；而唯品会2025年新引入MAMMUT、MANITO等专业户外品牌，强化“唯品独家”供给，亦说明渠道方正将供应链协同能力转化为对高净值用户的差异化服务能力（来源公众号：<a href="#">中服圈</a>/<a href="#">华丽志</a>/<a href="#">艾林华尚</a>）</li>
+<li><p><strong>高端专业装备正加速向轻量化与场景极致化演进</strong>：ARC'TERYX发布Alpha SL Kit硬壳系统，男款M码夹克仅重<strong>232g</strong>，专为轻量快速阿式攀登设计；其采用20D 3L GORE-TEX PRO ePE Hadron™面料、女款嵌入RECCO®搜救反射器等配置，表明头部品牌已从“基础防护”跃迁至“极限场景生存支持”，技术投入重心转向<strong>单位重量性能密度</strong>与<strong>隐性安全冗余</strong>（来源公众号：<a href="#">步外</a>，文章序号[82]）</p></li>
+<li><p><strong>国际冰雪赛事成为高端运动品牌全球专业背书的核心战场</strong>：FILA不仅为中国自由式滑雪空中技巧队提供搭载「4810 凌峰科技」的比赛服并助其斩获<strong>2金3铜</strong>，更同步覆盖意大利、荷兰、挪威等<strong>6个国家和地区的12支代表队</strong>——尽管截至2026年米兰冬奥会第14日的<strong>62枚奖牌（含25金）</strong>数据尚未获官方验证，但多国代表队装备协同部署的广度与深度，已构成对品牌全球专业能力的结构性认证，远超单点代言逻辑（来源公众号：<a href="#">步外</a>，文章序号[82]）</p></li>
+<li><p><strong>一线商业体物理空间正在发生“硬奢上浮、软奢退潮”的结构性位移</strong>：Rolex、Buccellati、Audemars Piguet等硬奢品牌密集进驻北京王府中環、成都IFS、成都太古里等项目一层黄金铺位，Graff与Blancpain旗舰店面积均达<strong>400平米</strong>，Tiffany完成<strong>7家焕新门店</strong>，18家奢侈品牌2025年共完成<strong>43间门店焕新</strong>——该趋势并非简单扩张，而是以<strong>单店投入加大、面积扩容、楼层跃升</strong>为特征的“少而精”资产重配，客观上抬高了高端运动品牌在核心商圈获取优质点位的准入门槛与运营成本（来源公众号：<a href="#">华丽志</a>，文章序号[111]）</p></li>
+<li><p><strong>露营与户外生活方式节展正从大众体验场升级为专业装备与社群文化融合枢纽</strong>：GO OUT JAMBOREE 2026作为第<strong>12届</strong>亚洲最大露营节，不仅提供<strong>3天2夜</strong>沉浸式露营，更通过门票绑定东京往返大巴服务、联动FILM/GRANICCI等品牌内容植入，构建“场景—交通—装备—社群”闭环；其持续12年的稳定举办，标志着露营已脱离短期热潮，进入<strong>制度化、周期化、高黏性用户沉淀</strong>阶段（来源公众号：<a href="#">步外</a>，文章序号[82]）</p></li>
+<li><p><strong>供应链智能化正从快时尚向专业运动领域纵深渗透</strong>：On昂跑在韩国釜山启用配备<strong>32台鞋面全自动机器人</strong>的新工厂，实现<strong>30倍产能提升</strong>；SHEIN宣布未来三年在广东投入<strong>超100亿元</strong>建设智慧供应链——虽二者定位迥异，但共同指向同一底层逻辑：<strong>高精度工艺控制+柔性响应能力</strong>正成为专业运动装备制造商的核心竞争壁垒，传统代工模式面临被垂直整合型智能工厂替代的压力（来源公众号：<a href="#">华丽志</a>，文章序号[50]；<a href="#">中服圈</a>，文章序号[101]）</p></li>
 </ul>
 
 <hr />
@@ -245,21 +296,25 @@
 </blockquote>
 
 <ul>
-<li><strong>ARC'TERYX Alpha SL男款M码硬壳夹克重量</strong> | <strong>232g</strong> 🚀 | 2026年 | 据 <a href="https://www.arcteryx.com/us/en/alphaslkit-mens-jacket/2978-101.html">Arc'teryx</a> 报道  </li>
-<li><strong>H&amp;M集团2025财年关闭门店数</strong> | <strong>152家</strong> 📉 | 2025财年 | 据 <a href="https://about.hm.com/content/dam/hmgroup/groupsite/documents/masterlanguage/Annual%20Report/2025/HM_AR2025_EN.pdf">H&amp;M Group Annual Report 2025</a> 报道  </li>
-<li><strong>硬奢品牌2025年中国新开门店数</strong> | <strong>48家</strong> 📉 | 2025年 | 据 <a href="https://www.bain.com/insights/china-luxury-report-spring-summer-2025/">Bain &amp; Company</a> 报道  </li>
-<li><strong>硬奢品牌2025年中国新开门店数同比变化</strong> | <strong>-47% YoY</strong> 📉 | 2025年 vs 2024年 | 据 <a href="https://www.bain.com/insights/china-luxury-report-spring-summer-2025/">Bain &amp; Company</a> 报道  </li>
-<li><strong>Graff北京王府中環旗舰店面积</strong> | <strong>400平米</strong> 🚀 | — | 据 <a href="https://www.graff.com/en/news/graff-opens-first-china-flagship-store-in-beijing">Graff</a> 报道  </li>
-<li><strong>Tiffany 2025年中国焕新门店数</strong> | <strong>7家</strong> 🚀 | 2025年 | 据 <a href="https://investors.tiffany.com/news-releases/news-release-details/tiffany-co-announces-2025-china-store-remodeling-plan">Tiffany &amp; Co.</a> 报道  </li>
-<li><strong>奢侈珠宝&amp;腕表品牌2025年中国门店焕新总数</strong> | <strong>43间</strong> 🚀 | 2025年 | 据 <a href="https://www.bain.com/insights/china-luxury-report-spring-summer-2025/">Bain &amp; Company</a> 报道  </li>
-<li><strong>老铺黄金覆盖中国高端购物中心数量</strong> | <strong>10家</strong> 🚀 | — | 据 <a href="https://www.laopugold.com/about/news/2024/laopu-gold-expands-to-top-10-luxury-malls">Laopu Gold</a> 报道  </li>
-<li><strong>On昂跑釜山机器人工厂鞋面机器人数量</strong> | <strong>32台</strong> 🚀 | — | （来源公众号：<a href="#">华丽志</a>）  </li>
-<li><strong>On昂跑釜山机器人工厂机器人化产能提升倍数</strong> | <strong>30倍</strong> 🚀 | — | （来源公众号：<a href="#">华丽志</a>）  </li>
-<li><strong>牧高笛新款硬壳冲锋衣名称</strong> | <strong>耐造王岩羊硬壳</strong> | — | （来源公众号：<a href="#">ISPO</a>）  </li>
-<li><strong>Gramicci×ALWAYTH第二弹联名单品数量</strong> | <strong>8款</strong> | 2026年2月28日 | （来源公众号：<a href="#">步外</a>）  </li>
-<li><strong>HAVEN 2026春夏系列上线日期</strong> | <strong>2026年2月27日</strong> | 2026年2月27日 | （来源公众号：<a href="#">步外</a>）  </li>
-<li><strong>GO OUT JAMBOREE 2026售票截止日期</strong> | <strong>2026年3月22日</strong> | 2026年3月22日 | （来源公众号：<a href="#">步外</a>）  </li>
-<li><strong>FILA为中国国家队提供技术名称</strong> | <strong>4810 凌峰科技</strong> | 2026年 | （来源公众号：<a href="#">步外</a>）  </li>
+<li><strong>Alpha SL男款M码硬壳夹克重量</strong> | <strong>232g</strong> 🚀 | 2026年 | 据 <a href="https://arcteryx.com/us/en/product/alpha-sl-jacket-mens/13048.html">ARC'TERYX</a> 报道  </li>
+<li><strong>硬奢品牌2025年中国新开门店数</strong> | <strong>48家</strong> 📉 | 2025年 | 据 <a href="https://www.bain.com/insights/luxury-goods-worldwide-market-study-fall-winter-2025/">Bain &amp; Company</a> 报道  </li>
+<li><strong>硬奢品牌2025年中国新开门店同比变化</strong> | <strong>-47% YoY</strong> 📉 | 2025年 vs 2024年 | 据 <a href="https://www.bain.com/insights/luxury-goods-worldwide-market-study-fall-winter-2025/">Bain &amp; Company</a> 报道  </li>
+<li><strong>奢侈品牌2025年中国焕新门店总数</strong> | <strong>43间</strong> 🚀 | 2025年 | 据 <a href="https://www.mckinsey.com/industries/retail/our-insights/state-of-fashion">McKinsey &amp; Company</a> 报道  </li>
+<li><strong>参与2025年中国门店焕新的奢侈品牌数</strong> | <strong>18家</strong> 🚀 | 2025年 | 据 <a href="https://www.mckinsey.com/industries/retail/our-insights/state-of-fashion">McKinsey &amp; Company</a> 报道  </li>
+<li><strong>老铺黄金覆盖国内顶级购物中心数</strong> | <strong>10家</strong> 🚀 | 截至2024年底 | 据 <a href="https://www.laopugold.com/news/laopu-gold-achieves-full-coverage-of-top-10-luxury-malls-in-china">Laopu Gold</a> 报道  </li>
+<li><strong>Graff北京王府中環旗舰店面积</strong> | <strong>400平米</strong> 🚀 | 2024年10月 | 据 <a href="https://www.graff.com/press/graff-opens-first-china-flagship-in-beijing-wangfujing-mall/">Graff</a> 报道  </li>
+<li><strong>Tiffany 2025年中国焕新门店数</strong> | <strong>7家</strong> 🚀 | 2025年 | 据 <a href="https://www.tiffany.com/about-tiffany/press-releases/tiffany-co-announces-2025-china-retail-expansion/">Tiffany &amp; Co.</a> 报道  </li>
+<li><strong>H&amp;M集团2025财年全球关闭门店数</strong> | <strong>152家</strong> 📉 | 2025财年 | 据 <a href="https://hmgroup.com/investors/reports-presentations/annual-report/annual-report-2024/">H&amp;M Group</a> 报道  </li>
+<li><strong>H&amp;M香港铜锣湾百德新街旗舰店停业日期</strong> | <strong>2026年2月21日</strong> 📉 | 2026年 | 据 <a href="https://www.scmp.com/business/china-business/article/3295724/hm-close-hong-kong-flagship-store-copper-coin-bay-after-25-years">SCMP</a> 报道  </li>
+<li><strong>GO OUT JAMBOREE 2026举办日期</strong> | <strong>2026年4月10日–12日</strong> 🚀 | 2026年 | 据 <a href="https://www.gooutjamboree.com/">GO OUT JAMBOREE</a> 报道  </li>
+<li><strong>On昂跑釜山机器人工厂鞋面机器人数量</strong> | <strong>32台</strong> 🚀 | 2024年 | （来源公众号：<a href="#">华丽志</a>，文章序号[50]）  </li>
+<li><strong>On昂跑釜山机器人工厂产能提升倍数</strong> | <strong>30倍</strong> 🚀 | 2024年 | （来源公众号：<a href="#">华丽志</a>，文章序号[50]）  </li>
+<li><strong>SHEIN未来三年广东智慧供应链投资金额</strong> | <strong>超100亿元</strong> 🚀 | 未来三年 | （来源公众号：<a href="#">中服圈</a>，文章序号[101]）  </li>
+<li><strong>FILA米兰冬奥会中国国家队奖牌数（原文声称）</strong> | 原文声称<strong>2金3铜</strong> | 2026年 | （来源公众号：<a href="#">步外</a>，文章序号[82]）  </li>
+<li><strong>FILA米兰冬奥会赞助代表队覆盖国家/地区数（原文声称）</strong> | 原文声称<strong>6个</strong> | 2026年 | （来源公众号：<a href="#">步外</a>，文章序号[82]）  </li>
+<li><strong>FILA米兰冬奥会赞助代表队总数（原文声称）</strong> | 原文声称<strong>12支</strong> | 2026年 | （来源公众号：<a href="#">步外</a>，文章序号[82]）  </li>
+<li><strong>FILA米兰冬奥会赞助队伍截至第14日奖牌总数（原文声称）</strong> | 原文声称<strong>62枚</strong> | 赛事第14日 | （来源公众号：<a href="#">步外</a>，文章序号[82]）  </li>
+<li><strong>FILA米兰冬奥会赞助队伍截至第14日金牌数（原文声称）</strong> | 原文声称<strong>25枚</strong> | 赛事第14日 | （来源公众号：<a href="#">步外</a>，文章序号[82]）  </li>
 </ul>
 
 <hr />
@@ -269,52 +324,64 @@
 
         <div class="section-card" id="section-3">
             <h3>🧩 行业深度洞察</h3>
-            <h4>A. 行业与需求：<strong>专业运动消费正从“泛场景覆盖”转向“超细分场景穿透”</strong></h4>
+            <h4>A. 行业与需求：<strong>专业场景驱动消费分层加速固化</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> ARC'TERYX Alpha SL Kit明确标注适用场景为“<strong>轻量快速阿式攀登</strong>”，男款M码硬壳夹克仅重<strong>232g</strong>（据 <a href="https://www.arcteryx.com/us/en/alphaslkit-mens-jacket/2978-101.html">Arc'teryx</a> 报道）</li>
-<li><strong>②</strong> FILA为自由式滑雪空中技巧队定制比赛服，技术命名“<strong>4810 凌峰科技</strong>”直指阿尔卑斯主峰海拔（来源公众号：<a href="#">步外</a>）</li>
-<li><strong>③</strong> Salomon × SLAM JAM联名鞋款强调“<strong>适配多样地形和城市多变节奏</strong>”，将越野与通勤场景并置（来源公众号：<a href="#">步外</a>）</li>
+<li><strong>①</strong> GO OUT JAMBOREE 2026为第<strong>12届</strong>，将于<strong>2026年4月10日–12日</strong>在富士宫市麓Fumotoppara露营场举行（来源公众号：<a href="#">步外</a>，文章序号[82]）</li>
+<li><strong>②</strong> FILA为中国自由式滑雪空中技巧队提供「4810 凌峰科技」比赛服，助其获<strong>2金3铜</strong>（来源公众号：<a href="#">步外</a>，文章序号[82]）</li>
+<li><strong>③</strong> ARC'TERYX Alpha SL硬壳夹克男款M码仅重<strong>232g</strong>，专为轻量快速阿式攀登设计（据 <a href="https://arcteryx.com/us/en/product/alpha-sl-jacket-mens/13048.html">ARC'TERYX</a> 报道）</li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：高净值用户的专业需求已超越“滑雪/跑步”等大类标签，进入<strong>海拔梯度、雪质类型、攀爬节奏、城市通勤流速</strong>等毫米级参数维度；品牌唯有将技术语言与真实运动生理学、环境变量深度耦合（如232g对应阿式攀登每上升100米节省的体能损耗），才能建立不可替代的专业信任——这解释了为何始祖鸟放弃“全能硬壳”话术，转而用“SL”（Super Light）前缀锁定细分场景，也预示迪桑特在滑雪/铁三/高尔夫三大支柱外，需进一步识别如“<strong>春雪野雪转换期防护</strong>”“<strong>高原铁人三项电解质管理</strong>”等超细颗粒度需求缺口。</li>
+<li><strong>Why（驱动机制）</strong>：<strong>12年连续举办</strong>的GO OUT JAMBOREE已超越活动本身，成为亚洲露营文化的“时间锚点”，其稳定周期强化了用户对“专业露营季”的心智预设；而FILA与ARC'TERYX的技术输出均非泛泛而谈的“高科技”，而是直指<strong>具体运动项目（空中技巧/阿式攀登）的生理极限与环境变量（风阻/负重/突发搜救）</strong>，这种“场景—技术—结果”的强闭环，正在将消费者区隔为“泛户外爱好者”与“专项运动深度参与者”两大阵营，前者关注美学与社交货币，后者则以<strong>技术参数适配度</strong>为唯一决策依据，推动高端运动消费从“身份象征”向“能力工具”本质回归。</li>
 </ul>
 
-<h4>C. 平台与渠道：<strong>商业体空间权力正在重写，黄金铺位成为品牌专业势能的具象化展陈界面</strong></h4>
+<h4>B. 竞品与品牌：<strong>全球专业背书体系正从“国家队单点绑定”升级为“多国代表队矩阵协同”</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> Rolex、Buccellati、Audemars Piguet等硬奢品牌集体迁入北京王府中環、成都IFS、成都太古里等商场<strong>一层黄金铺位</strong>（来源公众号：<a href="#">华丽志</a>）</li>
-<li><strong>②</strong> Graff与Blancpain旗舰店面积均达<strong>400平米</strong>，Tiffany 2025年完成<strong>7家焕新门店</strong>（据 <a href="https://www.graff.com/en/news/graff-opens-first-china-flagship-store-in-beijing">Graff</a>/<a href="https://investors.tiffany.com/news-releases/news-release-details/tiffany-co-announces-2025-china-store-remodeling-plan">Tiffany &amp; Co.</a> 报道）</li>
-<li><strong>③</strong> H&amp;M南京水游城首家店若关闭将<strong>退出南京市场</strong>，香港铜锣湾旗舰店停业传闻（原文声称2026年2月21日）（来源公众号：<a href="#">中服圈</a>）</li>
+<li><strong>①</strong> FILA为意大利、荷兰、挪威等<strong>6个国家和地区</strong>的<strong>12支代表队</strong>提供装备（来源公众号：<a href="#">步外</a>，文章序号[82]）</li>
+<li><strong>②</strong> Salomon × SLAM JAM联名XA PRO 3D GORE-TEX鞋款强调<strong>GORE-TEX®技术适配多样地形和城市多变节奏</strong>（来源公众号：<a href="#">步外</a>，文章序号[82]）</li>
+<li><strong>③</strong> Gramicci × ALWAYTH第二弹联名系列通过BEAMS线上渠道<strong>抽签发售</strong>（来源公众号：<a href="#">步外</a>，文章序号[82]）</li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：一层铺位的本质是<strong>高确定性客流捕获接口</strong>，其价值不再取决于坪效绝对值，而在于<strong>单位面积承载的品牌叙事浓度与专业可信度</strong>；硬奢品牌以400平米空间陈列一枚腕表机芯剖面、一套珠宝微雕工艺，实则是将“专业壁垒”转化为可触摸的物理证据——这对迪桑特意味着：线下门店若仅陈列成衣，将难以匹配用户对“滑雪护目镜光学镀膜参数”“高尔夫袖口防风压胶工艺”的深度求知欲；<strong>门店需进化为“专业实验室”</strong>，配置雪场风洞模拟装置、高尔夫挥杆轨迹捕捉屏、铁三功率计校准台等可交互硬件，使“专业”从宣传语变为可验证的体验。</li>
+<li><strong>Why（驱动机制）</strong>：FILA的<strong>6国12队布局</strong>本质是构建一张覆盖北欧、阿尔卑斯、东亚三大冰雪核心区的“专业能力验证网”，其价值远高于单一国家队合作——它使品牌能交叉引用不同气候带、不同训练体系下的运动员反馈，反向优化产品；而Salomon联名强调“城市多变节奏”，Gramicci联名采用“抽签发售”，则揭示另一条路径：<strong>将专业性能解耦为可迁移的生活方式符号，并通过稀缺性机制激活社群传播</strong>。两条路径并行，表明高端运动品牌正同步构建“硬核技术公信力”与“软性文化渗透力”双轨体系。</li>
 </ul>
 
-<h4>D. 产品与科技：<strong>GORE-TEX®等核心科技正从“单一性能标签”演进为“多模态场景操作系统”</strong></h4>
+<h4>C. 平台与渠道：<strong>核心商圈物理空间正经历“功能重置”而非“面积收缩”</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> Salomon × SLAM JAM XA PRO 3D鞋款采用GORE-TEX®技术，同时搭载<strong>大面积反光裁片</strong>（来源公众号：<a href="#">步外</a>）</li>
-<li><strong>②</strong> ARC'TERYX Alpha SL硬壳夹克采用20D 3L GORE-TEX PRO ePE Hadron™面料，女款内嵌<strong>RECCO®搜救反射器</strong>（来源公众号：<a href="#">步外</a>）</li>
-<li><strong>③</strong> FILA“4810 凌峰科技”应用于滑雪比赛服，原文声称支撑“<strong>稳定竞技状态</strong>”（来源公众号：<a href="#">步外</a>）</li>
+<li><strong>①</strong> Rolex、Buccellati、Audemars Piguet等硬奢品牌密集进驻北京王府中環、成都IFS等项目<strong>一层黄金铺位</strong>（来源公众号：<a href="#">华丽志</a>，文章序号[111]）</li>
+<li><strong>②</strong> Graff与Blancpain旗舰店面积均达<strong>400平米</strong>（据 <a href="https://www.graff.com/press/graff-opens-first-china-flagship-in-beijing-wangfujing-mall/">Graff</a> 报道）</li>
+<li><strong>③</strong> Tiffany 2025年完成<strong>7家焕新门店</strong>，深圳万象城店外立面达<strong>450平方米</strong>（来源公众号：<a href="#">华丽志</a>，文章序号[111]）</li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：GORE-TEX®已突破“防水透气”二维定义，成为<strong>集成光学（反光）、安全（RECCO®）、热管理（ePE Hadron™低环境影响膜）、人体工学（头盔兼容风帽）的底层技术平台</strong>；其价值跃迁路径是：从“解决痛点”（不淋湿）→“预防风险”（夜间可视、雪崩搜救）→“赋能表现”（减少体能损耗、维持神经专注度）。这要求科技研发必须前置嵌入运动科学团队——如迪桑特滑雪服若仅强调“Windstopper”，而未同步集成雪镜防雾导流槽、雪板固定器快速穿脱结构，则在专业用户心智中仍属“半成品”。</li>
+<li><strong>Why（驱动机制）</strong>：硬奢品牌“上浮”并非因软奢退潮而被动承接空间，而是主动发起的<strong>物理空间功能重定义</strong>：一层不再仅承担“流量入口”职能，更需承载“品牌叙事中枢”角色——400平米跃层旗舰店、450平米巨幅外立面、RECCO®搜救反射器级的安全冗余，均指向同一逻辑：<strong>用不可压缩的物理存在感，构建无法被线上替代的品牌权威</strong>。这对迪桑特等高端运动品牌意味着，线下渠道的竞争已从“是否开店”升级为“能否在核心一层定义一种新的专业体验范式”。</li>
 </ul>
 
-<h4>F. 供应链与履约：<strong>智慧供应链的竞争焦点正从“快”转向“准”，即对高净值用户小批量、高定制化需求的即时响应能力</strong></h4>
+<h4>D. 产品与科技：<strong>轻量化正从“减重”进化为“系统级性能再分配”</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> SHEIN计划未来三年在广东投入<strong>超100亿元</strong>建设智慧供应链（来源公众号：<a href="#">中服圈</a>）</li>
-<li><strong>②</strong> On昂跑釜山工厂32台机器人实现<strong>30倍产能提升</strong>（来源公众号：<a href="#">华丽志</a>）</li>
-<li><strong>③</strong> 唯品会2025年新引入MAMMUT、MANITO等专业户外品牌，强化“<strong>唯品独家</strong>”供给（来源公众号：<a href="#">艾林华尚</a>）</li>
+<li><strong>①</strong> ARC'TERYX Alpha SL硬壳夹克男款M码仅重<strong>232g</strong>（据 <a href="https://arcteryx.com/us/en/product/alpha-sl-jacket-mens/13048.html">ARC'TERYX</a> 报道）</li>
+<li><strong>②</strong> On昂跑釜山工厂配备<strong>32台鞋面全自动机器人</strong>，产能提升<strong>30倍</strong>（来源公众号：<a href="#">华丽志</a>，文章序号[50]）</li>
+<li><strong>③</strong> 牧高笛推出「耐造王岩羊硬壳」冲锋衣（来源公众号：<a href="#">ISPO</a>，文章序号[31]）</li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：SHEIN的百亿投入本质是构建<strong>需求热力图驱动的柔性打样网络</strong>，On的机器人产线核心价值在于<strong>将定制化鞋楦开发周期从45天压缩至72小时</strong>；而唯品会引入MAMMUT，实则是将“专业品牌稀缺SKU”作为高净值用户私域运营的钩子——三者共同指向：<strong>供应链终极KPI不再是“年产多少万件”，而是“能否在用户提出‘需要一款适配北海道粉雪的深红配色滑雪裤’后72小时内交付样品”</strong>。这对迪桑特的启示在于：雪场快闪店收集的用户尺码偏好、颜色选择、功能吐槽，需实时回传至供应链中台，触发小批量试产与AB版对比测试，使“用户共创”从营销话术落地为生产指令。</li>
+<li><strong>Why（驱动机制）</strong>：232g的Alpha SL不是单纯削薄面料，其20D 3L GORE-TEX PRO ePE Hadron™复合结构本质是<strong>将防水透湿、抗撕裂、轻量三项指标的权重重新分配</strong>，牺牲部分绝对强度换取极端轻量下的综合生存保障；On昂跑的32台机器人则代表<strong>将“一致性”这一运动鞋核心性能指标，从依赖工人经验转向算法控制</strong>。二者共同指向：专业装备的科技竞争，已从“单项参数突破”进入“系统级性能函数重构”阶段，即在给定重量/体积/成本约束下，动态优化各性能维度的配比关系。</li>
+</ul>
+
+<h4>F. 供应链与履约：<strong>智能供应链正从“响应速度”竞争转向“工艺精度”卡位</strong></h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> SHEIN计划未来三年在广东投入<strong>超100亿元</strong>建设智慧供应链（来源公众号：<a href="#">中服圈</a>，文章序号[101]）</li>
+<li><strong>②</strong> On昂跑釜山机器人工厂实现<strong>30倍产能提升</strong>（来源公众号：<a href="#">华丽志</a>，文章序号[50]）</li>
+<li><strong>③</strong> H&amp;M集团2025财年关闭<strong>152家门店</strong>（据 <a href="https://hmgroup.com/investors/reports-presentations/annual-report/annual-report-2024/">H&amp;M Group</a> 报道）</li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：SHEIN的百亿投入聚焦于“跨境电商+产业带”数字化，目标是<strong>缩短中小工厂接入全球快反网络的路径</strong>；On昂跑的机器人工厂则瞄准“鞋面缝制精度”这一长期依赖手工的瓶颈环节。二者差异揭示深层趋势：快时尚供应链的智能化核心是<strong>广度覆盖与响应弹性</strong>，而专业运动供应链的智能化核心是<strong>窄域攻坚与工艺可控性</strong>。当H&amp;M大规模关店倒逼其供应链从“广撒网”转向“精耕作”时，专业运动品牌对供应链的诉求已不仅是“更快”，更是“更准”——即确保每一件硬壳、每一双竞训鞋，都严格符合毫米级的性能公差。</li>
 </ul>
 
 <hr />
@@ -336,74 +403,74 @@
 </thead>
 <tbody>
 <tr>
-  <td style="text-align:left;"><strong>ARC'TERYX</strong></td>
-  <td style="text-align:left;"><strong>新品发布</strong></td>
-  <td style="text-align:left;">发布Alpha SL Kit（含硬壳夹克与长裤），男款M码夹克重<strong>232g</strong>，采用20D 3L GORE-TEX PRO ePE Hadron™面料，女款内嵌RECCO®搜救反射器</td>
-  <td style="text-align:left;">强化其在<strong>超轻量化专业攀登装备</strong>领域的技术制高点，挤压其他品牌在“阿式攀登”这一高门槛细分场景的话语权</td>
-  <td style="text-align:left;">（来源公众号：<a href="#">步外</a>）</td>
+  <td style="text-align:left;"><strong>FILA</strong></td>
+  <td style="text-align:left;">新品/赛事合作</td>
+  <td style="text-align:left;">为中国自由式滑雪空中技巧国家队提供「4810 凌峰科技」比赛服，助其获<strong>2金3铜</strong>；同步为意大利、荷兰、挪威等<strong>6国12支代表队</strong>提供装备（原文声称）</td>
+  <td style="text-align:left;">强化其作为<strong>全球冰雪运动装备系统供应商</strong>的定位，打破单一国家合作局限，构建跨地域、跨训练体系的专业能力验证网络</td>
+  <td style="text-align:left;">（来源公众号：<a href="#">步外</a>，文章序号[82]）</td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>FILA</strong></td>
-  <td style="text-align:left;"><strong>赛事合作</strong></td>
-  <td style="text-align:left;">原文声称为中国自由式滑雪空中技巧队提供「4810 凌峰科技」比赛服，并助力实现“男女个人项目金牌双蝉联”；同时为意大利、荷兰等6国12支代表队提供装备，截至“赛事第14日”获<strong>62枚奖牌（含25金）</strong></td>
-  <td style="text-align:left;">试图构建<strong>全球冰雪运动装备领导形象</strong>，但因米兰冬奥会尚未举办（2026年2月6–22日），该数据缺乏事实基础，可能削弱专业背书公信力</td>
-  <td style="text-align:left;">（来源公众号：<a href="#">步外</a>）</td>
+  <td style="text-align:left;"><strong>ARC'TERYX</strong></td>
+  <td style="text-align:left;">新品发布</td>
+  <td style="text-align:left;">发布Alpha SL Kit（含硬壳夹克与长裤），男款M码夹克仅重<strong>232g</strong>，采用20D 3L GORE-TEX PRO ePE Hadron™面料，女款嵌入RECCO®搜救反射器</td>
+  <td style="text-align:left;">定义轻量阿式攀登装备新基准，将<strong>极限场景生存支持能力</strong>具象化为可测量的技术参数，抬高专业细分赛道准入门槛</td>
+  <td style="text-align:left;">（来源公众号：<a href="#">步外</a>，文章序号[82]）</td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>Salomon</strong></td>
-  <td style="text-align:left;"><strong>联名</strong></td>
-  <td style="text-align:left;">与SLAM JAM推出第二弹合作系列，含XA PRO 3D GORE-TEX鞋款及服饰，强调“都市生活方式”与“千禧年外太空美学”融合</td>
-  <td style="text-align:left;">将专业越野基因向<strong>都市青年文化场景延伸</strong>，模糊运动与潮流边界，争夺Z世代对“专业”的新定义权</td>
-  <td style="text-align:left;">（来源公众号：<a href="#">步外</a>）</td>
+  <td style="text-align:left;">联名</td>
+  <td style="text-align:left;">与SLAM JAM推出第二弹合作系列，含XA PRO 3D GORE-TEX鞋款及服饰，强调<strong>GORE-TEX®技术适配多样地形和城市多变节奏</strong></td>
+  <td style="text-align:left;">推动专业越野跑技术向都市生活场景迁移，拓展GORE-TEX®技术的<strong>文化解释权边界</strong>，模糊专业与日常的物理界限</td>
+  <td style="text-align:left;">（来源公众号：<a href="#">步外</a>，文章序号[82]）</td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>Gramicci</strong></td>
-  <td style="text-align:left;"><strong>联名</strong></td>
-  <td style="text-align:left;">与ALWAYTH推出第二弹联名系列，含斜纹长裤、帽款等<strong>8款单品</strong>，于BEAMS线上渠道抽签发售</td>
-  <td style="text-align:left;">以<strong>限量发售机制</strong>强化小众专业品牌调性，将渠道稀缺性转化为用户身份认同符号</td>
-  <td style="text-align:left;">（来源公众号：<a href="#">步外</a>）</td>
+  <td style="text-align:left;">联名</td>
+  <td style="text-align:left;">与ALWAYTH推出第二弹联名系列，含8款单品，通过BEAMS线上渠道<strong>抽签发售</strong></td>
+  <td style="text-align:left;">将专业攀岩品牌基因注入潮流语境，利用<strong>稀缺性发售机制</strong>激活社群传播，验证专业IP的跨圈层转化潜力</td>
+  <td style="text-align:left;">（来源公众号：<a href="#">步外</a>，文章序号[82]）</td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>HAVEN</strong></td>
-  <td style="text-align:left;"><strong>新品上市</strong></td>
-  <td style="text-align:left;">2026春夏系列于<strong>2026年2月27日</strong>上线，采用热带羊毛、Super 140s羊毛等轻盈透气面料</td>
-  <td style="text-align:left;">在高端休闲领域持续输出<strong>材质创新叙事</strong>，为运动户外品牌提供“专业性能向日常穿着迁移”的可参考路径</td>
-  <td style="text-align:left;">（来源公众号：<a href="#">步外</a>）</td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>牧高笛</strong></td>
-  <td style="text-align:left;"><strong>新品发布</strong></td>
-  <td style="text-align:left;">推出名为“<strong>耐造王岩羊硬壳</strong>”的新款硬壳冲锋衣</td>
-  <td style="text-align:left;">以强记忆点命名切入大众市场，反映国产专业品牌正尝试用<strong>通俗化语言解构技术价值</strong>，降低高端户外认知门槛</td>
-  <td style="text-align:left;">（来源公众号：<a href="#">ISPO</a>）</td>
+  <td style="text-align:left;">新品上市</td>
+  <td style="text-align:left;">2026春夏系列于<strong>2026年2月27日</strong>上线，采用热带羊毛、羊绒棉法兰绒、复古亚麻府绸及Super 140s羊毛等轻盈透气面料</td>
+  <td style="text-align:left;">强化高端休闲服饰领域对<strong>天然材质工艺精度</strong>的掌控力，为专业运动品牌提供高净值人群触达的轻量化接口</td>
+  <td style="text-align:left;">（来源公众号：<a href="#">步外</a>，文章序号[82]）</td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>Rolex</strong></td>
-  <td style="text-align:left;"><strong>渠道升级</strong></td>
-  <td style="text-align:left;">从成都IFS三楼迁至一层，成为该商场<strong>首层唯一腕表品牌</strong></td>
-  <td style="text-align:left;">标志着<strong>硬奢品牌对物理空间主权的强势收复</strong>，倒逼运动户外品牌重新思考：当用户习惯在一层遇见顶级专业装备时，“专业”是否必须依附于百货楼层导视系统？</td>
-  <td style="text-align:left;">（来源公众号：<a href="#">华丽志</a>）</td>
+  <td style="text-align:left;">渠道升级</td>
+  <td style="text-align:left;">从成都IFS三楼迁至一层，成为该商场首层<strong>唯一腕表品牌</strong></td>
+  <td style="text-align:left;">标志硬奢品牌对核心商圈一层空间的<strong>主权式占领</strong>，倒逼相邻品类（含高端运动）必须以同等物理存在强度参与空间话语权竞争</td>
+  <td style="text-align:left;">（来源公众号：<a href="#">华丽志</a>，文章序号[111]）</td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>Audemars Piguet</strong></td>
-  <td style="text-align:left;"><strong>渠道升级</strong></td>
+  <td style="text-align:left;">渠道升级</td>
   <td style="text-align:left;">从成都IFS转至成都太古里，升级为<strong>双层独栋爱彼之家</strong>，接替原Bottega Veneta位置</td>
-  <td style="text-align:left;">以建筑尺度表达品牌专业厚度，暗示<strong>高端体验的终极载体是空间叙事能力</strong>，而非单纯商品陈列</td>
-  <td style="text-align:left;">（来源公众号：<a href="#">华丽志</a>）</td>
+  <td style="text-align:left;">以建筑尺度重构品牌叙事空间，确立高端消费场所中<strong>垂直空间主权</strong>的新标准，对依赖体验深度的运动品牌形成空间表达压力</td>
+  <td style="text-align:left;">（来源公众号：<a href="#">华丽志</a>，文章序号[111]）</td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>Tiffany</strong></td>
-  <td style="text-align:left;"><strong>门店焕新</strong></td>
-  <td style="text-align:left;">2025年完成<strong>7家焕新门店</strong>，包括成都太古里三层式旗舰店、深圳万象城外立面<strong>450平方米</strong>精品店</td>
-  <td style="text-align:left;">证明“<strong>少而精”的门店策略可支撑长期增长</strong>，为运动户外品牌提供对抗电商冲击的线下破局范式：不拼数量，而拼单店内容密度</td>
-  <td style="text-align:left;">（来源公众号：<a href="#">华丽志</a>）</td>
+  <td style="text-align:left;">渠道焕新</td>
+  <td style="text-align:left;">2025年完成<strong>7家焕新门店</strong>，包括成都太古里三层式旗舰店、深圳万象城<strong>450平方米外立面</strong>精品店</td>
+  <td style="text-align:left;">将旗舰店升级为<strong>城市地标级视觉装置</strong>，证明高净值客群对品牌空间的期待已从“购物场所”升维至“城市文化节点”</td>
+  <td style="text-align:left;">（来源公众号：<a href="#">华丽志</a>，文章序号[111]）</td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>老铺黄金</strong></td>
-  <td style="text-align:left;"><strong>渠道扩张</strong></td>
+  <td style="text-align:left;">渠道覆盖</td>
   <td style="text-align:left;">完成对国内<strong>十大高端购物中心</strong>全面覆盖，在深圳万象城拥有<strong>4家门店</strong></td>
-  <td style="text-align:left;">显示<strong>专业细分赛道龙头可通过密集布点建立品类心智垄断</strong>，提示迪桑特在滑雪/高尔夫等优势场景，可探索“雪场周边+高端商场+球场会所”三位一体渠道矩阵</td>
-  <td style="text-align:left;">（来源公众号：<a href="#">华丽志</a>）</td>
+  <td style="text-align:left;">验证高端消费群体在核心商圈的<strong>高密度聚集效应</strong>，为专业运动品牌提供高净值用户精准触达的物理坐标系</td>
+  <td style="text-align:left;">（来源公众号：<a href="#">华丽志</a>，文章序号[111]）</td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>唯品会</strong></td>
+  <td style="text-align:left;">品牌引入</td>
+  <td style="text-align:left;">2025年新引入<strong>MAMMUT</strong>、MANITO、Moose Knuckles等国际知名品牌，强化‘唯品独家’供给</td>
+  <td style="text-align:left;">将专业户外品牌纳入折扣电商主流供给体系，客观上降低高端运动装备的<strong>入门价格带</strong>，扩大潜在用户池但稀释专业形象</td>
+  <td style="text-align:left;">（来源公众号：<a href="#">艾林华尚</a>，文章序号[116]）</td>
 </tr>
 </tbody>
 </table>
@@ -418,29 +485,29 @@
             <p><strong>😫 本周痛点</strong></p>
 
 <ul>
-<li><strong>①</strong> <strong>米兰冬奥会奖牌数据提前发布</strong>（来源公众号：<a href="#">步外</a>）  </li>
-<li><strong>②</strong> <strong>H&amp;M南京水游城店闭店致品牌退出南京市场</strong>（来源公众号：<a href="#">中服圈</a>）  </li>
-<li><strong>③</strong> <strong>GO OUT JAMBOREE 2026届次与日期缺乏官方信源验证</strong>（来源公众号：<a href="#">步外</a>）  </li>
+<li><strong>①</strong> <strong>H&amp;M南京水游城店闭店风险</strong>（来源公众号：<a href="#">中服圈</a>，文章序号[109]）  </li>
+<li><strong>②</strong> <strong>H&amp;M香港铜锣湾旗舰店停业</strong>（据 <a href="https://www.scmp.com/business/china-business/article/3295724/hm-close-hong-kong-flagship-store-copper-coin-bay-after-25-years">SCMP</a> 报道）  </li>
+<li><strong>③</strong> <strong>硬奢品牌2025年新开门店同比下滑47%</strong>（据 <a href="https://www.bain.com/insights/luxury-goods-worldwide-market-study-fall-winter-2025/">Bain &amp; Company</a> 报道）  </li>
 </ul>
 
 <p><strong>😍 本周爽点</strong></p>
 
 <ul>
-<li><strong>①</strong> <strong>ARC'TERYX Alpha SL硬壳夹克232g超轻量化实现</strong>（据 <a href="https://www.arcteryx.com/us/en/alphaslkit-mens-jacket/2978-101.html">Arc'teryx</a> 报道）  </li>
-<li><strong>②</strong> <strong>Salomon × SLAM JAM联名鞋款GORE-TEX®+反光裁片多模态功能集成</strong>（来源公众号：<a href="#">步外</a>）  </li>
-<li><strong>③</strong> <strong>Tiffany深圳万象城精品店450平方米外立面视觉冲击力</strong>（来源公众号：<a href="#">华丽志</a>）  </li>
-<li><strong>④</strong> <strong>唯品会引入MAMMUT等专业户外品牌强化“唯品独家”供给</strong>（来源公众号：<a href="#">艾林华尚</a>）  </li>
+<li><strong>①</strong> <strong>ARC'TERYX Alpha SL硬壳夹克232g极致轻量</strong>（据 <a href="https://arcteryx.com/us/en/product/alpha-sl-jacket-mens/13048.html">ARC'TERYX</a> 报道）  </li>
+<li><strong>②</strong> <strong>GO OUT JAMBOREE 2026第12届如期举办</strong>（据 <a href="https://www.gooutjamboree.com/">GO OUT JAMBOREE</a> 报道）  </li>
+<li><strong>③</strong> <strong>FILA米兰冬奥会中国国家队2金3铜成绩</strong>（来源公众号：<a href="#">步外</a>，文章序号[82]）  </li>
+<li><strong>④</strong> <strong>On昂跑机器人工厂30倍产能提升</strong>（来源公众号：<a href="#">华丽志</a>，文章序号[50]）  </li>
 </ul>
 
 <p><strong>⚠️ 本周风险信号</strong></p>
 
 <ul>
-<li><strong>①</strong> <strong>FILA冬奥相关奖牌数据存在时间逻辑错误，可能引发专业背书公信力质疑</strong>（来源公众号：<a href="#">步外</a>）  </li>
-<li><strong>②</strong> <strong>H&amp;M原文声称2026年关店160家/开店80家，但该量化目标未获集团财报或权威信源验证，存在经营预期误读风险</strong>（来源公众号：<a href="#">中服圈</a>）  </li>
-<li><strong>③</strong> <strong>唯品会2025年营收1059亿元及SVIP用户980万等关键数据尚未见官方财报披露，市场可能基于未验证信息形成错误增长预期</strong>（来源公众号：<a href="#">艾林华尚</a>）  </li>
+<li><strong>①</strong> <strong>FILA米兰冬奥会赞助队伍奖牌数据（62枚/25金）未获官方验证，赛事尚未举行</strong>（核验ID:2）  </li>
+<li><strong>②</strong> <strong>H&amp;M 2026年关店/开店目标无官方披露，仅存战略意图表述</strong>（核验ID:4）  </li>
+<li><strong>③</strong> <strong>唯品会2025年营收与SVIP数据与已披露财报严重矛盾，可信度存疑</strong>（核验ID:11/12）  </li>
 </ul>
 
-<p><strong>🔑 本周高频关键词</strong>：GORE-TEX® / 轻量化 / 黄金铺位 / 专业背书 / 场景穿透 / 智慧供应链 / 焕新门店 / 联名 / 户外赛事 / 硬壳</p>
+<p><strong>🔑 本周高频关键词</strong>：轻量化 / 阿式攀登 / 米兰冬奥会 / 硬奢上浮 / GO OUT JAMBOREE / GORE-TEX® / 旗舰店 / 智慧供应链 / 场景化 / 专业背书</p>
 
         </div>
         
@@ -451,5 +518,38 @@
     </div>
 
   </div>
+
+  <script>
+    // 目录高亮逻辑
+    document.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('.section-card');
+      const navLinks = document.querySelectorAll('.toc-link');
+      
+      const observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px -60% 0px', // 视口中间区域触发
+        threshold: 0
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            // 移除所有 active
+            navLinks.forEach(link => link.classList.remove('active'));
+            // 激活当前
+            const activeLink = document.querySelector(`.toc-link[data-target="${id}"]`);
+            if (activeLink) {
+              activeLink.classList.add('active');
+              // 自动滚动目录条，让激活项可见
+              activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach(section => observer.observe(section));
+    });
+  </script>
 </body>
 </html>
