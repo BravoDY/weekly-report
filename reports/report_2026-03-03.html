@@ -227,45 +227,59 @@
       height: 100vh;
       background: white;
       z-index: 9999;
-      padding: 20px;
-      overflow: auto;
+      overflow: hidden; /* 内部滚动 */
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     
     /* 强制横屏旋转 (模拟手机横屏) */
-    .table-fullscreen-container.rotated {
-      width: 100vh;
+    .table-fullscreen-container.rotated .table-wrapper {
+      /* 交换宽高 */
+      width: 100vh; 
       height: 100vw;
+      max-height: 100vw;
+      overflow: auto;
       transform: rotate(90deg);
-      transform-origin: top left;
-      left: 100vw; /* 旋转后需要调整位置 */
-      top: 0;
-    }
-
-    .fullscreen-btn {
-      float: right;
-      margin-bottom: 10px;
-      padding: 6px 12px;
-      background: #3498db;
-      color: white;
-      border-radius: 4px;
-      font-size: 12px;
-      cursor: pointer;
-      border: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .fullscreen-btn:hover {
-      background: #2980b9;
+      /* 核心：确保旋转后位置正确 */
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(90deg);
+      background: white;
+      padding: 20px;
+      box-sizing: border-box;
     }
     
-    .table-wrapper {
-      position: relative;
-      width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
+    /* 退出按钮样式调整 */
+    .table-fullscreen-container .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px; /* 在竖屏视角下的右上角，旋转后就是左上角 */
+      z-index: 10000;
+      transform: none; /* 按钮不旋转，或者单独处理 */
+    }
+    /* 如果希望按钮也跟着旋转 */
+    .table-fullscreen-container.rotated .fullscreen-btn {
+        position: absolute;
+        top: auto;
+        bottom: 20px;
+        right: auto;
+        left: -40px; /* 需要微调位置 */
+        transform: rotate(90deg);
+        transform-origin: center;
+        /* 这个很难通用适配，建议按钮固定在屏幕某个位置不旋转 */
+    }
+    
+    /* 修正方案：按钮始终固定在屏幕物理右上角 */
+    .table-fullscreen-container .fullscreen-btn.fixed-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        float: none;
+        margin: 0;
+        background: #e74c3c; /* 退出时变红 */
+        transform: none !important; /* 按钮不参与旋转 */
     }
     tr:last-child td { border-bottom: none; }
     tr:nth-child(even) td { background: #ffffff; }
@@ -1049,18 +1063,28 @@
       });
 
       function toggleFullscreen(wrapper, btn) {
-        if (wrapper.classList.contains('table-fullscreen-container')) {
-          // Exit Fullscreen
+        // 检查当前是否已经是全屏模式
+        // 注意：wrapper 本身没有 table-fullscreen-container 类
+        // 我们动态创建一个 div 作为全屏容器，或者直接给 wrapper 加类
+        
+        // 简单方案：给 wrapper 加类
+        if (wrapper.classList.contains('rotated')) {
+          // 退出全屏
           wrapper.classList.remove('table-fullscreen-container');
           wrapper.classList.remove('rotated');
+          wrapper.style.cssText = ''; // 清除内联样式
+          
           btn.innerHTML = '🔄 横屏查看';
-          document.body.style.overflow = ''; // Restore scroll
+          btn.classList.remove('fixed-btn');
+          document.body.style.overflow = ''; 
         } else {
-          // Enter Fullscreen (Rotated)
+          // 进入全屏
           wrapper.classList.add('table-fullscreen-container');
           wrapper.classList.add('rotated');
+          
           btn.innerHTML = '🔙 退出全屏';
-          document.body.style.overflow = 'hidden'; // Lock scroll
+          btn.classList.add('fixed-btn');
+          document.body.style.overflow = 'hidden'; 
         }
       }
     });
