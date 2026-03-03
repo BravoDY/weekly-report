@@ -127,7 +127,9 @@
 
     /* 标题样式升级 */
     h2 { display: none; }
-    h3 {
+    
+    /* 板块标题 (由 core/sender.py 生成，带 .section-title 类) */
+    h3.section-title {
       font-size: 22px;
       font-weight: 700;
       color: #2c3e50;
@@ -137,7 +139,7 @@
       display: flex;
       align-items: center;
     }
-    h3::before {
+    h3.section-title::before {
       content: '';
       display: inline-block;
       width: 6px;
@@ -145,6 +147,16 @@
       background: #3498db;
       margin-right: 14px;
       border-radius: 3px;
+    }
+
+    /* 内容里的 h3 (战略判断结论) */
+    h3:not(.section-title) {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin: 24px 0 12px;
+      padding-left: 0;
+      border-bottom: none;
     }
 
     h4 {
@@ -405,7 +417,7 @@
 
     
         <div class="section-card" id="section-1">
-            <h3>🧭 行业动态</h3>
+            <h3 class="section-title">🧭 行业动态</h3>
             <ul>
 <li><p><strong>① 高端运动消费加速分层</strong></p>
 
@@ -495,7 +507,7 @@
         
 
         <div class="section-card" id="section-2">
-            <h3>📈 关键数据速查</h3>
+            <h3 class="section-title">📈 关键数据速查</h3>
             <table>
 <thead>
 <tr>
@@ -614,7 +626,7 @@
         
 
         <div class="section-card" id="section-3">
-            <h3>🧩 行业深度洞察</h3>
+            <h3 class="section-title">🧩 行业深度洞察</h3>
             <h4>A. 行业与需求：<strong>高尔夫与滑雪消费场景加速专业化与社交化</strong></h4>
 
 <ul>
@@ -741,7 +753,7 @@
         
 
         <div class="section-card" id="section-4">
-            <h3>🥊 竞品情报雷达</h3>
+            <h3 class="section-title">🥊 竞品情报雷达</h3>
             <table>
 <thead>
 <tr>
@@ -853,7 +865,7 @@
         
 
         <div class="section-card" id="section-5">
-            <h3>🎯 本周舆情温度</h3>
+            <h3 class="section-title">🎯 本周舆情温度</h3>
             <p><strong>😫 本周痛点</strong></p>
 
 <ul>
@@ -895,7 +907,7 @@
         
 
         <div class="section-card" id="section-6">
-            <h3>📚 全量文章列表</h3>
+            <h3 class="section-title">📚 全量文章列表</h3>
             <ol>
 <li>【高尔夫 GOLF MZ】 <a href="https://mp.weixin.qq.com/s/Uog0gsLK_Pav6pSDi07n3w">“中国双星”李昊桐、窦泽成本周出战高知特精英赛</a></li>
 <li>【中服圈】 <a href="https://mp.weixin.qq.com/s/7WA-cAwZZ3ZhwRigSr3uLw">安踏北美首店正式开业， 库里或能签约</a></li>
