@@ -126,7 +126,8 @@
     }
 
     /* 标题样式升级 */
-    h2 { display: none; }
+    /* 报告主标题在 header 里，正文里没有 h1 */
+    /* h2 是 Markdown 里的二级标题 (战略判断结论) */
     
     /* 板块标题 (由 core/sender.py 生成，带 .section-title 类) */
     h3.section-title {
@@ -149,14 +150,23 @@
       border-radius: 3px;
     }
 
-    /* 内容里的 h3 (战略判断结论) */
-    h3:not(.section-title) {
-      font-size: 18px;
+    /* 内容里的 h2 (战略判断结论) */
+    h2 {
+      display: block; /* 恢复显示 */
+      font-size: 19px; /* 比 h3.section-title 小一点，但比正文大 */
       font-weight: 700;
       color: #2c3e50;
       margin: 24px 0 12px;
       padding-left: 0;
       border-bottom: none;
+    }
+
+    /* 内容里的 h3 (如果还有的话) */
+    h3:not(.section-title) {
+      font-size: 17px;
+      font-weight: 700;
+      color: #34495e;
+      margin: 20px 0 10px;
     }
 
     h4 {
