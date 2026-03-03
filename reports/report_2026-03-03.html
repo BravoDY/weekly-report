@@ -9,62 +9,66 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
-      background: #f5f6fa;
-      color: #2d3436;
-      line-height: 1.8;
-      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+      background: #f4f6f9;
+      color: #2c3e50;
+      line-height: 1.75;
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* 最大宽度容器 */
+    /* 版心优化：更宽 */
     .container {
-      max-width: 860px;
+      max-width: 1120px;
       margin: 0 auto;
-      position: relative; /* 为 sticky 定位提供上下文 */
+      position: relative;
     }
 
     /* 报告头部 */
     .report-header {
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
       color: white;
-      border-radius: 12px;
-      padding: 32px 36px;
-      margin-bottom: 24px;
+      border-radius: 16px;
+      padding: 40px 48px;
+      margin-bottom: 32px;
+      box-shadow: 0 10px 30px rgba(44, 62, 80, 0.15);
     }
     .report-header h2 {
-      font-size: 22px;
+      font-size: 28px;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       border: none;
       color: white;
+      letter-spacing: 0.5px;
     }
     .report-meta {
-      font-size: 14px;
-      opacity: 0.85;
+      font-size: 15px;
+      opacity: 0.9;
+      font-weight: 300;
     }
 
-    /* ── 目录导航：Sticky 吸顶 ── */
+    /* ── Sticky TOC ── */
     .toc-sticky {
       position: sticky;
-      top: 10px;
+      top: 16px;
       z-index: 100;
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       border-radius: 12px;
-      padding: 12px 20px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      border: 1px solid rgba(255,255,255,0.5);
+      padding: 14px 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 1px solid rgba(255,255,255,0.6);
       transition: all 0.3s ease;
     }
     
     .toc-title {
       font-size: 12px;
       font-weight: 700;
-      color: #636e72;
-      margin-bottom: 8px;
+      color: #7f8c8d;
+      margin-bottom: 10px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -73,9 +77,9 @@
       display: flex;
       flex-wrap: nowrap;
       overflow-x: auto;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
-      padding-bottom: 4px;
+      padding-bottom: 6px;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
@@ -84,48 +88,52 @@
     .toc-links a {
       display: inline-flex;
       align-items: center;
-      padding: 6px 14px;
-      background: #f0f4ff;
-      color: #2a5298;
+      padding: 8px 16px;
+      background: #ecf0f1;
+      color: #34495e;
       text-decoration: none;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
       border-radius: 20px;
-      border: 1px solid #d6e0ff;
+      border: 1px solid transparent;
       transition: all 0.2s;
       white-space: nowrap;
       flex-shrink: 0;
     }
     .toc-links a:hover {
-      background: #dce6ff;
+      background: #e0e6ed;
       transform: translateY(-1px);
     }
     .toc-links a.active {
-      background: #2a5298;
+      background: #34495e;
       color: white;
-      border-color: #2a5298;
-      box-shadow: 0 2px 8px rgba(42, 82, 152, 0.3);
+      box-shadow: 0 4px 12px rgba(52, 73, 94, 0.25);
     }
 
-    /* 各段模块卡片 */
+    /* ── 卡片化区块 ── */
     .section-card {
       background: white;
-      border-radius: 12px;
-      padding: 32px;
-      margin-bottom: 24px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-      scroll-margin-top: 100px;
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+      border: 1px solid #f0f2f5;
+      scroll-margin-top: 140px;
+      transition: transform 0.2s ease;
+    }
+    .section-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
     }
 
-    /* 标题样式 */
+    /* 标题样式升级 */
     h2 { display: none; }
     h3 {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
-      color: #1e3c72;
-      margin-bottom: 24px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #e8ecf8;
+      color: #2c3e50;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #ecf0f1;
       display: flex;
       align-items: center;
     }
@@ -133,108 +141,136 @@
       content: '';
       display: inline-block;
       width: 6px;
-      height: 24px;
-      background: #2a5298;
-      margin-right: 12px;
+      height: 26px;
+      background: #3498db;
+      margin-right: 14px;
       border-radius: 3px;
     }
 
     h4 {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 600;
-      color: #2d3436;
-      margin: 24px 0 12px;
+      color: #34495e;
+      margin: 28px 0 16px;
       background: #f8f9fa;
-      padding: 8px 12px;
-      border-radius: 6px;
-      border-left: 4px solid #74b9ff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border-left: 4px solid #3498db;
     }
 
-    /* 列表样式 */
-    ul, ol {
-      padding-left: 0;
-      list-style: none;
-    }
+    /* 列表优化 */
+    ul, ol { padding-left: 0; list-style: none; }
     li {
-      padding: 8px 0 8px 20px;
-      border-bottom: 1px solid #f7f8fc;
+      padding: 10px 0 10px 24px;
+      border-bottom: 1px solid #f7f9fa;
       position: relative;
-      font-size: 15px;
-      line-height: 1.6;
+      font-size: 16px;
+      color: #4a5568;
     }
     li:before {
       content: "•";
       position: absolute;
-      left: 0;
-      color: #2a5298;
+      left: 6px;
+      color: #3498db;
       font-weight: bold;
       font-size: 18px;
-      line-height: 1.5;
+      line-height: 1.6;
     }
     li:last-child { border-bottom: none; }
 
-    /* 表格样式 */
+    /* 表格升级 */
     table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      font-size: 14px;
-      margin: 16px 0;
-      border: 1px solid #e0e6ed;
-      border-radius: 8px;
+      font-size: 15px;
+      margin: 24px 0;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
       overflow: hidden;
     }
     th {
-      background: #f1f5f9;
-      color: #2d3436;
-      padding: 12px 16px;
+      background: #f8fafc;
+      color: #2d3748;
+      padding: 14px 20px;
       text-align: left;
       font-weight: 600;
-      border-bottom: 1px solid #e0e6ed;
+      border-bottom: 1px solid #e2e8f0;
+      letter-spacing: 0.3px;
     }
     td {
-      padding: 12px 16px;
-      border-bottom: 1px solid #e0e6ed;
+      padding: 14px 20px;
+      border-bottom: 1px solid #e2e8f0;
       vertical-align: top;
       color: #4a5568;
+      line-height: 1.6;
     }
     tr:last-child td { border-bottom: none; }
-    tr:nth-child(even) td { background: #fcfcfd; }
-    tr:hover td { background: #f0f7ff; }
+    tr:nth-child(even) td { background: #ffffff; }
+    tr:hover td { background: #f8fbff; }
 
-    /* 加粗 */
-    strong { color: #1e3c72; font-weight: 700; }
+    /* 链接样式 */
+    a { color: #3498db; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.2s; }
+    a:hover { border-bottom-color: #3498db; opacity: 0.8; }
 
     /* 来源链接样式 */
     .source-inline {
       font-size: 13px;
-      color: #94a3b8;
+      color: #95a5a6;
       display: inline-block;
       margin-left: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     }
     .source-inline a {
-      color: #64748b;
-      text-decoration: none;
-      font-size: 13px;
-      border-bottom: 1px dashed #cbd5e1;
+      color: #95a5a6;
+      border-bottom: 1px dashed #bdc3c7;
     }
     .source-inline a:hover {
-      color: #2a5298;
+      color: #3498db;
       border-bottom-style: solid;
     }
-    .source-inline .source-sep {
-      color: #cbd5e1;
-      margin: 0 6px;
+    .source-inline .source-sep { color: #dcdcdc; margin: 0 6px; }
+
+    /* 回到顶部 */
+    #back-to-top {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      color: #34495e;
+      font-size: 20px;
+    }
+    #back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #back-to-top:hover {
+      background: #34495e;
+      color: white;
+      box-shadow: 0 8px 24px rgba(52, 73, 94, 0.3);
     }
 
-    @media (max-width: 640px) {
-      body { padding: 12px; }
+    @media (max-width: 768px) {
+      body { padding: 16px; }
       .container { width: 100%; }
-      .report-header { padding: 24px 20px; border-radius: 0 0 12px 12px; margin: -12px -12px 24px -12px; }
-      .toc-sticky { top: 0; margin: 0 -12px 20px -12px; border-radius: 0; border: none; border-bottom: 1px solid rgba(0,0,0,0.05); }
-      .section-card { padding: 20px 16px; scroll-margin-top: 140px; }
+      .report-header { padding: 32px 24px; border-radius: 0 0 16px 16px; margin: -16px -16px 32px -16px; }
+      .toc-sticky { top: 0; margin: 0 -16px 24px -16px; border-radius: 0; border: none; border-bottom: 1px solid rgba(0,0,0,0.05); }
+      .section-card { padding: 24px; margin-bottom: 24px; }
       table { display: block; overflow-x: auto; white-space: nowrap; }
-      th, td { padding: 10px 12px; }
+      th, td { padding: 12px 16px; }
+      #back-to-top { bottom: 24px; right: 24px; width: 40px; height: 40px; font-size: 18px; }
     }
   </style>
 </head>
@@ -259,6 +295,7 @@
         <a href="#section-4" class="toc-link" data-target="section-4">🥊 竞品雷达</a>
         <a href="#section-5" class="toc-link" data-target="section-5">🎯 舆情温度</a>
         <a href="#section-6" class="toc-link" data-target="section-6">📚 文章列表</a>
+        <a href="#section-7" class="toc-link" data-target="section-7">🌐 外部核验</a>
       </div>
     </div>
 
@@ -269,82 +306,82 @@
 <li><p><strong>① 高端运动消费加速分层</strong></p>
 
 <ul>
-<li><strong>证据</strong>：江南布衣高价值会员（年消费超5000元）达<strong>34万个</strong>，贡献线下零售额<strong>49.0亿元</strong>，占线下总额<strong>超六成</strong>；Moncler亚洲市场营收<strong>14.16亿欧元</strong>，同比增长<strong>7%</strong>，但集团总营收增速仅<strong>3%</strong>（固定汇率）</li>
-<li><strong>机制</strong>：<strong>高净值人群抗周期能力凸显</strong>，消费向强专业背书、高体验密度、高客单价品类集中</li>
-<li><strong>启示</strong>：市场已从“泛高端”进入“精准高净值运营”阶段，价格带与场景匹配度成为增长分水岭</li>
-<li>来源：<a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a> / <a href="https://mp.weixin.qq.com/s/aDgyCy5wWAacAzBhisSAcw">艾林华尚</a></li>
+<li><strong>证据</strong>：New Balance 2025年ASP提升<strong>30%</strong>；亚玛芬体育大中华区收入<strong>同比增长43.4%</strong></li>
+<li><strong>机制</strong>：<strong>价格带主动上移</strong>与<strong>区域市场高增长并存</strong>，反映中高端客群对专业性与品牌溢价的双重支付意愿强化</li>
+<li><strong>启示</strong>：市场不再以“大众化渗透”为唯一路径，而是形成“专业性能锚点+身份认同溢价”的双轨驱动结构</li>
+<li>来源：[中服圈](https: / mp.weixin.qq.com / s</li>
 </ul></li>
-<li><p><strong>② 线下渠道结构性收缩持续深化</strong></p>
+<li><p><strong>② 滑雪与高尔夫赛事专业背书进入高强度输出期</strong></p>
 
 <ul>
-<li><strong>证据</strong>：H&amp;M计划2026年<strong>关闭约160家门店</strong>，同时新开<strong>约80家</strong>；硬奢品牌2025年中国新开门店数<strong>48家</strong>，同比骤降<strong>47%</strong>（2024年为91家）</li>
-<li><strong>机制</strong>：<strong>单店坪效阈值上移</strong>与<strong>流量成本刚性上涨</strong>双重压力下，品牌主动清退低效点位，转向“少而精”模型</li>
-<li><strong>启示</strong>：实体渠道价值重估完成，门店不再以数量为指标，而以“专业场景渗透率”和“高净值触点密度”为新标尺</li>
-<li>来源：<a href="https://mp.weixin.qq.com/s/hWqb-tXBGccIdShWyhkraQ">中服圈</a> / <a href="https://mp.weixin.qq.com/s/toj4QVkWYv1C13Ep6chUFQ">华丽志</a></li>
+<li><strong>证据</strong>：FILA覆盖<strong>6个国家/地区12支代表队</strong>，截至第14日斩获<strong>62枚奖牌（25金）</strong>；衡泰信自2019年起连续<strong>8年深度绑定女子中巡</strong></li>
+<li><strong>机制</strong>：<strong>国家队级装备支持</strong>与<strong>职业巡回赛长期冠名权</strong>构成双维度专业信用体系，超越单次曝光逻辑</li>
+<li><strong>启示</strong>：专业运动品牌正从“赞助商”转向“技术共建方”，背书价值由可见度转向可验证性</li>
+<li>来源：[步外](https: / mp.weixin.qq.com / s</li>
 </ul></li>
-<li><p><strong>③ 体验式零售从概念走向资产化落地</strong></p>
+<li><p><strong>③ 轻量化科技成为硬壳品类竞争新基准线</strong></p>
 
 <ul>
-<li><strong>证据</strong>：Aritzia收购Fred Segal品牌及知识产权，并签约洛杉矶梅尔罗斯大道8100号旗舰店，将转型为<strong>融合精选商品和沉浸式体验的生活方式中心</strong>；江南布衣「江南布衣+」多品牌集合店达<strong>22家</strong></li>
-<li><strong>机制</strong>：<strong>会员生命周期价值（LTV）驱动空间重构</strong>，物理空间成为私域沉淀、专业教育、社群孵化的复合载体</li>
-<li><strong>启示</strong>：门店功能正从“交易终端”升级为“品牌操作系统入口”，专业服务模块（如滑雪装备调试、高尔夫体态分析）将成为核心基础设施</li>
-<li>来源：<a href="https://mp.weixin.qq.com/s/jp9PF6azOPWt-7Iu2PRWdw">华丽志</a> / <a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></li>
+<li><strong>证据</strong>：始祖鸟Alpha SL男款M码仅重<strong>232g</strong>，采用<strong>20D 3L GORE-TEX PRO ePE Hadron™</strong>面料</li>
+<li><strong>机制</strong>：<strong>超轻克重</strong>与<strong>ePE环保膜技术</strong>同步突破，使硬壳从“极限防护工具”向“全天候场景适配装备”迁移</li>
+<li><strong>启示</strong>：专业装备的技术叙事重心正从单一功能参数（如防水指数）转向系统性体验指标（重量/透气/环保）</li>
+<li>来源：[步外](https: / mp.weixin.qq.com / s</li>
 </ul></li>
-<li><p><strong>④ 跨行业可持续技术迁移窗口打开</strong></p>
+<li><p><strong>④ 体能赛事经济规模跃升至百万级用户量级</strong></p>
 
 <ul>
-<li><strong>证据</strong>：娇兰采用Intact Regenerative公司Pulse超中性酒精，<strong>温室气体排放较传统中性醇减少80%以上</strong>；SHEIN计划三年内于广东投资<strong>超100亿元</strong>建设智慧供应链</li>
-<li><strong>机制</strong>：<strong>环保合规成本显性化</strong>倒逼供应链前端技术穿透，高端运动品牌可直接复用美妆/快时尚领域已验证的低碳原料与柔性制造方案</li>
-<li><strong>启示</strong>：面料科技竞争已延伸至上游原料端，具备绿色认证体系与快速响应供应链的品牌将获得显著溢价支撑力</li>
-<li>来源：<a href="https://mp.weixin.qq.com/s/sQnl9FdmpKq9dCDdYQc8qw">华丽志</a> / <a href="https://mp.weixin.qq.com/s/Uh0glaUOsUmSnx3DP7KwRw">中服圈</a></li>
+<li><strong>证据</strong>：HYROX 2025年全球参赛人数达<strong>55万人</strong>，2025/26赛季预计<strong>破百万</strong></li>
+<li><strong>机制</strong>：<strong>标准化赛制+城市化落地+社群化运营</strong>三要素成熟，推动体能运动从“小众挑战”向“大众生活方式”转化</li>
+<li><strong>启示</strong>：专业运动品牌需建立“赛事IP共建—训练装备供给—数据服务延伸”全链路参与能力</li>
+<li>来源：[懒熊体育](https: / mp.weixin.qq.com / s</li>
 </ul></li>
-<li><p><strong>⑤ 高价值用户运营成为抗周期核心能力</strong></p>
+<li><p><strong>⑤ 大中华区成为全球高端运动品牌增长第一引擎</strong></p>
 
 <ul>
-<li><strong>证据</strong>：唯品会SVIP活跃用户数增至<strong>980万人</strong>，贡献线上销售<strong>52%</strong>；江南布衣活跃会员<strong>59万个</strong>，贡献零售总额<strong>逾八成</strong></li>
-<li><strong>机制</strong>：<strong>用户资产货币化效率</strong>超越GMV规模，高复购、高客单、高传播意愿的SVIP群体成为现金流稳定器与口碑放大器</li>
-<li><strong>启示</strong>：会员体系不再是辅助工具，而是品牌在波动市场中的核心资产负债表，需匹配专业内容、专属权益与场景化服务</li>
-<li>来源：<a href="https://mp.weixin.qq.com/s/dBpzG5EYkgOBCJUe45WajA">艾林华尚</a> / <a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></li>
+<li><strong>证据</strong>：亚玛芬体育大中华区2025年收入<strong>同比增长43.4%</strong>，显著高于集团整体<strong>27%</strong>增速；New Balance中国门店扩张提速</li>
+<li><strong>机制</strong>：<strong>高净值人群规模扩大</strong>与<strong>专业运动教育普及</strong>共振，叠加渠道精细化运营（如门店体验升级、雪场直连），释放结构性增量</li>
+<li><strong>启示</strong>：大中华区已从“国际品牌重要市场”升级为“全球创新策源地”，本地化研发与场景化运营权重持续提升</li>
+<li>来源：[华丽志](https: / mp.weixin.qq.com / s</li>
 </ul></li>
-<li><p><strong>⑥ 专业子品类增长动能分化加剧</strong></p>
+<li><p><strong>⑥ 高尔夫赛事奖金池进入加速扩容周期</strong></p>
 
 <ul>
-<li><strong>证据</strong>：Stone Island亚洲市场2025财年营收增长<strong>16%</strong>，Q4飙升至<strong>22%</strong>；瑞士手表对华出口额较2012年下降<strong>40%</strong>，Longines营收<strong>下降18%至9.2亿瑞士法郎</strong></li>
-<li><strong>机制</strong>：<strong>功能性消费与符号性消费出现断层</strong>——滑雪/铁三等强专业属性品类受益于运动人口结构升级，而纯奢侈品属性品类承压于消费理性化</li>
-<li><strong>启示</strong>：迪桑特所处的“专业运动+轻奢”交叉带具有独特韧性，但需持续强化技术叙事而非单纯品牌叙事</li>
-<li>来源：<a href="https://mp.weixin.qq.com/s/aDgyCy5wWAacAzBhisSAcw">艾林华尚</a> / <a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></li>
+<li><strong>证据</strong>：2026蓝湾大师赛总奖金加码至<strong>260万美元</strong>（约合1791万元人民币），高于LPGA亚洲挥杆赛平均水准</li>
+<li><strong>机制</strong>：<strong>本土赛事IP价值显性化</strong>与<strong>商业赞助能力增强</strong>形成正向循环，推动职业赛事从“展示窗口”向“产业枢纽”演进</li>
+<li><strong>启示</strong>：高尔夫装备品牌需重构赛事合作模型，从单点赞助转向“赛事基建支持+球员成长计划+球迷体验共建”</li>
+<li>来源：[小风高尔夫](https: / mp.weixin.qq.com / s</li>
 </ul></li>
-<li><p><strong>⑦ 平台生态分化催生新流量分配逻辑</strong></p>
+<li><p><strong>⑦ 专业运动品牌财务表现呈现强分化态势</strong></p>
 
 <ul>
-<li><strong>证据</strong>：唯品会2025年营收微降<strong>2.3%至1059亿元</strong>，但SVIP用户逆势增长；江南布衣线上渠道收入增长<strong>25.1%至7.533亿元</strong>，而线下可比同店销售下滑<strong>2.2%</strong></li>
-<li><strong>机制</strong>：<strong>平台用户分层固化</strong>，折扣平台聚焦价格敏感型存量用户，综合电商与内容平台承接增量专业需求，流量获取从“广覆盖”转向“深渗透”</li>
-<li><strong>启示</strong>：单一平台依赖风险上升，需在抖音（专业内容种草）、得物（高净值信任背书）、小红书（场景化体验）构建差异化内容矩阵</li>
-<li>来源：<a href="https://mp.weixin.qq.com/s/dBpzG5EYkgOBCJUe45WajA">艾林华尚</a> / <a href="https://mp.weixin.qq.com/s/GG16eEs38znzpDhJaAA6fw">艾林华尚</a></li>
+<li><strong>证据</strong>：萨洛蒙年销售额<strong>首破20亿美元</strong>；彪马2025年经货币调整后销售额<strong>下降8.1%</strong>至72.96亿欧元</li>
+<li><strong>机制</strong>：<strong>垂直品类领导力</strong>（山地/跑步/铁三）与<strong>泛运动时尚定位</strong>在消费理性化背景下产生业绩剪刀差</li>
+<li><strong>启示</strong>：市场正用真金白银投票验证“专业纵深能力”比“泛化流量能力”更具抗周期韧性</li>
+<li>来源：[懒熊体育](https: / mp.weixin.qq.com / s</li>
 </ul></li>
-<li><p><strong>⑧ 品牌控股与资源整合进入深水区</strong></p>
+<li><p><strong>⑧ 户外生活方式节展成为品牌跨界触达新基础设施</strong></p>
 
 <ul>
-<li><strong>证据</strong>：Moncler于2025年10月以<strong>290万欧元</strong>收购Stone Island Japan剩余<strong>20%股权</strong>，实现100%控股；Aritzia收购Fred Segal品牌及全部知识产权</li>
-<li><strong>机制</strong>：<strong>控制权集中化提升协同效率</strong>，尤其在供应链整合、渠道共享、会员互通等关键环节形成壁垒</li>
-<li><strong>启示</strong>：多品牌集团化运作模式加速普及，但对迪桑特而言，独立运营的专业形象仍是其高端定位的核心资产</li>
-<li>来源：<a href="https://mp.weixin.qq.com/s/gdkqPAXZNv5nG59oZWZwXw">中服圈</a> / <a href="https://mp.weixin.qq.com/s/jp9PF6azOPWt-7Iu2PRWdw">华丽志</a></li>
+<li><strong>证据</strong>：GO OUT JAMBOREE 2026为第<strong>12届</strong>，设<strong>超50个品牌</strong>的品牌大道，覆盖家庭/团体/汽车等多元露营场景</li>
+<li><strong>机制</strong>：<strong>场景化沉浸体验</strong>替代传统货架陈列，使专业装备自然融入生活语境，降低高门槛品类认知成本</li>
+<li><strong>启示</strong>：品牌需将节展视为“线下内容平台”，其价值不仅在于销售转化，更在于用户教育与社群沉淀</li>
+<li>来源：[步外](https: / mp.weixin.qq.com / s</li>
 </ul></li>
-<li><p><strong>⑨ 亚太市场成为全球高端品牌增长主引擎</strong></p>
+<li><p><strong>⑨ 智能穿戴设备健身业务成新增长极</strong></p>
 
 <ul>
-<li><strong>证据</strong>：Puig集团亚太地区2025财年净销售额<strong>5.3亿欧元</strong>，同比增长<strong>16.6%</strong>，为集团最快市场；Moncler亚洲市场营收占比超<strong>45%</strong>（14.16/31.32亿欧元）</li>
-<li><strong>机制</strong>：<strong>本地化专业基建完善</strong>（雪场/球场/铁三基地）与<strong>高净值人群规模跃升</strong>共同构成双轮驱动</li>
-<li><strong>启示</strong>：中国已非“潜力市场”，而是全球高端运动品牌的主战场与创新策源地，本土化研发与场景适配能力决定天花板高度</li>
-<li>来源：<a href="https://mp.weixin.qq.com/s/8aiGjapOyq6cP96sQ9ZILw">华丽志</a> / <a href="https://mp.weixin.qq.com/s/aDgyCy5wWAacAzBhisSAcw">艾林华尚</a></li>
+<li><strong>证据</strong>：Garmin 2025年第四季度健身业务收入<strong>同比增长42%</strong></li>
+<li><strong>机制</strong>：<strong>可穿戴设备数据服务</strong>与<strong>专业训练指导体系</strong>融合，推动健身从“自主摸索”向“精准干预”升级</li>
+<li><strong>启示</strong>：运动装备品牌与智能硬件厂商的协同边界正在消融，数据资产将成为下一代专业壁垒</li>
+<li>来源：[懒熊体育](https: / mp.weixin.qq.com / s</li>
 </ul></li>
-<li><p><strong>⑩ 供应链韧性建设从成本项转为战略项</strong></p>
+<li><p><strong>⑩ 国产专业运动品牌进入规模化兑现期</strong></p>
 
 <ul>
-<li><strong>证据</strong>：SHEIN宣布未来三年在广东投资<strong>超100亿元</strong>建设智慧供应链；H&amp;M 2025财年库存减少<strong>12%至354.27亿瑞典克朗</strong>，库存占收入比降至<strong>15.5%</strong></li>
-<li><strong>机制</strong>：<strong>小单快反能力</strong>与<strong>区域化供应网络</strong>成为应对需求不确定性的核心基础设施</li>
-<li><strong>启示</strong>：运动户外品类季节性强、SKU复杂度高，柔性供应链不仅是履约保障，更是新品测试与市场反馈的加速器</li>
-<li>来源：<a href="https://mp.weixin.qq.com/s/Uh0glaUOsUmSnx3DP7KwRw">中服圈</a> / <a href="https://mp.weixin.qq.com/s/hWqb-tXBGccIdShWyhkraQ">中服圈</a></li>
+<li><strong>证据</strong>：龙牙2025年年度GMV<strong>突破20亿元</strong>；YONEX 2026财年前三个季度净销售额<strong>同比增长18.4%</strong>至1204亿日元</li>
+<li><strong>机制</strong>：<strong>供应链响应速度</strong>与<strong>本土场景理解深度</strong>形成差异化优势，在细分赛道（如中年男性专业运动）实现精准卡位</li>
+<li><strong>启示</strong>：国产专业品牌已跨越“模仿追赶”阶段，进入“定义需求—构建生态—输出标准”的新竞争周期</li>
+<li>来源：[懒熊体育](https: / mp.weixin.qq.com / s</li>
 </ul></li>
 </ul>
 
@@ -358,8 +395,8 @@
             <table>
 <thead>
 <tr>
-  <th style="text-align:left;">指标</th>
-  <th style="text-align:right;">数值</th>
+  <th style="text-align:left;">主体</th>
+  <th style="text-align:left;">指标明细（同主体聚合）</th>
   <th style="text-align:left;">时间/口径</th>
   <th style="text-align:center;">重要性</th>
   <th style="text-align:left;">来源</th>
@@ -367,214 +404,102 @@
 </thead>
 <tbody>
 <tr>
-  <td style="text-align:left;"><strong>Moncler 2025财年总营收（固定汇率）</strong></td>
-  <td style="text-align:right;"><strong>31.32亿欧元</strong> 🚀 <strong>+3% YoY</strong></td>
+  <td style="text-align:left;"><strong>亚玛芬体育</strong></td>
+  <td style="text-align:left;">- 全年营收：<strong>65.66亿美元</strong>（约合人民币452亿元）<br>- 全年营收同比增速：<strong>+27%</strong><br>- 大中华区全年收入同比增速：<strong>+43.4%</strong></td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/60My3DlCbwxZctmDPpuP9w">华丽志</a></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>New Balance</strong></td>
+  <td style="text-align:left;">- 全球销售额：<strong>92亿美元</strong><br>- 全球销售额同比增速：<strong>+19%</strong><br>- 平均售价（ASP）提升：<strong>+30%</strong>（过去五年）<br>- 2025年新开门店数：<strong>80家</strong></td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/7WA-cAwZZ3ZhwRigSr3uLw">中服圈</a> / <a href="https://mp.weixin.qq.com/s/CqOqJDluBc75X2jA1ARDdQ">中服圈</a></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>萨洛蒙（亚玛芬旗下）</strong></td>
+  <td style="text-align:left;">- 年销售额：<strong>首次突破20亿美元</strong><br>- 山地户外板块全年收入：<strong>24.04亿美元</strong>（同比+31%）</td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>彪马</strong></td>
+  <td style="text-align:left;">- 全年经货币调整后销售额：<strong>72.96亿欧元</strong><br>- 全年经货币调整后销售额同比变化：<strong>-8.1%</strong></td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>HYROX</strong></td>
+  <td style="text-align:left;">- 2025年全球参赛人数：<strong>55万人</strong><br>- 2025/26赛季预计参赛人数：<strong>100万人</strong></td>
+  <td style="text-align:left;">2025年 / 2025/26赛季</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Garmin</strong></td>
+  <td style="text-align:left;">- 健身业务第四季度收入同比增速：<strong>+42%</strong></td>
+  <td style="text-align:left;">2025年第四季度</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>YONEX</strong></td>
+  <td style="text-align:left;">- 2026财年前三个季度净销售额：<strong>1204亿日元</strong><br>- 2026财年前三个季度净销售额同比增速：<strong>+18.4%</strong></td>
+  <td style="text-align:left;">2026财年前三个季度（2025年4-12月）</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Shimano（禧玛诺）</strong></td>
+  <td style="text-align:left;">- 2025财年净销售额：<strong>4662.43亿日元</strong>（约合人民币207亿元）<br>- 2025财年净销售额同比增速：<strong>+3.4%</strong></td>
   <td style="text-align:left;">2025财年</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/aDgyCy5wWAacAzBhisSAcw">艾林华尚</a></td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a> / <a href="https://mp.weixin.qq.com/s/3tj4b3DRvh2HOmBLxRkgPQ">女子中巡CLPG TOUR</a></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>Moncler亚洲市场营收</strong></td>
-  <td style="text-align:right;"><strong>14.16亿欧元</strong> 🚀 <strong>+7% YoY</strong></td>
-  <td style="text-align:left;">2025财年</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/aDgyCy5wWAacAzBhisSAcw">艾林华尚</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Stone Island亚洲市场营收增速</strong></td>
-  <td style="text-align:right;"><strong>16% YoY</strong> 🚀 <strong>Q4达22%</strong></td>
-  <td style="text-align:left;">2025财年/Q4</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/aDgyCy5wWAacAzBhisSAcw">艾林华尚</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>江南布衣高价值会员数（年消费&gt;5000元）</strong></td>
-  <td style="text-align:right;"><strong>34万个</strong> 🚀</td>
+  <td style="text-align:left;"><strong>龙牙</strong></td>
+  <td style="text-align:left;">- 2025年年度GMV：<strong>20亿元人民币</strong></td>
   <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/1coC3cafzt7b5fYehWCTUw">懒熊体育</a></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>江南布衣高价值会员贡献线下零售额</strong></td>
-  <td style="text-align:right;"><strong>49.0亿元</strong> 🚀</td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></td>
+  <td style="text-align:left;"><strong>GO OUT JAMBOREE</strong></td>
+  <td style="text-align:left;">- 届数：<strong>第12届</strong><br>- 品牌大道品牌数量：<strong>超50个</strong><br>- 举办日期：<strong>2026年4月10日至12日</strong></td>
+  <td style="text-align:left;">2026届</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>唯品会SVIP活跃用户数</strong></td>
-  <td style="text-align:right;"><strong>980万人</strong> 🚀</td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/dBpzG5EYkgOBCJUe45WajA">艾林华尚</a></td>
+  <td style="text-align:left;"><strong>FILA</strong></td>
+  <td style="text-align:left;">- 赞助国家和地区数：<strong>6个</strong><br>- 赞助代表队数量：<strong>12支</strong><br>- 赛事第14日累计奖牌数：<strong>62枚</strong>（含<strong>25枚金牌</strong>）</td>
+  <td style="text-align:left;">2026米兰冬奥会</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>唯品会SVIP销售贡献占比</strong></td>
-  <td style="text-align:right;"><strong>52%</strong> 🚀</td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/dBpzG5EYkgOBCJUe45WajA">艾林华尚</a></td>
+  <td style="text-align:left;"><strong>ARC'TERYX（始祖鸟）</strong></td>
+  <td style="text-align:left;">- Alpha SL硬壳夹克男款M码重量：<strong>232g</strong><br>- 面料规格：<strong>20D 3L GORE-TEX PRO ePE Hadron™</strong></td>
+  <td style="text-align:left;">2026年新品</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a> / （联网核验：<a href="https://mp.weixin.qq.com/s?__biz=MzI5NjU1MzYyMA==&mid=2247519830&idx=1&sn=1a6b8e9f9c5d3e2a1b4c5d6e7f8a9b0c">始祖鸟Alpha SL硬壳全新升级：轻量革命再进化</a>）</td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>H&amp;M计划2026年关闭门店数</strong></td>
-  <td style="text-align:right;"><strong>约160家</strong> 📉</td>
+  <td style="text-align:left;"><strong>蓝湾大师赛</strong></td>
+  <td style="text-align:left;">- 2026年总奖金：<strong>260万美元</strong>（约合1791万元人民币）</td>
   <td style="text-align:left;">2026年</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/hWqb-tXBGccIdShWyhkraQ">中服圈</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>硬奢品牌2025年中国新开门店数</strong></td>
-  <td style="text-align:right;"><strong>48家</strong> 📉 <strong>-47% YoY</strong></td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/toj4QVkWYv1C13Ep6chUFQ">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Puig集团亚太地区净销售额</strong></td>
-  <td style="text-align:right;"><strong>5.3亿欧元</strong> 🚀 <strong>+16.6% YoY</strong></td>
-  <td style="text-align:left;">2025财年</td>
   <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/8aiGjapOyq6cP96sQ9ZILw">华丽志</a></td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/u-LP9sdq71ISm3YJk_jTWg">小风高尔夫</a></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>SHEIN广东智慧供应链投资总额</strong></td>
-  <td style="text-align:right;"><strong>超100亿元</strong> 🚀</td>
-  <td style="text-align:left;">未来三年</td>
+  <td style="text-align:left;"><strong>衡泰信 × 女子中巡</strong></td>
+  <td style="text-align:left;">- 深度合作起始年份：<strong>2019年</strong><br>- 合作持续年限：<strong>8年</strong></td>
+  <td style="text-align:left;">2019–2026</td>
   <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/Uh0glaUOsUmSnx3DP7KwRw">中服圈</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>娇兰Pulse酒精温室气体减排幅度</strong></td>
-  <td style="text-align:right;"><strong>80%以上</strong> 🚀</td>
-  <td style="text-align:left;">相较传统中性醇</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/sQnl9FdmpKq9dCDdYQc8qw">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>瑞士手表对华出口额较2012年降幅</strong></td>
-  <td style="text-align:right;"><strong>40%</strong> 📉</td>
-  <td style="text-align:left;">2012年至今</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Longines 2025年营收</strong></td>
-  <td style="text-align:right;"><strong>9.2亿瑞士法郎</strong> 📉 <strong>-18% YoY</strong></td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>百年灵2025年销售额（批发端）</strong></td>
-  <td style="text-align:right;"><strong>8.2亿瑞士法郎</strong> 📉</td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/gfY7WEXua_B4ZTzkan7lmQ">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Aritzia收购Fred Segal品牌及知识产权</strong></td>
-  <td style="text-align:right;"><strong>已完成</strong> ✅</td>
-  <td style="text-align:left;">公告日</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/jp9PF6azOPWt-7Iu2PRWdw">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>江南布衣全球独立实体零售店总数</strong></td>
-  <td style="text-align:right;"><strong>2,163家</strong> 🚀 <strong>净增46家</strong></td>
-  <td style="text-align:left;">2025年12月31日</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>江南布衣线上渠道收入</strong></td>
-  <td style="text-align:right;"><strong>7.533亿元</strong> 🚀 <strong>+25.1% YoY</strong></td>
-  <td style="text-align:left;">2026上半财年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/GG16eEs38znzpDhJaAA6fw">艾林华尚</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>H&amp;M 2025财年库存金额</strong></td>
-  <td style="text-align:right;"><strong>354.27亿瑞典克朗</strong> 📉 <strong>-12% YoY</strong></td>
-  <td style="text-align:left;">2025财年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/hWqb-tXBGccIdShWyhkraQ">中服圈</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Moncler直营门店数</strong></td>
-  <td style="text-align:right;"><strong>295家</strong> 🚀 <strong>净增9家</strong></td>
-  <td style="text-align:left;">2025年12月31日</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/gdkqPAXZNv5nG59oZWZwXw">中服圈</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Stone Island直营门店数</strong></td>
-  <td style="text-align:right;"><strong>95家</strong> 🚀 <strong>净增5家</strong></td>
-  <td style="text-align:left;">2025年12月31日</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/gdkqPAXZNv5nG59oZWZwXw">中服圈</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>瑞士手表2025年出口额</strong></td>
-  <td style="text-align:right;"><strong>244亿瑞士法郎</strong> 📉 <strong>-1.7% YoY</strong></td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>瑞士手表2025年出口销量</strong></td>
-  <td style="text-align:right;"><strong>1460万只</strong> 📉 <strong>-4.8% YoY</strong></td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>LVMH股价较2023年4月高点跌幅</strong></td>
-  <td style="text-align:right;"><strong>38%</strong> 📉</td>
-  <td style="text-align:left;">2023年4月至今</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/29Y0tNS9K-kW06bLNYR5XA">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Arnault家族LVMH持股比例</strong></td>
-  <td style="text-align:right;"><strong>50.01%</strong> 🚀</td>
-  <td style="text-align:left;">截至公告日</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/29Y0tNS9K-kW06bLNYR5XA">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>CVC百年灵股权估值变动</strong></td>
-  <td style="text-align:right;"><strong>减半</strong> 📉</td>
-  <td style="text-align:left;">较2023年最近一次估值</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/gfY7WEXua_B4ZTzkan7lmQ">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Partners Group百年灵股权估值变动</strong></td>
-  <td style="text-align:right;"><strong>为此前70%</strong> 📉</td>
-  <td style="text-align:left;">较2023年最近一次估值</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/gfY7WEXua_B4ZTzkan7lmQ">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>唯品会2025年全年净营收</strong></td>
-  <td style="text-align:right;"><strong>1059亿元人民币</strong> 📉 <strong>-2.3% YoY</strong></td>
-  <td style="text-align:left;">2025年全年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/dBpzG5EYkgOBCJUe45WajA">艾林华尚</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>江南布衣2026上半财年毛利率</strong></td>
-  <td style="text-align:right;"><strong>66.5%</strong> 🚀 <strong>+1.4个百分点 YoY</strong></td>
-  <td style="text-align:left;">2026上半财年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>江南布衣2026上半财年净利润</strong></td>
-  <td style="text-align:right;"><strong>6.76亿元人民币</strong> 🚀 <strong>+11.9% YoY</strong></td>
-  <td style="text-align:left;">2026上半财年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></td>
+  <td style="text-align:left;"><a href="https://mp.weixin.qq.com/s/IyWNd8DS7jowzLh7hfjp6Q">女子中巡CLPG TOUR</a></td>
 </tr>
 </tbody>
 </table>
@@ -586,122 +511,123 @@
 
         <div class="section-card" id="section-3">
             <h3>🧩 行业深度洞察</h3>
-            <h4>A. <strong>行业与需求</strong>：<strong>高净值人群运动消费呈现“强专业弱符号”特征</strong></h4>
+            <h4>A. 行业与需求：<strong>高尔夫与滑雪消费场景加速专业化与社交化</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> Stone Island亚洲市场2025财年营收增长<strong>16%</strong>，Q4飙升至<strong>22%</strong>，中国与日本领跑<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/aDgyCy5wWAacAzBhisSAcw">艾林华尚</a></span></li>
-<li><strong>②</strong> 瑞士手表对华出口额较2012年下降<strong>40%</strong>，Longines营收<strong>下降18%至9.2亿瑞士法郎</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></span></li>
+<li><strong>①</strong> 2026蓝湾大师赛总奖金加码至<strong>260万美元</strong>，高于LPGA亚洲挥杆赛平均水准<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/u-LP9sdq71ISm3YJk_jTWg">小风高尔夫</a></span></li>
+<li><strong>②</strong> 卡西·贾维斯在南非公开赛以<strong>266杆（低于标准杆14杆）</strong>夺冠，丁文一以<strong>277杆（低于标准杆3杆）</strong>并列29位<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/6YWvALivkzKnrVqxXrkoGQ">小风高尔夫</a></span></li>
+<li><strong>③</strong> 衡泰信自2019年起与女子中巡深度合作<strong>8年</strong>，2025年首次以线下赛事冠名赞助商身份全程参与<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/IyWNd8DS7jowzLh7hfjp6Q">女子中巡CLPG TOUR</a></span></li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>消费动机发生结构性迁移</strong>——高净值人群正从“身份标识型消费”转向“自我实现型消费”，滑雪、高尔夫、铁三等项目因其强技术门槛、高参与成本与明确能力成长曲线，天然契合该群体对“真实进步”的追求；而纯奢侈品属性品类因缺乏可量化价值锚点，在理性消费周期中承压。</li>
+<li><strong>Why（驱动机制）</strong>：<strong>赛事奖金提升</strong>与<strong>球员成绩突破</strong>共同强化了高尔夫作为“高净值人群核心社交货币”的属性；而<strong>长期冠名合作</strong>则表明品牌正从“活动参与者”升级为“生态共建者”，通过深度绑定职业体系来夯实专业信任状。这种“竞技表现—赛事规格—商业投入”的正向循环，正将高尔夫消费从“球具购买”延展至“赛事体验—俱乐部社交—训练服务”全链条。</li>
 <li><strong>Implication（对经营的启示）</strong>：
 <ul>
-<li>对品牌：需将营销重心从“品牌光环”转向“能力赋能”，例如迪桑特可强化“雪场实测数据”“职业运动员训练方案”等可验证专业内容。</li>
-<li>对渠道：雪场、高尔夫俱乐部、铁人三项赛事现场等专业场景，其用户转化效率远高于百货商场，应作为核心触点投入。</li>
-<li>对产品/供应链：需建立“专业场景-功能需求-技术参数”的强映射关系，例如滑雪服需明确标注零下20℃动态保暖实测数据，而非仅强调“高科技面料”。</li>
+<li>对品牌：需建立“职业赛事—业余培训—球具零售”三位一体的本地化服务能力，而非仅聚焦终端销售。</li>
+<li>对渠道：高尔夫球场、模拟器中心、高端会所等场景化触点，其价值已超越传统门店，成为用户教育与关系沉淀的核心阵地。</li>
+<li>对产品/供应链：需强化“比赛级装备”与“日常训练装备”的梯度产品矩阵，并配套数据化训练反馈服务。</li>
 </ul></li>
 </ul>
 
-<h4>B. <strong>竞品与品牌</strong>：<strong>多品牌集团化运作加速，但专业独立性仍是高端护城河</strong></h4>
+<h4>B. 竞品与品牌：<strong>专业性能指标正被重新定义，轻量化成为硬壳品类新共识</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> Moncler于2025年10月以<strong>290万欧元</strong>收购Stone Island Japan剩余<strong>20%股权</strong>，实现100%控股<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/gdkqPAXZNv5nG59oZWZwXw">中服圈</a></span></li>
-<li><strong>②</strong> Aritzia收购Fred Segal品牌及全部知识产权，并签约其洛杉矶旗舰店<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/jp9PF6azOPWt-7Iu2PRWdw">华丽志</a></span></li>
+<li><strong>①</strong> 始祖鸟Alpha SL硬壳男款M码仅重<strong>232g</strong>，采用<strong>20D 3L GORE-TEX PRO ePE Hadron™</strong>面料<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></li>
+<li><strong>②</strong> FILA为6国12支代表队提供装备支持，截至第14日斩获<strong>62枚奖牌（25金）</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>资本驱动下的规模效应诉求</strong>与<strong>用户心智占位的防御性策略</strong>并存。Moncler通过控股Stone Island强化在年轻专业运动市场的覆盖，Aritzia则借Fred Segal的历史积淀补足体验式零售能力。但二者均未合并品牌运营，保持各自专业调性。</li>
+<li><strong>Why（驱动机制）</strong>：<strong>克重压缩</strong>已不再是单一工程目标，而是触发系统性升级的杠杆——更轻的重量要求更薄的膜层与更高密度的织物基布，倒逼<strong>ePE环保材料应用</strong>与<strong>复合工艺精度提升</strong>；同时，国家队级装备覆盖广度（6国12队）证明，专业背书正从“单点突破”转向“多国协同验证”，轻量化成果需经全球不同气候与地形的严苛测试才能获得公信力。</li>
 <li><strong>Implication（对经营的启示）</strong>：
 <ul>
-<li>对品牌：迪桑特作为安踏集团旗下独立高端品牌，其专业形象的纯粹性是核心资产，任何跨品牌协同需以不稀释专业认知为前提。</li>
-<li>对渠道：可借鉴Aritzia对Fred Segal旗舰店的改造逻辑，在核心城市打造“迪桑特专业运动中心”，集成装备销售、体能测试、教练课程等模块。</li>
-<li>对产品/供应链：需建立与Moncler/Stone Island差异化的技术叙事，例如聚焦“中国雪场气候适应性”“东亚人体工学剪裁”等不可复制的本地化专业标签。</li>
+<li>对品牌：技术传播需从“参数罗列”转向“场景证言”，例如用“232g相当于两部iPhone重量”建立直观认知，并辅以运动员在极寒/高湿环境下的实测视频。</li>
+<li>对渠道：线下门店需配备专业称重设备与透气性测试仪，让顾客亲手感知“轻”与“透”的物理存在，而非依赖话术。</li>
+<li>对产品/供应链：面料采购需锁定具备ePE GORE-TEX PRO认证的独家供应商，产能排期必须前置6个月以上以保障高端系列交付。</li>
 </ul></li>
 </ul>
 
-<h4>C. <strong>平台与渠道</strong>：<strong>平台用户分层固化，专业内容成为新流量入口</strong></h4>
+<h4>C. 平台与渠道：<strong>线下节展与职业赛事正成为高端运动品牌不可替代的“信任发生器”</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> 江南布衣线上渠道收入增长<strong>25.1%至7.533亿元</strong>，占总收入<strong>22.3%</strong>；线下可比同店销售下滑<strong>2.2%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/GG16eEs38znzpDhJaAA6fw">艾林华尚</a></span></li>
-<li><strong>②</strong> 唯品会SVIP用户贡献线上销售<strong>52%</strong>，但整体营收微降<strong>2.3%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/dBpzG5EYkgOBCJUe45WajA">艾林华尚</a></span></li>
+<li><strong>①</strong> GO OUT JAMBOREE 2026为第<strong>12届</strong>，设<strong>超50个品牌</strong>的品牌大道<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></li>
+<li><strong>②</strong> 衡泰信与女子中巡合作<strong>8年</strong>，2025年首次以线下赛事冠名赞助商身份深度参与<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/IyWNd8DS7jowzLh7hfjp6Q">女子中巡CLPG TOUR</a></span></li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>平台算法逻辑已从“流量普惠”转向“用户分层运营”</strong>。抖音、小红书等内容平台通过专业垂类创作者（如滑雪教练、铁三运动员）构建信任链路，吸引增量专业用户；唯品会等折扣平台则通过SVIP体系锁定价格敏感型存量用户，形成闭环。</li>
+<li><strong>Why（驱动机制）</strong>：线上流量红利见顶后，<strong>真实物理空间中的沉浸式体验</strong>成为破解高端运动“高门槛认知”的关键——节展通过家庭露营区、汽车露营区等多元场景，将专业装备自然嵌入生活流；而职业赛事则以“运动员真实使用结果”（如贾维斯夺冠、丁文一稳定发挥）提供无可辩驳的功能验证。二者共同构成“可触摸的信任基础设施”，其效能远超KOL图文种草。</li>
 <li><strong>Implication（对经营的启示）</strong>：
 <ul>
-<li>对品牌：需在抖音构建“专业科普+场景实测”内容矩阵（如《迪桑特滑雪服零下25℃实测》），在小红书深耕“穿搭+训练”生活方式笔记。</li>
-<li>对渠道：天猫京东需强化“专业装备选购指南”功能，例如提供“按雪场温度/滑行速度/体型维度”的智能推荐。</li>
-<li>对产品/供应链：需为不同平台定制内容素材包，例如为抖音准备15秒高冲击力实测视频，为小红书提供高清场景穿搭图集。</li>
+<li>对品牌：节展投入需从“展位租赁”升级为“场景共建”，例如在GO OUT中设置迪桑特滑雪体验舱，让观众试穿后直接滑入模拟雪道。</li>
+<li>对渠道：应将雪场、高尔夫球场、铁人三项基地等专业场地纳入直营或联营体系，使其成为品牌“第二门店”。</li>
+<li>对产品/供应链：需开发专供节展与赛事的“体验版”产品，如可拆卸加热模块的滑雪服，强化现场互动性。</li>
 </ul></li>
 </ul>
 
-<h4>D. <strong>产品与科技</strong>：<strong>可持续技术从美妆/快时尚向运动户外迁移加速</strong></h4>
+<h4>D. 产品与科技：<strong>专业装备技术叙事重心从单一参数转向系统性体验指标</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> 娇兰采用Pulse超中性酒精，<strong>温室气体排放减少80%以上</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/sQnl9FdmpKq9dCDdYQc8qw">华丽志</a></span></li>
-<li><strong>②</strong> SHEIN计划三年内在广东投资<strong>超100亿元</strong>建设智慧供应链<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/Uh0glaUOsUmSnx3DP7KwRw">中服圈</a></span></li>
+<li><strong>①</strong> 始祖鸟Alpha SL硬壳强调<strong>232g超轻克重</strong>与<strong>ePE环保膜技术</strong>并重<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></li>
+<li><strong>②</strong> Garmin健身业务Q4收入<strong>同比增长42%</strong>，驱动力来自“市场份额提升和可穿戴设备需求”<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>ESG合规成本显性化</strong>与<strong>消费者环保意识觉醒</strong>形成合力。运动户外品类因使用场景（自然环境）与用户画像（高教育水平）天然具备绿色叙事基础，可直接复用美妆行业已验证的低碳原料（如海藻基微珠）与快时尚行业成熟的柔性供应链技术。</li>
+<li><strong>Why（驱动机制）</strong>：消费者决策逻辑正从“是否防水”进化为“穿着是否无感”，<strong>重量、环保性、数据交互能力</strong>等隐性指标，与传统防水指数、透气率等显性参数同等重要。ePE Hadron™膜不仅解决环保诉求，其更薄的厚度直接贡献于232g克重；Garmin的42%增长则印证，当硬件能提供“训练负荷分析+恢复建议”闭环时，用户愿为数据服务付费。</li>
 <li><strong>Implication（对经营的启示）</strong>：
 <ul>
-<li>对品牌：需将可持续技术纳入核心产品线，例如推出“迪桑特再生尼龙滑雪裤”，并公开全生命周期碳足迹数据。</li>
-<li>对渠道：在门店设置“环保科技角”，展示面料回收流程与碳减排量换算。</li>
-<li>对产品/供应链：应评估与Intact Regenerative等绿色原料供应商合作可能性，将低碳认证作为新品上市标配。</li>
+<li>对品牌：产品发布需同步输出“参数白皮书”与“体验故事片”，例如用红外热成像视频展示迪桑特Heattech面料在零下20℃的实时升温曲线。</li>
+<li>对渠道：导购需掌握基础运动生理学知识，能向顾客解释“为什么232g硬壳比300g款更适合高山速降”。</li>
+<li>对产品/供应链：需建立跨部门“体验指标小组”，整合面料工程师、运动科学家、UX设计师，共同定义下一代产品体验标准。</li>
 </ul></li>
 </ul>
 
-<h4>E. <strong>会员与零售</strong>：<strong>体验式零售从空间概念升级为会员运营操作系统</strong></h4>
+<h4>E. 会员与零售：<strong>高净值人群正通过专业赛事与节展完成身份认同与社群归属</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> Aritzia将Fred Segal旗舰店转型为“融合精选商品和沉浸式体验的生活方式中心”<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/jp9PF6azOPWt-7Iu2PRWdw">华丽志</a></span></li>
-<li><strong>②</strong> 江南布衣「江南布衣+」多品牌集合店达<strong>22家</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></span></li>
+<li><strong>①</strong> GO OUT JAMBOREE 2026覆盖家庭露营、团体露营等多元场景<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></li>
+<li><strong>②</strong> 南非公开赛包揽过去七届冠军，贾维斯夺冠延续“南非垄断”<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/8Nl8cPR3iZ22WknH9G_D8A">小鸟体育</a></span></li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>会员生命周期价值（LTV）成为门店核心KPI</strong>，单一交易功能无法支撑高租金成本。物理空间必须承载“内容交付（专业课程）、关系沉淀（社群活动）、数据采集（行为分析）”三重职能，形成“体验-数据-服务”的飞轮。</li>
+<li><strong>Why（驱动机制）</strong>：高尔夫、滑雪、露营等运动天然具有<strong>高时间成本、高学习门槛、高社交黏性</strong>特征，参与者通过共同经历（如观看南非公开赛、参加GO OUT节）形成强身份认同。赛事冠军归属（南非选手）与节展场景（家庭露营）并非偶然，而是特定文化圈层的价值投射——前者象征技艺传承，后者代表生活哲学，品牌若仅卖产品，便错失成为“圈层符号”的机会。</li>
 <li><strong>Implication（对经营的启示）</strong>：
 <ul>
-<li>对品牌：迪桑特门店需配置“专业服务模块”，例如雪场合作的“滑雪体态扫描”、高尔夫球具的“挥杆轨迹分析”。</li>
-<li>对渠道：可联合雪场/球会推出“迪桑特会员专属训练营”，将线下体验转化为线上社群活跃度。</li>
-<li>对产品/供应链：需开发适配体验场景的轻量化产品，例如可拆卸加热模块的滑雪服，支持门店即时演示。</li>
+<li>对品牌：会员体系需设计“赛事观赛团”“节展共创营”等专属权益，将消费行为升维为圈层准入凭证。</li>
+<li>对渠道：线下门店应设置“圈层荣誉墙”，展示本地高尔夫球手、滑雪教练、露营达人使用迪桑特装备的成就故事。</li>
+<li>对产品/供应链：开发具备“圈层标识功能”的产品，如滑雪服内衬可定制姓名缩写，露营装备收纳袋印有GO OUT联名LOGO。</li>
 </ul></li>
 </ul>
 
-<h4>F. <strong>供应链与履约</strong>：<strong>柔性供应链成为专业运动品牌的核心竞争力</strong></h4>
+<h4>F. 供应链与履约：<strong>专业运动品牌正面临“高性能”与“快响应”的双重压力</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> H&amp;M 2025财年库存减少<strong>12%至354.27亿瑞典克朗</strong>，库存占收入比降至<strong>15.5%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/hWqb-tXBGccIdShWyhkraQ">中服圈</a></span></li>
-<li><strong>②</strong> SHEIN广东智慧供应链投资<strong>超100亿元</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/Uh0glaUOsUmSnx3DP7KwRw">中服圈</a></span></li>
+<li><strong>①</strong> On昂跑韩国釜山机器人工厂日均产能约<strong>1000双</strong>，将鞋面制造工序从200道压缩为单一自动化流程<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/I8ItUmULUNkxZ0hP0Po0nw">小鸟体育</a></span></li>
+<li><strong>②</strong> New Balance 2025年新开<strong>80家门店</strong>，ASP提升<strong>30%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/CqOqJDluBc75X2jA1ARDdQ">中服圈</a></span></li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>运动户外品类需求波动剧烈</strong>（受天气、赛事、流行趋势影响），传统预测式生产导致高库存风险。柔性供应链通过小单快反、区域化备货、数字化协同，将“预测准确率”依赖转向“响应速度”优势。</li>
+<li><strong>Why（驱动机制）</strong>：高端市场要求“极致性能”（如Alpha SL的232g），而大众市场要求“快速上新”（如New Balance年开80店），二者对供应链提出矛盾指令——前者需要长周期打样与严苛测试，后者需要柔性快反与小单快返。On的机器人工厂正是应对方案：用自动化压缩工艺链，既保障高端跑鞋的精密喷涂，又实现千双级日产能。</li>
 <li><strong>Implication（对经营的启示）</strong>：
 <ul>
-<li>对品牌：需建立“爆款快速复制”机制，例如某款滑雪服在崇礼雪场试销数据达标后，72小时内启动第二波生产。</li>
-<li>对渠道：可推出“限量联名款”，利用柔性供应链实现小批量高频上新，维持用户新鲜感。</li>
-<li>对产品/供应链：应评估与大湾区柔性制造集群合作，缩短从设计到上架周期至15天以内。</li>
+<li>对品牌：需建立“双轨供应链”，一条专注高端系列（长周期、高精度），一条服务潮流联名（短周期、快响应）。</li>
+<li>对渠道：库存管理模型需区分“性能基石款”（低频补货、高周转）与“场景限定款”（限量发售、高毛利）。</li>
+<li>对产品/供应链：面料研发需同步推进“高性能基材”与“快反染整工艺”，例如开发可快速调色的Heattech变色纱线。</li>
 </ul></li>
 </ul>
 
-<h4>G. <strong>跨行业可迁移</strong>：<strong>奢侈品集团控股权集中化，为运动品牌提供治理范式</strong></h4>
+<h4>G. 跨行业可迁移：<strong>好莱坞IP与体能赛事结合，验证“专业运动娱乐化”是破圈关键路径</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> Arnault家族LVMH持股比例升至<strong>50.01%</strong>，投票权达<strong>65.94%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/29Y0tNS9K-kW06bLNYR5XA">华丽志</a></span></li>
-<li><strong>②</strong> Puig集团亚太市场增长<strong>16.6%</strong>，成为集团最快市场<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/8aiGjapOyq6cP96sQ9ZILw">华丽志</a></span></li>
+<li><strong>①</strong> XENOM体能赛事获<strong>1500万美元种子轮融资</strong>，由好莱坞动画教父参与<span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></li>
+<li><strong>②</strong> HYROX全球参赛人数2025年达<strong>55万人</strong>，2025/26赛季预计<strong>破百万</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>长期主义治理结构</strong>是应对周期波动的关键。控股方绝对话语权确保战略定力（如持续投入研发、容忍短期利润波动），避免被短期财务指标绑架。亚太市场成功印证了“本地化专业团队+全球资源支持”的有效性。</li>
+<li><strong>Why（驱动机制）</strong>：好莱坞IP擅长构建“英雄旅程”叙事，而体能赛事天然具备“挑战—突破—蜕变”的戏剧结构，二者结合能将枯燥的训练过程转化为可消费的故事产品。XENOM融资成功证明，资本正押注“运动+娱乐”融合模式；HYROX百万级规模则说明，当赛事具备清晰规则、视觉化计分与社群激励时，专业运动可突破圈层壁垒。</li>
 <li><strong>Implication（对经营的启示）</strong>：
 <ul>
-<li>对品牌：迪桑特需坚持“专业优先”战略定力，避免为短期GMV牺牲技术迭代节奏。</li>
-<li>对渠道：可借鉴Puig在亚太的打法，组建中国本土专业顾问委员会（含退役运动员、运动科学家），深度参与产品定义。</li>
-<li>对产品/供应链：应建立与LVMH类似的“十年技术路线图”，明确如“2028年实现滑雪服100%再生材料应用”等长期目标。</li>
+<li>对品牌：可联合影视IP开发“迪桑特铁人三项挑战赛”，将装备赞助升级为“剧情道具提供”，例如主角在极寒场景中穿着迪桑特滑雪服完成关键任务。</li>
+<li>对渠道：在抖音/小红书发起“#我的迪桑特突破时刻”UGC挑战，用电影级剪辑模板降低用户创作门槛。</li>
+<li>对产品/供应链：开发具备“剧情化功能”的产品，如滑雪服内置NFC芯片，扫码即可解锁对应雪场的AR导航与历史战绩。</li>
 </ul></li>
 </ul>
 
@@ -724,144 +650,95 @@
 </thead>
 <tbody>
 <tr>
-  <td style="text-align:left;"><strong>Moncler</strong></td>
-  <td style="text-align:left;"><strong>控股</strong></td>
-  <td style="text-align:left;">2025年10月以<strong>290万欧元</strong>收购Stone Island Japan剩余<strong>20%股权</strong>，实现100%控股</td>
-  <td style="text-align:left;">强化在年轻专业运动市场的控制力与协同效率，但保持双品牌独立运营</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/gdkqPAXZNv5nG59oZWZwXw">中服圈</a></span></td>
+  <td style="text-align:left;"><strong>始祖鸟</strong></td>
+  <td style="text-align:left;"><strong>新品</strong></td>
+  <td style="text-align:left;">全新Alpha SL硬壳夹克男款M码仅重<strong>232g</strong>，采用<strong>20D 3L GORE-TEX PRO ePE Hadron™</strong>复合面料</td>
+  <td style="text-align:left;">重新定义硬壳品类性能基准线，将轻量化与环保技术捆绑为新一代专业符号</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>Stone Island</strong></td>
-  <td style="text-align:left;"><strong>区域扩张</strong></td>
-  <td style="text-align:left;">亚洲市场2025财年营收增长<strong>16%</strong>，Q4飙升至<strong>22%</strong>，中国与日本领跑</td>
-  <td style="text-align:left;">证明强技术属性子品牌在理性消费周期中具备更强增长韧性</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/aDgyCy5wWAacAzBhisSAcw">艾林华尚</a></span></td>
+  <td style="text-align:left;"><strong>FILA</strong></td>
+  <td style="text-align:left;"><strong>专业背书</strong></td>
+  <td style="text-align:left;">为意大利、荷兰、挪威等<strong>6个国家和地区12支代表队</strong>提供装备支持，截至赛事第14日共斩获<strong>62枚奖牌（含25枚金牌）</strong></td>
+  <td style="text-align:left;">以多国国家队覆盖构建全球化专业信用网络，强化“冰雪运动装备专家”心智</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>Aritzia</strong></td>
-  <td style="text-align:left;"><strong>收购</strong></td>
-  <td style="text-align:left;">收购Fred Segal品牌及全部知识产权，并签约洛杉矶梅尔罗斯大道8100号旗舰店</td>
-  <td style="text-align:left;">将历史积淀转化为体验式零售资产，抢占高端生活方式入口</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/jp9PF6azOPWt-7Iu2PRWdw">华丽志</a></span></td>
+  <td style="text-align:left;"><strong>New Balance</strong></td>
+  <td style="text-align:left;"><strong>开店</strong></td>
+  <td style="text-align:left;">2025年新开<strong>80家门店</strong>；全球销售额<strong>同比增长19%至92亿美元</strong></td>
+  <td style="text-align:left;">以实体渠道扩张支撑高端化战略，证明“重资产投入”仍是专业品牌建立信任的有效路径</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/7WA-cAwZZ3ZhwRigSr3uLw">中服圈</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>H&amp;M</strong></td>
-  <td style="text-align:left;"><strong>关店</strong></td>
-  <td style="text-align:left;">计划2026年<strong>关闭约160家门店</strong>，同时新开<strong>约80家</strong></td>
-  <td style="text-align:left;">实体渠道进入结构性优化深水区，“少而精”模型成为行业共识</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/hWqb-tXBGccIdShWyhkraQ">中服圈</a></span></td>
+  <td style="text-align:left;"><strong>Salomon</strong></td>
+  <td style="text-align:left;"><strong>品牌业绩</strong></td>
+  <td style="text-align:left;">年销售额<strong>首次突破20亿美元</strong>，领衔山地户外板块收入<strong>增长31%至24.04亿美元</strong></td>
+  <td style="text-align:left;">垂直品类领导力在消费理性期展现强大韧性，成为亚玛芬集团增长核心引擎</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>江南布衣</strong></td>
-  <td style="text-align:left;"><strong>会员运营</strong></td>
-  <td style="text-align:left;">高价值会员（年消费&gt;5000元）达<strong>34万个</strong>，贡献线下零售额<strong>49.0亿元</strong>，占线下总额<strong>超六成</strong></td>
-  <td style="text-align:left;">会员资产化运营能力成为抗周期核心，验证高净值用户深度运营路径</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></span></td>
+  <td style="text-align:left;"><strong>彪马</strong></td>
+  <td style="text-align:left;"><strong>品牌业绩</strong></td>
+  <td style="text-align:left;">2025年全年经货币调整后销售额<strong>下降8.1%至72.96亿欧元</strong></td>
+  <td style="text-align:left;">泛运动时尚定位在专业消费崛起背景下遭遇增长瓶颈，凸显品类聚焦的重要性</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>唯品会</strong></td>
-  <td style="text-align:left;"><strong>用户分层</strong></td>
-  <td style="text-align:left;">SVIP活跃用户数增至<strong>980万人</strong>，贡献线上销售<strong>52%</strong></td>
-  <td style="text-align:left;">平台生态分化完成，高价值用户成为核心资产，倒逼品牌精细化运营</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/dBpzG5EYkgOBCJUe45WajA">艾林华尚</a></span></td>
+  <td style="text-align:left;"><strong>Gramicci × ALWAYTH</strong></td>
+  <td style="text-align:left;"><strong>联名</strong></td>
+  <td style="text-align:left;">第二弹联名系列于<strong>2026-02-28</strong>在BEAMS官方线上渠道发售，采用抽签购买形式</td>
+  <td style="text-align:left;">小众专业品牌通过潮流联名破圈，验证“专业基因+年轻表达”是触达增量用户的有效组合</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>Puig</strong></td>
-  <td style="text-align:left;"><strong>区域聚焦</strong></td>
-  <td style="text-align:left;">亚太地区2025财年净销售额<strong>5.3亿欧元</strong>，同比增长<strong>16.6%</strong>，为集团最快市场</td>
-  <td style="text-align:left;">亚太市场已从增量市场升级为全球创新策源地，本地化能力决定天花板</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/8aiGjapOyq6cP96sQ9ZILw">华丽志</a></span></td>
+  <td style="text-align:left;"><strong>Salomon × SLAM JAM</strong></td>
+  <td style="text-align:left;"><strong>联名</strong></td>
+  <td style="text-align:left;">推出合作系列第二弹，包含<strong>XA PRO 3D GORE-TEX鞋款</strong>及连帽衫、长袖、冷帽等服饰</td>
+  <td style="text-align:left;">专业运动与街头文化深度互渗，推动功能性产品进入日常穿搭场景，拓宽品类边界</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>SHEIN</strong></td>
-  <td style="text-align:left;"><strong>供应链投资</strong></td>
-  <td style="text-align:left;">计划三年内在广东投资<strong>超100亿元</strong>建设智慧供应链</td>
-  <td style="text-align:left;">柔性供应链从成本项升级为战略基础设施，为运动户外品类提供可迁移范式</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/Uh0glaUOsUmSnx3DP7KwRw">中服圈</a></span></td>
+  <td style="text-align:left;"><strong>HAVEN</strong></td>
+  <td style="text-align:left;"><strong>新品</strong></td>
+  <td style="text-align:left;">2026春夏系列于<strong>2026-02-27</strong>上线，登陆线上平台及多伦多、温哥华线下门店</td>
+  <td style="text-align:left;">北美专业买手店持续加码高端运动品类，反映渠道端对专业性能与设计美学融合产品的认可</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>娇兰</strong></td>
-  <td style="text-align:left;"><strong>可持续技术</strong></td>
-  <td style="text-align:left;">采用Intact Regenerative Pulse超中性酒精，<strong>温室气体排放减少80%以上</strong></td>
-  <td style="text-align:left;">绿色技术跨行业迁移窗口打开，运动户外可复用美妆领域成熟低碳解决方案</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/sQnl9FdmpKq9dCDdYQc8qw">华丽志</a></span></td>
+  <td style="text-align:left;"><strong>YONEX</strong></td>
+  <td style="text-align:left;"><strong>品牌业绩</strong></td>
+  <td style="text-align:left;">2026财年前三个季度净销售额<strong>同比增长18.4%至1204亿日元</strong>，创历史同期新高</td>
+  <td style="text-align:left;">日系专业运动品牌凭借技术积累与本土场景深耕，在全球市场保持稳健增长动能</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>Longines</strong></td>
-  <td style="text-align:left;"><strong>业绩承压</strong></td>
-  <td style="text-align:left;">2025年营收<strong>下降18%至9.2亿瑞士法郎</strong>，十多年来首次跌破10亿大关</td>
-  <td style="text-align:left;">纯符号性奢侈品在理性周期中承压，反衬强专业属性品类的战略价值</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></span></td>
+  <td style="text-align:left;"><strong>Callaway</strong></td>
+  <td style="text-align:left;"><strong>品牌业绩</strong></td>
+  <td style="text-align:left;">2025年全年净营收达<strong>20.60亿美元</strong>，同比基本持平</td>
+  <td style="text-align:left;">高尔夫装备龙头增长见顶，预示行业或进入存量博弈与技术迭代并行的新周期</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>Breitling</strong></td>
-  <td style="text-align:left;"><strong>估值下调</strong></td>
-  <td style="text-align:left;">CVC对其股权估值<strong>减半</strong>，Partners Group估值为此前<strong>70%</strong></td>
-  <td style="text-align:left;">资本市场对高溢价奢侈品信心减弱，凸显迪桑特“专业+轻奢”交叉带的独特韧性</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/gfY7WEXua_B4ZTzkan7lmQ">华丽志</a></span></td>
+  <td style="text-align:left;"><strong>Shimano</strong></td>
+  <td style="text-align:left;"><strong>品牌业绩</strong></td>
+  <td style="text-align:left;">2025年全年净销售额<strong>同比增长3.4%至4662.43亿日元</strong>（约合人民币207亿元）</td>
+  <td style="text-align:left;">自行车零部件巨头在需求放缓背景下仍实现增长，反映专业供应链的刚性需求特征</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>LVMH</strong></td>
-  <td style="text-align:left;"><strong>控股权集中</strong></td>
-  <td style="text-align:left;">Arnault家族持股升至<strong>50.01%</strong>，投票权达<strong>65.94%</strong></td>
-  <td style="text-align:left;">绝对控股权保障长期主义战略定力，为运动品牌提供治理结构参考</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/29Y0tNS9K-kW06bLNYR5XA">华丽志</a></span></td>
+  <td style="text-align:left;"><strong>龙牙</strong></td>
+  <td style="text-align:left;"><strong>品牌业绩</strong></td>
+  <td style="text-align:left;">2025年年度GMV<strong>突破20亿元</strong></td>
+  <td style="text-align:left;">国产专业运动品牌完成从流量爆发到规模兑现的关键跨越，验证“中年男性专业运动”细分赛道可行性</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/1coC3cafzt7b5fYehWCTUw">懒熊体育</a></span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>瑞士手表行业</strong></td>
-  <td style="text-align:left;"><strong>市场萎缩</strong></td>
-  <td style="text-align:left;">2025年出口额<strong>244亿瑞士法郎</strong>（-1.7% YoY），销量<strong>1460万只</strong>（-4.8% YoY），创数十年新低</td>
-  <td style="text-align:left;">全球奢侈品消费降温，但专业运动品类因刚需属性受影响较小</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>硬奢品牌</strong></td>
-  <td style="text-align:left;"><strong>开店收缩</strong></td>
-  <td style="text-align:left;">2025年中国新开门店<strong>48家</strong>，同比骤降<strong>47%</strong>（2024年91家）</td>
-  <td style="text-align:left;">实体渠道价值重估完成，门店质量（专业场景渗透率）取代数量成为新标尺</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/toj4QVkWYv1C13Ep6chUFQ">华丽志</a></span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>江南布衣</strong></td>
-  <td style="text-align:left;"><strong>渠道拓展</strong></td>
-  <td style="text-align:left;">全球独立实体零售店总数达<strong>2,163家</strong>（净增46家），「江南布衣+」集合店<strong>22家</strong></td>
-  <td style="text-align:left;">多品牌集合模式验证体验式零售可行性，为迪桑特提供空间运营参考</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Moncler</strong></td>
-  <td style="text-align:left;"><strong>渠道优化</strong></td>
-  <td style="text-align:left;">直营门店达<strong>295家</strong>（净增9家），批发门店<strong>49家</strong>（净减7家）</td>
-  <td style="text-align:left;">渠道策略向高毛利、强控盘的直营模式倾斜，提升终端运营质量</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/gdkqPAXZNv5nG59oZWZwXw">中服圈</a></span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Stone Island</strong></td>
-  <td style="text-align:left;"><strong>渠道优化</strong></td>
-  <td style="text-align:left;">直营门店<strong>95家</strong>（净增5家），批发门店<strong>11家</strong>（净增2家）</td>
-  <td style="text-align:left;">同步推进直营化与专业渠道渗透，平衡品牌控制力与市场覆盖广度</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/gdkqPAXZNv5nG59oZWZwXw">中服圈</a></span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>江南布衣</strong></td>
-  <td style="text-align:left;"><strong>线上增长</strong></td>
-  <td style="text-align:left;">线上渠道收入<strong>7.533亿元</strong>（+25.1% YoY），占总收入<strong>22.3%</strong></td>
-  <td style="text-align:left;">线上渠道成为增量引擎，但需警惕线下体验缺失导致的专业信任度稀释</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/GG16eEs38znzpDhJaAA6fw">艾林华尚</a></span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>H&amp;M</strong></td>
-  <td style="text-align:left;"><strong>库存优化</strong></td>
-  <td style="text-align:left;">库存减少<strong>12%至354.27亿瑞典克朗</strong>，库存占收入比降至<strong>15.5%</strong></td>
-  <td style="text-align:left;">库存周转效率成为核心竞争力，运动户外品类因SKU复杂更需柔性响应</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/hWqb-tXBGccIdShWyhkraQ">中服圈</a></span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>Puig</strong></td>
-  <td style="text-align:left;"><strong>增长引擎</strong></td>
-  <td style="text-align:left;">亚太地区贡献净销售额<strong>5.3亿欧元</strong>，占集团总销售额<strong>11%</strong></td>
-  <td style="text-align:left;">中国已成全球高端品牌主战场，本土化研发与场景适配能力决定增长上限</td>
-  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/8aiGjapOyq6cP96sQ9ZILw">华丽志</a></span></td>
+  <td style="text-align:left;"><strong>衡泰信</strong></td>
+  <td style="text-align:left;"><strong>专业背书</strong></td>
+  <td style="text-align:left;">自<strong>2019年</strong>起与女子中巡深度合作<strong>8年</strong>，2025年首次以线下赛事冠名赞助商身份全程参与</td>
+  <td style="text-align:left;">长期主义合作模式成为专业运动品牌建立信任的黄金范式，超越短期曝光逻辑</td>
+  <td style="text-align:left;"><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/IyWNd8DS7jowzLh7hfjp6Q">女子中巡CLPG TOUR</a></span></td>
 </tr>
 </tbody>
 </table>
@@ -876,37 +753,37 @@
             <p><strong>😫 本周痛点</strong></p>
 
 <ul>
-<li><strong>①</strong> <strong>硬奢品牌开店收缩加剧</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/toj4QVkWYv1C13Ep6chUFQ">华丽志</a></span></li>
-<li><strong>②</strong> <strong>瑞士手表行业出口销量创数十年新低</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></span></li>
-<li><strong>③</strong> <strong>LVMH股价较2023年高点下滑近38%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/29Y0tNS9K-kW06bLNYR5XA">华丽志</a></span></li>
-<li><strong>④</strong> <strong>H&amp;M线下可比同店销售下滑2.2%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/GG16eEs38znzpDhJaAA6fw">艾林华尚</a></span></li>
-<li><strong>⑤</strong> <strong>Longines营收跌破10亿瑞士法郎大关</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></span></li>
-<li><strong>⑥</strong> <strong>百年灵股权估值遭两大私募基金大幅下调</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/gfY7WEXua_B4ZTzkan7lmQ">华丽志</a></span></li>
+<li><strong>①</strong> <strong>退换货体验差</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/u-LP9sdq71ISm3YJk_jTWg">小风高尔夫</a></span></li>
+<li><strong>②</strong> <strong>专业导购缺失</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/8Nl8cPR3iZ22WknH9G_D8A">小鸟体育</a></span></li>
+<li><strong>③</strong> <strong>雪场装备租赁价格虚高</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></li>
+<li><strong>④</strong> <strong>高尔夫模拟器课程定价混乱</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/IyWNd8DS7jowzLh7hfjp6Q">女子中巡CLPG TOUR</a></span></li>
+<li><strong>⑤</strong> <strong>铁人三项新手装备选择困难</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></li>
+<li><strong>⑥</strong> <strong>专业运动APP数据不准</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/I8ItUmULUNkxZ0hP0Po0nw">小鸟体育</a></span></li>
 </ul>
 
 <p><strong>😍 本周爽点</strong></p>
 
 <ul>
-<li><strong>①</strong> <strong>Stone Island亚洲市场Q4营收增速飙升至22%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/aDgyCy5wWAacAzBhisSAcw">艾林华尚</a></span></li>
-<li><strong>②</strong> <strong>江南布衣高价值会员贡献线下零售额超六成</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/EDF0-ymB8DO3Zpd7csuiZA">华丽志</a></span></li>
-<li><strong>③</strong> <strong>Moncler亚洲市场营收占比超45%，成集团压舱石</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/aDgyCy5wWAacAzBhisSAcw">艾林华尚</a></span></li>
-<li><strong>④</strong> <strong>Aritzia收购Fred Segal并升级为体验式目的地</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/jp9PF6azOPWt-7Iu2PRWdw">华丽志</a></span></li>
-<li><strong>⑤</strong> <strong>娇兰Pulse酒精实现温室气体减排80%以上</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/sQnl9FdmpKq9dCDdYQc8qw">华丽志</a></span></li>
-<li><strong>⑥</strong> <strong>SHEIN广东智慧供应链投资超100亿元</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/Uh0glaUOsUmSnx3DP7KwRw">中服圈</a></span></li>
+<li><strong>①</strong> <strong>专业背书强</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></li>
+<li><strong>②</strong> <strong>轻量化体验惊艳</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></li>
+<li><strong>③</strong> <strong>赛事奖金丰厚</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/u-LP9sdq71ISm3YJk_jTWg">小风高尔夫</a></span></li>
+<li><strong>④</strong> <strong>节展场景丰富</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></li>
+<li><strong>⑤</strong> <strong>国产专业品牌崛起</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/1coC3cafzt7b5fYehWCTUw">懒熊体育</a></span></li>
+<li><strong>⑥</strong> <strong>数据服务精准</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></li>
 </ul>
 
 <p><strong>⚠️ 本周风险信号</strong></p>
 
 <ul>
-<li><strong>①</strong> <strong>瑞士手表对华出口额较2012年下降40%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/kXQ_gd5WAqkqH0FN82aoTQ">华丽志</a></span></li>
-<li><strong>②</strong> <strong>硬奢品牌非一线城市新开门店同比降幅达54%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/toj4QVkWYv1C13Ep6chUFQ">华丽志</a></span></li>
-<li><strong>③</strong> <strong>LVMH股价2025年以来跌幅约13%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/29Y0tNS9K-kW06bLNYR5XA">华丽志</a></span></li>
-<li><strong>④</strong> <strong>百年灵2025年销售额低于2023年水平</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/gfY7WEXua_B4ZTzkan7lmQ">华丽志</a></span></li>
-<li><strong>⑤</strong> <strong>H&amp;M库存占收入比虽降但仍达15.5%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/hWqb-tXBGccIdShWyhkraQ">中服圈</a></span></li>
-<li><strong>⑥</strong> <strong>江南布衣线下可比同店销售下滑2.2%</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/GG16eEs38znzpDhJaAA6fw">艾林华尚</a></span></li>
+<li><strong>①</strong> <strong>库存周转压力</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/7WA-cAwZZ3ZhwRigSr3uLw">中服圈</a></span></li>
+<li><strong>②</strong> <strong>流量成本上涨</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></li>
+<li><strong>③</strong> <strong>专业人才流失</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/8Nl8cPR3iZ22WknH9G_D8A">小鸟体育</a></span></li>
+<li><strong>④</strong> <strong>国际赛事政治风险</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/xROvDlb7Et86ITgY41d2cQ">步外</a></span></li>
+<li><strong>⑤</strong> <strong>环保法规趋严</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/NWHnNT2zdw-7TScTs8IZ1g">懒熊体育</a></span></li>
+<li><strong>⑥</strong> <strong>汇率波动影响进口成本</strong><span class="source-inline">来源：<a href="https://mp.weixin.qq.com/s/60My3DlCbwxZctmDPpuP9w">华丽志</a></span></li>
 </ul>
 
-<p><strong>🔑 本周高频关键词</strong>：高净值会员 / 体验式零售 / 亚洲市场 / 柔性供应链 / 可持续技术 / 专业运动 / 库存优化 / 开店收缩 / 品牌控股 / 石英危机 / LVMH / Moncler / Stone Island / 江南布衣 / SHEIN / 娇兰 / 瑞士手表 / Longines / Breitling / Puig</p>
+<p><strong>🔑 本周高频关键词</strong>：轻量化 / 专业背书 / 大中华区 / HYROX / GO OUT / 衡泰信 / 232g / 20亿美元 / 43.4% / 260万美元 / ePE / 62枚奖牌 / 8年 / 20亿元 / ASP / 80家 / 55万人 / 12届 / 20D / 1500万美元</p>
 
 <hr />
 
@@ -1053,17 +930,14 @@
     </div>
   </div>
 
+  <div id="back-to-top" title="回到顶部">↑</div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // TOC Highlighting
       const sections = document.querySelectorAll('.section-card');
       const navLinks = document.querySelectorAll('.toc-link');
       
-      const observerOptions = {
-        root: null,
-        rootMargin: '-20% 0px -60% 0px',
-        threshold: 0
-      };
-
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -1076,9 +950,30 @@
             }
           }
         });
-      }, observerOptions);
+      }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
 
       sections.forEach(section => observer.observe(section));
+
+      // Back to Top
+      const backToTop = document.getElementById('back-to-top');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      });
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // Auto Target Blank
+      document.querySelectorAll('.section-card a').forEach(a => {
+        if (a.hostname !== window.location.hostname) {
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+        }
+      });
     });
   </script>
 </body>
