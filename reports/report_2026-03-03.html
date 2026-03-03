@@ -188,7 +188,18 @@
       border: 1px solid #e2e8f0;
       border-radius: 10px;
       overflow: hidden;
+      /* 自适应列宽 */
+      table-layout: auto; 
     }
+    /* 强制某些列不换行，或者给最小宽度 */
+    td:first-child {
+      min-width: 100px;
+      font-weight: 600;
+    }
+    td:nth-child(2) {
+      min-width: 200px; /* 指标明细列 */
+    }
+
     th {
       background: #f8fafc;
       color: #2d3748;
@@ -197,6 +208,7 @@
       font-weight: 600;
       border-bottom: 1px solid #e2e8f0;
       letter-spacing: 0.3px;
+      white-space: nowrap; /* 表头不换行 */
     }
     td {
       padding: 14px 20px;
@@ -204,6 +216,56 @@
       vertical-align: top;
       color: #4a5568;
       line-height: 1.6;
+    }
+    
+    /* 横屏/全屏模式样式 */
+    .table-fullscreen-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: white;
+      z-index: 9999;
+      padding: 20px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* 强制横屏旋转 (模拟手机横屏) */
+    .table-fullscreen-container.rotated {
+      width: 100vh;
+      height: 100vw;
+      transform: rotate(90deg);
+      transform-origin: top left;
+      left: 100vw; /* 旋转后需要调整位置 */
+      top: 0;
+    }
+
+    .fullscreen-btn {
+      float: right;
+      margin-bottom: 10px;
+      padding: 6px 12px;
+      background: #3498db;
+      color: white;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .fullscreen-btn:hover {
+      background: #2980b9;
+    }
+    
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     tr:last-child td { border-bottom: none; }
     tr:nth-child(even) td { background: #ffffff; }
@@ -969,6 +1031,38 @@
           a.rel = 'noopener noreferrer';
         }
       });
+
+      // Table Enhancements (Fullscreen & Rotate)
+      document.querySelectorAll('table').forEach((table, index) => {
+        // Wrap table for overflow handling
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper';
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+
+        // Add Fullscreen Button
+        const btn = document.createElement('button');
+        btn.className = 'fullscreen-btn';
+        btn.innerHTML = '🔄 横屏查看';
+        btn.onclick = () => toggleFullscreen(wrapper, btn);
+        wrapper.parentNode.insertBefore(btn, wrapper);
+      });
+
+      function toggleFullscreen(wrapper, btn) {
+        if (wrapper.classList.contains('table-fullscreen-container')) {
+          // Exit Fullscreen
+          wrapper.classList.remove('table-fullscreen-container');
+          wrapper.classList.remove('rotated');
+          btn.innerHTML = '🔄 横屏查看';
+          document.body.style.overflow = ''; // Restore scroll
+        } else {
+          // Enter Fullscreen (Rotated)
+          wrapper.classList.add('table-fullscreen-container');
+          wrapper.classList.add('rotated');
+          btn.innerHTML = '🔙 退出全屏';
+          document.body.style.overflow = 'hidden'; // Lock scroll
+        }
+      }
     });
   </script>
 </body>
