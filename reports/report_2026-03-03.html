@@ -1,340 +1,390 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>行业热点/市场动态周报</title>
   <style>
-    /* ========== 基础重置 ========== */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    /* 基础重置 */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
       background: #f4f6f9;
       color: #2c3e50;
-      font-size: 15px;
       line-height: 1.75;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ========== 顶部 Header ========== */
-    .report-header {
-      background: linear-gradient(135deg, #1a3a5c 0%, #0d2137 100%);
-      color: #fff;
-      padding: 28px 24px 22px;
-      text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
-    }
-    .report-header h1 {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
-    }
-    .report-meta {
-      font-size: 12px;
-      color: rgba(255,255,255,0.75);
-      letter-spacing: 0.5px;
-    }
-
-    /* ========== 目录导航 ========== */
-    .toc-nav {
-      background: #fff;
-      border-bottom: 1px solid #e8ecf0;
-      padding: 10px 16px;
-      overflow-x: auto;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-      position: sticky;
-      top: 80px;
-      z-index: 99;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    }
-    .toc-nav a {
-      display: inline-block;
-      padding: 5px 12px;
-      margin-right: 6px;
-      border-radius: 20px;
-      background: #f0f4f8;
-      color: #1a3a5c;
-      font-size: 13px;
-      font-weight: 500;
-      text-decoration: none;
-      transition: background 0.2s, color 0.2s;
-    }
-    .toc-nav a:hover, .toc-nav a.active {
-      background: #1a3a5c;
-      color: #fff;
-    }
-
-    /* ========== 主体内容区 ========== */
-    .main-content {
-      max-width: 860px;
+    /* 版心优化：更宽 */
+    .container {
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 16px 12px 60px;
-    }
-
-    /* ========== Section 卡片 ========== */
-    .section-card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-      margin-bottom: 20px;
-      overflow: hidden;
       position: relative;
     }
-    .section-card h3 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1a3a5c;
-      padding: 16px 20px 12px;
-      border-bottom: 2px solid #e8f0f8;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+
+    .container { padding: 16px 12px 60px; }
+
+    /* 报告头部 */
+    .report-header {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 40px 48px;
+      margin-bottom: 32px;
+      box-shadow: 0 10px 30px rgba(44, 62, 80, 0.15);
     }
-    .section-card h3::before {
-      content: '';
-      display: inline-block;
-      width: 4px;
-      height: 18px;
-      background: #1a3a5c;
-      border-radius: 2px;
+    .report-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      border: none;
+      color: white;
+      letter-spacing: 0.5px;
+    }
+    .report-meta {
+      font-size: 15px;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    /* ── Sticky TOC ── */
+    .toc-sticky {
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      padding: 14px 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 1px solid rgba(255,255,255,0.6);
+      transition: all 0.3s ease;
+    }
+    
+    .toc-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #7f8c8d;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .toc-links {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 12px;
+      align-items: center;
+      padding-bottom: 6px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .toc-links::-webkit-scrollbar { display: none; }
+
+    .toc-links a {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      background: #ecf0f1;
+      color: #34495e;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
       flex-shrink: 0;
     }
-    .section-body {
-      padding: 14px 18px 18px;
+    .toc-links a:hover {
+      background: #e0e6ed;
+      transform: translateY(-1px);
+    }
+    .toc-links a.active {
+      background: #34495e;
+      color: white;
+      box-shadow: 0 4px 12px rgba(52, 73, 94, 0.25);
     }
 
-    /* ========== 横屏按钮（右上角）========== */
-    .landscape-btn {
-      position: absolute;
-      top: 10px;
-      right: 14px;
-      background: #1a3a5c;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 4px 10px;
-      font-size: 12px;
-      cursor: pointer;
-      z-index: 10;
+    /* ── 卡片化区块 ── */
+    .section-card {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+      border: 1px solid #f0f2f5;
+      scroll-margin-top: 140px;
+      transition: transform 0.2s ease;
+    }
+    .section-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+
+    /* 标题样式升级 */
+    h2 { display: none; }
+    h3 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #ecf0f1;
       display: flex;
       align-items: center;
-      gap: 4px;
-      letter-spacing: 0.3px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      transition: background 0.2s;
-      -webkit-tap-highlight-color: transparent;
     }
-    .landscape-btn:hover { background: #0d2137; }
-    .landscape-btn svg {
-      width: 13px;
-      height: 13px;
-      fill: currentColor;
+    h3::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 26px;
+      background: #3498db;
+      margin-right: 14px;
+      border-radius: 3px;
     }
 
-    /* ========== 横屏全屏弹层 ========== */
-    .landscape-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #fff;
-      z-index: 9999;
-      overflow: hidden;
-    }
-    .landscape-overlay.active { display: block; }
-
-    .landscape-close {
-      position: fixed;
-      top: 10px;
-      right: 12px;
-      z-index: 10001;
-      background: #1a3a5c;
-      color: #fff;
-      border: none;
-      border-radius: 20px;
-      padding: 6px 16px;
-      font-size: 13px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-      -webkit-tap-highlight-color: transparent;
+    h4 {
+      font-size: 17px;
+      font-weight: 600;
+      color: #34495e;
+      margin: 28px 0 16px;
+      background: #f8f9fa;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border-left: 4px solid #3498db;
     }
 
-    .landscape-hint {
-      position: fixed;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10001;
-      background: rgba(0,0,0,0.55);
-      color: #fff;
-      font-size: 11px;
-      padding: 4px 12px;
-      border-radius: 12px;
-      pointer-events: none;
-      white-space: nowrap;
+    /* 列表优化 */
+    ul, ol { padding-left: 0; list-style: none; }
+    li {
+      padding: 10px 0 10px 24px;
+      border-bottom: 1px solid #f7f9fa;
+      position: relative;
+      font-size: 16px;
+      color: #4a5568;
     }
-
-    /* 旋转容器：把表格旋转90°使其横向展示 */
-    .landscape-rotate-wrap {
+    li:before {
+      content: "•";
       position: absolute;
+      left: 6px;
+      color: #3498db;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    li:last-child { border-bottom: none; }
+
+    /* 表格升级 */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 15px;
+      margin: 24px 0;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      /* 自适应列宽 */
+      table-layout: auto; 
+    }
+    /* 强制某些列不换行，或者给最小宽度 */
+    td:first-child {
+      min-width: 100px;
+      font-weight: 600;
+    }
+    td:nth-child(2) {
+      min-width: 200px; /* 指标明细列 */
+    }
+
+    th {
+      background: #f8fafc;
+      color: #2d3748;
+      padding: 14px 20px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 1px solid #e2e8f0;
+      letter-spacing: 0.3px;
+      white-space: nowrap; /* 表头不换行 */
+    }
+    td {
+      padding: 14px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+    
+    /* 横屏/全屏模式样式 */
+    .table-fullscreen-container {
+      position: fixed;
       top: 0;
       left: 0;
-      /* 宽高由JS动态注入 */
-      transform-origin: top left;
-      overflow: auto;
-      padding: 16px;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    /* 弹层内表格样式 */
-    .landscape-rotate-wrap table {
-      border-collapse: collapse;
-      min-width: 500px;
-      font-size: 13px;
-      white-space: nowrap;
-    }
-    .landscape-rotate-wrap table th {
-      background: #1a3a5c;
-      color: #fff;
-      padding: 8px 14px;
-      text-align: left;
-      font-weight: 600;
-      position: sticky;
-      top: 0;
-    }
-    .landscape-rotate-wrap table td {
-      padding: 7px 14px;
-      border-bottom: 1px solid #e8ecf0;
-      vertical-align: middle;
-    }
-    .landscape-rotate-wrap table tr:nth-child(even) td { background: #f7f9fc; }
-    .landscape-rotate-wrap table tr:hover td { background: #edf3fb; }
-
-    /* ========== 正文内表格（列宽自适应）========== */
-    .section-body table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: auto;
-      font-size: 13px;
-      margin: 8px 0;
-      display: block;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    .section-body table th {
-      background: #1a3a5c;
-      color: #fff;
-      padding: 8px 12px;
-      text-align: left;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .section-body table td {
-      padding: 7px 12px;
-      border-bottom: 1px solid #e8ecf0;
-      vertical-align: middle;
-      white-space: normal;
-      min-width: 60px;
-    }
-    /* 指标列（第1列）允许换行，其余列 nowrap */
-    .section-body table td:first-child { min-width: 140px; white-space: normal; }
-    /* 数值列右对齐 */
-    .section-body table td:nth-child(2) { text-align: right; white-space: nowrap; min-width: 100px; }
-    .section-body table tr:nth-child(even) td { background: #f7f9fc; }
-    .section-body table tr:hover td { background: #edf3fb; }
-
-    /* ========== 正文排版 ========== */
-    .section-body p { margin-bottom: 10px; }
-    .section-body ul, .section-body ol { padding-left: 20px; margin-bottom: 10px; }
-    .section-body li { margin-bottom: 5px; }
-    .section-body h4 { font-size: 14px; font-weight: 700; color: #1a3a5c; margin: 14px 0 6px; }
-    .section-body strong { color: #1a3a5c; }
-    .section-body a { color: #2473b5; text-decoration: none; }
-    .section-body a:hover { text-decoration: underline; }
-    .section-body blockquote {
-      border-left: 3px solid #c8d8ea;
-      padding: 6px 12px;
-      background: #f7f9fc;
-      color: #666;
-      font-size: 13px;
-      margin: 8px 0;
-      border-radius: 0 6px 6px 0;
-    }
-
-    /* ========== 来源样式 ========== */
-    .source-inline {
-      font-size: 12px;
-      color: #8a9bb0;
-      display: inline-block;
-      margin-left: 4px;
-    }
-    .source-inline a { color: #8a9bb0; text-decoration: underline; }
-    .source-sep { color: #b0bec5; }
-
-    /* ========== Footer ========== */
-    .report-footer {
-      text-align: center;
-      color: #a0aab4;
-      font-size: 12px;
-      padding: 20px 16px 40px;
-    }
-
-    /* ========== 回到顶部 ========== */
-    .back-top {
-      position: fixed;
-      bottom: 24px;
-      right: 18px;
-      width: 40px;
-      height: 40px;
-      background: #1a3a5c;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      font-size: 18px;
-      cursor: pointer;
-      display: none;
+      width: 100vw;
+      height: 100vh;
+      background: white;
+      z-index: 9999;
+      overflow: hidden; /* 内部滚动 */
+      display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.25);
-      z-index: 200;
-      transition: opacity 0.3s;
-      -webkit-tap-highlight-color: transparent;
     }
-    .back-top.visible { display: flex; }
+    
+    /* 强制横屏旋转 (模拟手机横屏) */
+    .table-fullscreen-container.rotated .table-wrapper {
+      /* 交换宽高 */
+      width: 100vh; 
+      height: 100vw;
+      max-height: 100vw;
+      overflow: auto;
+      transform: rotate(90deg);
+      /* 核心：确保旋转后位置正确 */
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(90deg);
+      background: white;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    
+    /* 退出按钮样式调整 */
+    .table-fullscreen-container .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px; /* 在竖屏视角下的右上角，旋转后就是左上角 */
+      z-index: 10000;
+      transform: none; /* 按钮不旋转，或者单独处理 */
+    }
+    /* 如果希望按钮也跟着旋转 */
+    .table-fullscreen-container.rotated .fullscreen-btn {
+        position: absolute;
+        top: auto;
+        bottom: 20px;
+        right: auto;
+        left: -40px; /* 需要微调位置 */
+        transform: rotate(90deg);
+        transform-origin: center;
+        /* 这个很难通用适配，建议按钮固定在屏幕某个位置不旋转 */
+    }
+    
+    /* 修正方案：按钮始终固定在屏幕物理右上角 */
+    .table-fullscreen-container .fullscreen-btn.fixed-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        float: none;
+        margin: 0;
+        background: #e74c3c; /* 退出时变红 */
+        transform: none !important; /* 按钮不参与旋转 */
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #ffffff; }
+    tr:hover td { background: #f8fbff; }
+
+    /* 链接样式 */
+    a { color: #3498db; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.2s; }
+    a:hover { border-bottom-color: #3498db; opacity: 0.8; }
+
+    /* 来源链接样式 */
+    .source-inline {
+      font-size: 13px;
+      color: #95a5a6;
+      display: inline-block;
+      margin-left: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .source-inline a {
+      color: #95a5a6;
+      border-bottom: 1px dashed #bdc3c7;
+    }
+    .source-inline a:hover {
+      color: #3498db;
+      border-bottom-style: solid;
+    }
+    .source-inline .source-sep { color: #dcdcdc; margin: 0 6px; }
+
+    /* 回到顶部 */
+    #back-to-top {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      color: #34495e;
+      font-size: 20px;
+    }
+    #back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #back-to-top:hover {
+      background: #34495e;
+      color: white;
+      box-shadow: 0 8px 24px rgba(52, 73, 94, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 16px; }
+      .container { width: 100%; }
+      .report-header { padding: 32px 24px; border-radius: 0 0 16px 16px; margin: -16px -16px 32px -16px; }
+      .toc-sticky { top: 0; margin: 0 -16px 24px -16px; border-radius: 0; border: none; border-bottom: 1px solid rgba(0,0,0,0.05); }
+      .section-card { padding: 24px; margin-bottom: 24px; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      th, td { padding: 12px 16px; }
+      #back-to-top { bottom: 24px; right: 24px; width: 40px; height: 40px; font-size: 18px; }
+    }
+  
+    /* Header 与目录在移动端避免遮挡：压缩高度 + 调整吸顶偏移 */
+    .report-header h1, .report-header h2 { line-height: 1.25; }
+    .report-meta { word-break: break-word; }
+
+    @media (max-width: 600px) {
+      .report-header { padding: 14px 14px; border-radius: 0; }
+      .report-header h1, .report-header h2 { font-size: 16px; }
+      .report-meta { font-size: 12px; opacity: 0.9; }
+      .toc-sticky { top: 6px; padding: 10px 12px; margin-bottom: 16px; }
+    }
+
   </style>
 </head>
 <body>
+  <div class="container">
+    <div class="report-header">
+      <h2>行业热点/市场动态周报</h2>
+      <div class="report-meta">
+        📰 共 127 篇文章 &nbsp;|&nbsp; 📅 2026-03-03 &nbsp;|&nbsp; 行业热点/市场动态·周报
+      </div>
+    </div>
 
-<!-- Header -->
-<div class="report-header">
-  <h1>行业热点/市场动态周报</h1>
-  <div class="report-meta">📰 共 127 篇文章 &nbsp;|&nbsp; 📅 2026-03-03 &nbsp;|&nbsp; 内部周报</div>
-</div>
+    <div class="toc-sticky" id="toc">
+      <div class="toc-links">
+        <a href="#section-1" class="toc-link" data-target="section-1">🧭 行业动态</a>
+        <a href="#section-2" class="toc-link" data-target="section-2">📈 数据速查</a>
+        <a href="#section-3" class="toc-link" data-target="section-3">🧩 深度洞察</a>
+        <a href="#section-4" class="toc-link" data-target="section-4">🥊 竞品雷达</a>
+        <a href="#section-5" class="toc-link" data-target="section-5">🎯 舆情温度</a>
+        <a href="#section-6" class="toc-link" data-target="section-6">📚 文章列表</a>
+      </div>
+    </div>
 
-<!-- 目录导航 -->
-<div class="toc-nav">
-  <a href="#section-1">🧭 战略判断</a>
-  <a href="#section-2">📈 数据速查</a>
-  <a href="#section-3">🧩 深度洞察</a>
-  <a href="#section-4">🥊 竞品雷达</a>
-  <a href="#section-5">🎯 舆情温度</a>
-  <a href="#section-6">📚 文章列表</a>
-</div>
-
-<!-- 横屏弹层（全局唯一） -->
-<div class="landscape-overlay" id="landscapeOverlay">
-  <button class="landscape-close" id="landscapeClose">✕ 关闭</button>
-  <div class="landscape-hint" id="landscapeHint">左右滑动查看更多数据</div>
-  <div class="landscape-rotate-wrap" id="landscapeWrap"></div>
-</div>
-
-<!-- 主体内容 -->
-<div class="main-content">
-  
+    
         <div class="section-card" id="section-1">
             <h3>🧭 行业动态</h3>
             <ul>
@@ -959,182 +1009,99 @@
 
         </div>
         
-</div>
 
-<!-- Footer -->
-<div class="report-footer">
-  内部周报 · 仅供参考 · 请勿外传
-</div>
+    <div class="report-footer">
+      Denscente-EC 数智营销-BI部门 · 行业热点/市场动态·周报 · 仅供内部参考
+    </div>
+  </div>
 
-<!-- 回到顶部 -->
-<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+  <div id="back-to-top" title="回到顶部">↑</div>
 
-<script>
-// ============================================================
-// 1. 把 section-card 内容包进 .section-body
-// ============================================================
-(function wrapSectionBody() {
-  document.querySelectorAll('.section-card').forEach(function(card) {
-    var h3 = card.querySelector('h3');
-    if (!h3) return;
-    // 把 h3 之后的所有节点放进 .section-body
-    var body = document.createElement('div');
-    body.className = 'section-body';
-    var nodes = [];
-    var node = h3.nextSibling;
-    while (node) { nodes.push(node); node = node.nextSibling; }
-    nodes.forEach(function(n) { body.appendChild(n); });
-    card.appendChild(body);
-  });
-})();
-
-// ============================================================
-// 2. 为 section-2（数据速查）和 section-4（竞品雷达）添加横屏按钮
-// ============================================================
-var LANDSCAPE_SECTIONS = ['section-2', 'section-4'];
-
-LANDSCAPE_SECTIONS.forEach(function(sid) {
-  var card = document.getElementById(sid);
-  if (!card) return;
-
-  var btn = document.createElement('button');
-  btn.className = 'landscape-btn';
-  btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48H24C23.37 5.69 20.1 2 15.9.38L16.48 2.52zm-9 0L8.1.38C3.9 2 .63 5.69 0 11h2.05c.36-3.76 2.7-6.93 5.43-8.48zM7.48 21.48C4.21 19.93 1.87 16.76 1.51 13H-.49c.63 5.31 3.9 9 8.1 10.62l-.13-2.14zM15.9 23.62C20.1 22 23.37 18.31 24 13h-2.05c-.36 3.76-2.7 6.93-5.97 8.48l-.08 2.14zM12 5c-3.87 0-7 3.13-7 7s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>横屏查看';
-  btn.setAttribute('aria-label', '横屏查看表格');
-
-  btn.addEventListener('click', function() {
-    openLandscape(sid);
-  });
-
-  // 插入到 h3 旁边（定位在卡片右上角）
-  card.appendChild(btn);
-});
-
-// ============================================================
-// 3. 横屏弹层逻辑
-// ============================================================
-var overlay   = document.getElementById('landscapeOverlay');
-var closeBtn  = document.getElementById('landscapeClose');
-var wrap      = document.getElementById('landscapeWrap');
-var hint      = document.getElementById('landscapeHint');
-
-function openLandscape(sectionId) {
-  var card = document.getElementById(sectionId);
-  if (!card) return;
-
-  // 找到表格
-  var table = card.querySelector('table');
-  if (!table) {
-    alert('该模块暂无表格数据');
-    return;
-  }
-
-  // 克隆表格
-  wrap.innerHTML = '';
-  var clone = table.cloneNode(true);
-  wrap.appendChild(clone);
-
-  // 所有外链补齐 target/rel
-  clone.querySelectorAll('a').forEach(function(a) {
-    a.setAttribute('target', '_blank');
-    a.setAttribute('rel', 'noopener noreferrer');
-  });
-
-  // 展示弹层，先设 display:block 再计算尺寸
-  overlay.classList.add('active');
-  document.body.style.overflow = 'hidden';
-
-  // 延一帧再做旋转，确保 overlay 已经渲染出来
-  requestAnimationFrame(function() {
-    applyRotation();
-  });
-}
-
-function applyRotation() {
-  // 竖屏视口
-  var vw = window.innerWidth;
-  var vh = window.innerHeight;
-
-  // 旋转后：原本"宽=vw 高=vh"的容器 → 旋转90度 → 视觉上宽=vh 高=vw
-  // wrap 的 CSS width 设为 vh（旋转后变成视觉宽度），height 设为 vw（旋转后变成视觉高度）
-  wrap.style.width  = vh + 'px';
-  wrap.style.height = vw + 'px';
-
-  // transform-origin 在左上角，rotate 后左上角对齐 overlay 左上角
-  // 需要把 wrap 向右平移 vw px，使旋转后内容填满屏幕
-  wrap.style.transform       = 'rotate(90deg)';
-  wrap.style.transformOrigin = '0 0';
-  wrap.style.top             = '0';
-  wrap.style.left            = vw + 'px';
-
-  // 关闭按钮和提示文字位置（它们不旋转）
-  // 视觉上"横屏"后，右上角对应的是旋转坐标系里的某个位置
-  // 直接 fixed 在屏幕右上即可，不随 wrap 旋转
-}
-
-function closeLandscape() {
-  overlay.classList.remove('active');
-  document.body.style.overflow = '';
-  wrap.innerHTML = '';
-}
-
-closeBtn.addEventListener('click', closeLandscape);
-
-// 点击遮罩空白处也可关闭
-overlay.addEventListener('click', function(e) {
-  if (e.target === overlay) closeLandscape();
-});
-
-// 屏幕方向变化或窗口尺寸变化时重新计算
-window.addEventListener('resize', function() {
-  if (overlay.classList.contains('active')) {
-    applyRotation();
-  }
-});
-
-// ============================================================
-// 4. TOC 目录 IntersectionObserver 高亮当前章节
-// ============================================================
-(function initTOC() {
-  var tocLinks = document.querySelectorAll('.toc-nav a');
-  if (!tocLinks.length) return;
-
-  var sectionEls = [];
-  tocLinks.forEach(function(a) {
-    var target = document.querySelector(a.getAttribute('href'));
-    if (target) sectionEls.push(target);
-  });
-
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        var id = '#' + entry.target.id;
-        tocLinks.forEach(function(a) {
-          a.classList.toggle('active', a.getAttribute('href') === id);
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // TOC Highlighting
+      const sections = document.querySelectorAll('.section-card');
+      const navLinks = document.querySelectorAll('.toc-link');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            navLinks.forEach(link => link.classList.remove('active'));
+            const activeLink = document.querySelector(`.toc-link[data-target="${id}"]`);
+            if (activeLink) {
+              activeLink.classList.add('active');
+              activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+          }
         });
+      }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+
+      sections.forEach(section => observer.observe(section));
+
+      // Back to Top
+      const backToTop = document.getElementById('back-to-top');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      });
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // Auto Target Blank
+      document.querySelectorAll('.section-card a').forEach(a => {
+        if (a.hostname !== window.location.hostname) {
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+        }
+      });
+
+      // Table Enhancements (Fullscreen & Rotate)
+      document.querySelectorAll('table').forEach((table, index) => {
+        // Wrap table for overflow handling
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper';
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+
+        // Add Fullscreen Button
+        const btn = document.createElement('button');
+        btn.className = 'fullscreen-btn';
+        btn.innerHTML = '🔄 横屏查看';
+        btn.onclick = () => toggleFullscreen(wrapper, btn);
+        wrapper.parentNode.insertBefore(btn, wrapper);
+      });
+
+      function toggleFullscreen(wrapper, btn) {
+        // 检查当前是否已经是全屏模式
+        // 注意：wrapper 本身没有 table-fullscreen-container 类
+        // 我们动态创建一个 div 作为全屏容器，或者直接给 wrapper 加类
+        
+        // 简单方案：给 wrapper 加类
+        if (wrapper.classList.contains('rotated')) {
+          // 退出全屏
+          wrapper.classList.remove('table-fullscreen-container');
+          wrapper.classList.remove('rotated');
+          wrapper.style.cssText = ''; // 清除内联样式
+          
+          btn.innerHTML = '🔄 横屏查看';
+          btn.classList.remove('fixed-btn');
+          document.body.style.overflow = ''; 
+        } else {
+          // 进入全屏
+          wrapper.classList.add('table-fullscreen-container');
+          wrapper.classList.add('rotated');
+          
+          btn.innerHTML = '🔙 退出全屏';
+          btn.classList.add('fixed-btn');
+          document.body.style.overflow = 'hidden'; 
+        }
       }
     });
-  }, { rootMargin: '-20% 0px -70% 0px' });
-
-  sectionEls.forEach(function(el) { observer.observe(el); });
-})();
-
-// ============================================================
-// 5. 回到顶部按钮
-// ============================================================
-var backTop = document.getElementById('backTop');
-window.addEventListener('scroll', function() {
-  backTop.classList.toggle('visible', window.scrollY > 300);
-});
-
-// ============================================================
-// 6. 所有外链补 target/rel（正文内）
-// ============================================================
-document.querySelectorAll('.section-body a[href^="http"]').forEach(function(a) {
-  a.setAttribute('target', '_blank');
-  a.setAttribute('rel', 'noopener noreferrer');
-});
-</script>
-
+  </script>
 </body>
 </html>
