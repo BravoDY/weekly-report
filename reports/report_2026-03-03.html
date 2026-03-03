@@ -13,7 +13,7 @@
       background: #f4f6f9;
       color: #2c3e50;
       line-height: 1.75;
-      padding: 0;
+      padding: 24px;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -23,8 +23,6 @@
       margin: 0 auto;
       position: relative;
     }
-
-    .container { padding: 16px 12px 60px; }
 
     /* 报告头部 */
     .report-header {
@@ -351,18 +349,39 @@
       #back-to-top { bottom: 24px; right: 24px; width: 40px; height: 40px; font-size: 18px; }
     }
   
-    /* Header 与目录在移动端避免遮挡：压缩高度 + 调整吸顶偏移 */
-    .report-header h1, .report-header h2 { line-height: 1.25; }
-    .report-meta { word-break: break-word; }
-
+    /* ===== Mobile tight layout: no extra white gaps between header and TOC ===== */
     @media (max-width: 600px) {
-      .report-header { padding: 14px 14px; border-radius: 0; }
-      .report-header h1, .report-header h2 { font-size: 16px; }
-      .report-meta { font-size: 12px; opacity: 0.9; }
-      .toc-sticky { top: 6px; padding: 10px 12px; margin-bottom: 16px; }
+      body { padding: 10px; }
+
+      .report-header {
+        border-radius: 12px;
+        padding: 14px 14px;
+        margin-bottom: 8px;  /* tight to TOC */
+      }
+      .report-header h2 {
+        font-size: 16px;
+        margin-bottom: 6px;
+        line-height: 1.25;
+      }
+      .report-meta {
+        font-size: 12px;
+        line-height: 1.35;
+        word-break: break-word;
+      }
+
+      .toc-sticky {
+        top: 0px;            /* avoid big top gap */
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin-bottom: 12px;
+      }
+      .toc-title { margin-bottom: 8px; }
+
+      /* if any elements add extra margins, clamp them */
+      h3 { margin-top: 0; }
     }
 
-  </style>
+</style>
 </head>
 <body>
   <div class="container">
