@@ -295,6 +295,49 @@ body {
 }
 #back-top.show { opacity: 1; pointer-events: auto; }
 
+
+/* --- 横屏布局按钮（仅表格区域显示） --- */
+#landscape-toggle {
+  position: fixed;
+  left: 14px;
+  bottom: 20px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.08);
+  background: rgba(255,255,255,.92);
+  color: var(--text-primary);
+  font-size: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.12);
+  z-index: 210;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  display: none; /* 默认不显示：由 JS 在表格区域控制显示 */
+}
+#landscape-toggle.show { display: inline-flex; align-items: center; gap: 6px; }
+body.force-landscape .main-content { 
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+body.force-landscape .toc-sticky {
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+}
+body.force-landscape .toc-sticky .toc-items { flex-direction: row !important; flex-wrap: nowrap !important; gap: 6px !important; }
+body.force-landscape .toc-sticky .toc-item { flex-shrink: 0 !important; }
+body.force-landscape #section-1,
+body.force-landscape #section-3,
+body.force-landscape #section-5,
+body.force-landscape #section-6 {
+  grid-column: 1 / -1 !important;
+}
+body.force-landscape #section-2,
+body.force-landscape #section-4 {
+  grid-column: 1 / -1 !important; /* 重点表格区占满整行，避免被分栏压窄 */
+}
+
 /* --- Footer --- */
 .report-footer {
   text-align: center;
@@ -1190,6 +1233,10 @@ body {
   Denscente-EC 数智营销 · BI部门 &nbsp;·&nbsp; 行业热点 / 市场动态 · 周报 &nbsp;·&nbsp; 仅供内部参考
 </footer>
 
+
+<!-- ⑥ 横屏布局按钮（仅在数据速查/竞品雷达区域出现） -->
+<div id="landscape-toggle" role="button" aria-label="横屏布局切换">⤢ <span id="landscape-toggle-text">横屏布局</span></div>
+
 <!-- ⑤ 回顶按钮 -->
 <div id="back-top" role="button" aria-label="回到顶部" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
 
@@ -1314,6 +1361,56 @@ body {
       window.scrollTo({ top: top, behavior: 'smooth' });
     });
   });
+
+
+  /* ============================================================
+     横屏布局按钮：仅在“数据速查(#section-2)”或“竞品雷达(#section-4)”进入视口时显示
+     - 不尝试强制系统旋转（各 WebView 不允许）
+     - 通过 body.force-landscape 模拟横屏排版，提升表格可读性
+     ============================================================ */
+  var landscapeBtn = document.getElementById('landscape-toggle');
+  var landscapeText = document.getElementById('landscape-toggle-text');
+
+  function syncLandscapeBtnText() {
+    var on = document.body.classList.contains('force-landscape');
+    landscapeText.textContent = on ? '退出横屏' : '横屏布局';
+  }
+  syncLandscapeBtnText();
+
+  landscapeBtn.addEventListener('click', function () {
+    document.body.classList.toggle('force-landscape');
+    syncLandscapeBtnText();
+    // 切换布局后重新包表格，避免溢出
+    setTimeout(function(){ wrapTables(); }, 50);
+  });
+
+  // 只在指定 section 出现时显示按钮
+  var watchIds = ['#section-2', '#section-4'];
+  var watchEls = watchIds.map(function(sel){ return document.querySelector(sel); }).filter(Boolean);
+
+  function setBtnVisible(visible) {
+    if (visible) landscapeBtn.classList.add('show');
+    else landscapeBtn.classList.remove('show');
+  }
+
+  if (watchEls.length && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      // 任一目标可见就显示
+      var anyVisible = entries.some(function(en){ return en.isIntersecting; });
+      setBtnVisible(anyVisible);
+    }, { root: null, threshold: 0.15 });
+    watchEls.forEach(function(el){ io.observe(el); });
+  } else {
+    // 兜底：滚动位置判断
+    window.addEventListener('scroll', function(){
+      var anyVisible = false;
+      watchEls.forEach(function(el){
+        var r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight * 0.85 && r.bottom > window.innerHeight * 0.15) anyVisible = true;
+      });
+      setBtnVisible(anyVisible);
+    }, { passive: true });
+  }
 
 })();
 </script>
