@@ -258,6 +258,24 @@ body {
 /* 表格超出宽度时横向滚动 */
 .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
+/* ============================================================
+   [新增] 针对特定板块的表格列宽优化
+   ============================================================ */
+
+/* --- 关键数据速查 (#section-2) --- */
+/* 列结构：主体 | 指标域 | 指标明细 | 时间/口径 | 重要性 | 来源 */
+#section-2 table th:nth-child(1), #section-2 table td:nth-child(1) { width: 12%; min-width: 70px; } /* 主体 */
+#section-2 table th:nth-child(2), #section-2 table td:nth-child(2) { width: 15%; min-width: 90px; } /* 指标域 (加宽) */
+#section-2 table th:nth-child(3), #section-2 table td:nth-child(3) { width: auto; }                 /* 明细 (自适应) */
+#section-2 table th:nth-child(4), #section-2 table td:nth-child(4) { width: 10%; min-width: 70px; } /* 时间 (收窄) */
+#section-2 table th:nth-child(5), #section-2 table td:nth-child(5) { width: 60px; text-align: center; } /* 重要性 */
+#section-2 table th:nth-child(6), #section-2 table td:nth-child(6) { width: 70px; }                 /* 来源 */
+
+/* --- 竞品情报雷达 (#section-4) --- */
+/* 假设结构类似，也可以单独微调 */
+#section-4 table th:nth-child(1), #section-4 table td:nth-child(1) { width: 12%; min-width: 70px; }
+#section-4 table th:nth-child(2), #section-4 table td:nth-child(2) { width: 12%; min-width: 70px; }
+
 /* --- 来源标签 --- */
 .source-inline {
   display: inline-block;
