@@ -260,16 +260,41 @@ body {
 #section-4 table th:nth-child(2), #section-4 table td:nth-child(2) { width: 12%; min-width: 70px; }
 
 /* --- 全量文章列表 (#section-6) --- */
-.article-list {
+.article-groups {
   display: grid;
-  grid-template-columns: 1fr; /* 默认移动端单列 */
-  gap: 4px 20px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.article-group {
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.article-group h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: var(--accent);
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 6px;
+}
+
+.article-list {
   padding-left: 20px;
+  margin: 0;
+}
+
+.article-list li {
+  margin-bottom: 4px;
+  line-height: 1.4;
+  font-size: 12px;
 }
 
 @media screen and (min-width: 600px) {
-  .article-list {
-    grid-template-columns: 1fr 1fr; /* PC/平板双列 */
+  .article-groups {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* 自适应多列 */
   }
 }
 
@@ -442,7 +467,7 @@ body.force-landscape #section-4 {
 <li><strong>启示</strong>：高尔夫产业正从“场地依赖型”向“场景泛化型”演进，科技赋能使专业运动突破物理空间限制，开辟增量用户池</li>
 </ul>
 
-<h2>⑦ <strong>彪马2025年净亏损</strong>6.46亿欧元<strong>，安踏百亿入主后转型阵痛加剧</strong></h2>
+<h2>⑦ <strong>彪马2025年净亏损</strong>6.46亿欧元**，安踏百亿入主后转型阵痛加剧**</h2>
 
 <ul>
 <li><strong>证据</strong>：彪马2025年净亏损高达<strong>6.46亿欧元</strong>（约合人民币52.28亿元），销售额同比下降<strong>8.1%至72.96亿欧元</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/FXNUTf3Mis4ceEf3jFkIDg">艾林华尚</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/VtMrPCK0BftuiT4qiUmCZw">中服圈</a>）</span></li>
