@@ -282,53 +282,124 @@ body {
 }
 
 /* ============================================================
-   3. 响应式布局 (PC端优化)
+   3. 响应式布局 (PC端优化 - 宽屏紧凑版)
    ============================================================ */
 @media screen and (min-width: 768px) {
   :root {
-    --page-px: 40px;
-    --card-px: 40px;
+    --page-px: 24px;  /* 减少页面左右留白 */
+    --card-px: 28px;  /* 适中的卡片内边距 */
+    --card-py: 20px;  /* 减少卡片上下内边距 */
   }
   
   body {
-    max-width: 900px; /* 稍微收窄一点，提升阅读体验 */
+    max-width: 1280px; /* 大幅增加最大宽度，适应宽屏 */
     margin: 0 auto;
-    background-color: #f1f5f9; /* PC端背景稍深一点，突出白卡片 */
+    background-color: #f1f5f9;
   }
   
   .report-header {
-    margin-bottom: 32px;
+    margin-bottom: 20px; /* 减少 Header 下方间距 */
+    padding: 24px var(--card-px); /* 减少 Header 内部高度 */
   }
-  .report-header h2 { font-size: 32px; }
+  .report-header h2 { font-size: 28px; margin-bottom: 4px; }
+  
+  .toc-sticky {
+    margin-bottom: 20px;
+    padding: 10px var(--card-px); /* 紧凑导航栏 */
+  }
+  
+  .section-card {
+    margin-bottom: 20px; /* 减少卡片间距 */
+  }
   
   /* PC端文章列表也保持单列通铺 */
   .article-groups { grid-template-columns: 1fr; }
 }
 
-/* 来源标签 */
-.source-inline {
-  display: inline-block;
-  font-size: 12px;
-  color: var(--text-secondary);
-  background: #f1f5f9;
-  border-radius: 4px;
-  padding: 2px 8px;
-  margin-left: 6px;
-  border: 1px solid var(--border);
+/* 超大屏幕优化 */
+@media screen and (min-width: 1440px) {
+  body { max-width: 1400px; }
+}
+
+/* ============================================================
+   4. 移动端深度适配 (Mobile First)
+   ============================================================ */
+@media screen and (max-width: 480px) {
+  :root {
+    --page-px: 8px; /* 极致边距 */
+    --card-px: 14px;
+    --card-py: 16px;
+    --radius: 8px;
+    --font-base: 14px;
+  }
+  
+  .report-header {
+    padding: 20px 16px;
+    margin-bottom: 16px;
+    text-align: left;
+  }
+  .report-header h2 { font-size: 22px; }
+  
+  /* 导航栏变身为横向滑动条 */
+  .toc-sticky {
+    padding: 8px 12px;
+    margin: 0 -8px 16px -8px; /* 抵消 body padding */
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    width: calc(100% + 16px);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+  }
+  .toc-title { display: none; /* 移动端隐藏标题，省空间 */ }
+  .toc-items {
+    flex-wrap: nowrap; /* 不换行 */
+    gap: 8px;
+    padding-right: 16px;
+  }
+  .toc-item a {
+    white-space: nowrap;
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+  
+  /* 表格优化 */
+  .table-wrapper {
+    margin: 12px -14px; /* 让表格撑满卡片宽度 */
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .section-card table { font-size: 12px; }
+  .section-card td, .section-card th { padding: 8px 10px; }
+  
+  /* 强制横屏模式 (由JS触发) */
+  body.force-landscape {
+    width: 100vh;
+    height: 100vw;
+    transform: rotate(90deg);
+    transform-origin: 50% 50%;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
 }
 
 /* 交互按钮 */
-#back-top {
+#back-top, #landscape-toggle {
   position: fixed;
-  bottom: 40px;
-  right: 40px;
   background: #ffffff;
   color: var(--accent);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   border: 1px solid var(--border);
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -339,12 +410,22 @@ body {
   pointer-events: none;
   transform: translateY(20px);
 }
-#back-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-#back-top:hover { 
-  background: var(--accent); 
-  color: #fff;
-  transform: translateY(-4px); 
+#back-top { bottom: 30px; right: 20px; }
+#landscape-toggle { 
+  bottom: 30px; 
+  left: 20px; 
+  opacity: 1; /* 常驻显示 */
+  pointer-events: auto;
+  transform: translateY(0);
+  display: none; /* 默认PC隐藏，移动端通过JS控制显示? 不，CSS控制 */
 }
+
+@media screen and (max-width: 480px) {
+  #landscape-toggle { display: flex; }
+}
+
+#back-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
 
 .report-footer {
   text-align: center;
@@ -384,68 +465,68 @@ body {
   
         <div class="section-card" id="section-1">
             <h3 class="section-title">🧭 行业动态</h3>
-            <h2>① <strong>[核心结论]</strong> <strong>亚太市场成On昂跑全球增长核心引擎，贡献17%全球营收</strong></h2>
+            <h2>① <strong>[核心结论]</strong> <strong>On昂跑亚太市场进入爆发临界点</strong></h2>
 
 <ul>
-<li><strong>证据</strong>：On昂跑2025年亚太地区净销售额达<strong>5.111亿瑞士法郎</strong>，同比增长<strong>96.4%</strong>；该区域贡献<strong>17%的全球营收</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/B9h7kjVJwaw8lBHJxYf2GA">中服圈</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/-6x9lIkaPqgOe196J_c-vQ">华丽志</a>）</span></li>
-<li><strong>机制</strong>：<strong>DTC渠道加速渗透</strong>（DTC销售额同比+33.7%）与<strong>自有门店扩张至近70家</strong>共同驱动，叠加中国消费者对高性能跑步/训练装备需求爆发</li>
-<li><strong>启示</strong>：高端运动品牌全球化路径正从“欧美先行”转向“亚太反哺”，区域市场已具备独立支撑全球业绩的能力</li>
+<li><strong>证据</strong>：2025年亚太区净销售额达<strong>5.111亿瑞士法郎</strong>，<strong>同比增长96.4%</strong>；贡献全球营收<strong>17%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/B9h7kjVJwaw8lBHJxYf2GA">中服圈</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/-6x9lIkaPqgOe196J_c-vQ">华丽志</a>）</span></li>
+<li><strong>机制</strong>：DTC渠道增速（<strong>+33.7%</strong>）显著高于整体（<strong>+30.0%</strong>），叠加自有门店扩至<strong>近70家</strong>，形成“高毛利直营+本地化场景”双轮驱动；中国作为核心引擎，已落地超<strong>80家门店</strong>，目标2026年底达<strong>100家</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/B9h7kjVJwaw8lBHJxYf2GA">中服圈</a>）</span></li>
+<li><strong>启示</strong>：高端运动品牌在亚太的规模化路径正从“单点突破”转向“全域基建”，门店密度与DTC占比成为关键竞争门槛。</li>
 </ul>
 
-<h2>② <strong>[核心结论]</strong> <strong>FILA借米兰冬奥+时装周双轨叙事，完成从专业运动到高级运动时装的战略跃迁</strong></h2>
+<h2>② <strong>[核心结论]</strong> <strong>FILA完成从专业运动到高级运动时装的战略跃迁</strong></h2>
 
 <ul>
-<li><strong>证据</strong>：FILA为<strong>6国12支代表队</strong>提供装备，斩获<strong>29枚金牌</strong>；同步回归<strong>米兰时装周官方日程</strong>，薄底鞋系列登陆<strong>10 Corso Como</strong>买手店<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/H9VnJxE3CF2Poy35YOukzw">华丽志</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/7KEoWrjvC8Clvc0IMtQbRw">懒熊体育</a>）</span></li>
-<li><strong>机制</strong>：<strong>赛事背书强化专业信任</strong>（如与中国自由式滑雪空中技巧队合作12年）与<strong>时尚场景构建文化溢价</strong>形成闭环，突破传统运动品牌价值天花板</li>
-<li><strong>启示</strong>：高端运动品牌竞争已进入“专业性能×时尚话语权”双维战场，单一维度优势难以构筑长期壁垒</li>
+<li><strong>证据</strong>：米兰时装周官方日程发布MILANO系列；同步登陆殿堂级买手店10 Corso Como；赞助6国12支代表队斩获<strong>69枚奖牌（含29枚金牌）</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/H9VnJxE3CF2Poy35YOukzw">华丽志</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/7KEoWrjvC8Clvc0IMtQbRw">懒熊体育</a>）</span></li>
+<li><strong>机制</strong>：以<strong>奥运级专业背书</strong>为底层信用，嫁接<strong>时装周美学表达</strong>与<strong>买手渠道高端分发</strong>，实现“赛场—秀场—零售”三重价值闭环；薄底鞋系列同步上新，验证产品线向轻量化、时尚化延伸<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qOh0BBfXcRBzuio5z5pADA">艾林华尚</a>）</span></li>
+<li><strong>启示</strong>：高端运动品牌的价值升维不再依赖单一性能参数，而是通过“专业权威×文化叙事×渠道势能”的三角锚定高端心智。</li>
 </ul>
 
-<h2>③ <strong>[核心结论]</strong> <strong>羊毛科技成为户外服饰新分水岭，美丽诺羊毛产品成交额同比激增119%</strong></h2>
+<h2>③ <strong>[核心结论]</strong> <strong>美丽诺羊毛正成为高端户外服饰的核心技术分水岭</strong></h2>
 
 <ul>
-<li><strong>证据</strong>：2025年7月天猫与WOOLMARK数据显示，美丽诺（Merino）羊毛产品成交额<strong>同比增长119%</strong>；Outopia以Vita Shell冲锋衣实现<strong>20000mm防水+15000g/m²/24h透湿</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
-<li><strong>机制</strong>：<strong>天然材质功能升级</strong>（超轻量化、高透湿性）与<strong>消费认知迁移</strong>（从“保暖”到“全天候舒适解决方案”）共振，推动品类溢价能力跃升</li>
-<li><strong>启示</strong>：面料技术迭代正从“参数竞赛”转向“场景化体验交付”，羊毛等天然材质在高端户外赛道重获定义权</li>
+<li><strong>证据</strong>：2025年7月天猫与WOOLMARK数据显示，美丽诺（Merino）羊毛产品成交额<strong>同比增长119%</strong>；Outopia以该材质为基底推出Vita Shell冲锋衣，实现<strong>20000mm防水+15000g/m²/24h透湿+15000次耐磨</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
+<li><strong>机制</strong>：消费者对“功能即体验”的认知深化，羊毛天然调温、抑菌、低敏特性，契合高净值人群对“无感科技”的追求；Outopia等新锐品牌以<strong>材料科学为原点</strong>重构产品定义，倒逼传统巨头加速技术迭代<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
+<li><strong>启示</strong>：面料技术话语权正从B端供应链向C端消费语言迁移，具备材料研发与认证能力的品牌将主导高端定价权。</li>
 </ul>
 
-<h2>④ <strong>[核心结论]</strong> <strong>安踏系资本动作密集，已形成覆盖专业运动全光谱的产业矩阵</strong></h2>
+<h2>④ <strong>[核心结论]</strong> <strong>安踏系资本整合进入深水区，多品牌协同效应待验证</strong></h2>
 
 <ul>
-<li><strong>证据</strong>：2009年收购FILA中国；2019年联合收购亚玛芬体育；2025年收购狼爪；2026年1月收购彪马<strong>29.06%股权</strong>，成其最大单一股东<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/F7fyz1ITJXsXIy-lUm071g">哥德巴赫的思考</a>）</span></li>
-<li><strong>机制</strong>：<strong>并购逻辑从渠道补强（FILA）升级为技术整合（亚玛芬旗下始祖鸟/萨洛蒙）与市场对冲（彪马欧洲基本盘+狼爪德国基因）</strong></li>
-<li><strong>启示</strong>：中国运动集团已超越单一品牌运营，进入以资本为杠杆、以技术为内核的全球产业生态构建阶段</li>
+<li><strong>证据</strong>：2025年5月收购狼爪；2026年1月以<strong>15亿欧元</strong>收购彪马<strong>29.06%股权</strong>；同时彪马大中华区2025年销售额<strong>下滑19.1%至4.884亿欧元</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/F7fyz1ITJXsXIy-lUm071g">哥德巴赫的思考</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></li>
+<li><strong>机制</strong>：收购节奏密集（狼爪→彪马→亚玛芬体育），但被投品牌存在显著业绩分化：彪马承压，而On昂跑亚太增长<strong>96.4%</strong>；Frasers集团同日以<strong>近6%持股</strong>成为彪马第二大股东，暗示治理结构复杂性<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/WDCXIHrKxRQsIUi7Cjwa7Q">华丽志</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/nhHnDPMbC6FxH6xZvoZKAQ">艾林华尚</a>）</span></li>
+<li><strong>启示</strong>：资本并购规模不等于协同效率，多品牌矩阵需在供应链、渠道、用户数据层面建立实质性整合，否则易陷入“并而不合”的资源内耗。</li>
 </ul>
 
-<h2>⑤ <strong>[核心结论]</strong> <strong>彪马大中华区战略重置致业绩承压，库存周转压力凸显</strong></h2>
+<h2>⑤ <strong>[核心结论]</strong> <strong>高端运动消费加速分层，女性细分市场成新蓝海</strong></h2>
 
 <ul>
-<li><strong>证据</strong>：彪马2025年大中华区销售额<strong>同比下降19.1%至4.884亿欧元</strong>，毛利<strong>下降24.9%</strong>；全球库存达<strong>20.6亿欧元</strong>，同比+10.7%<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></li>
-<li><strong>机制</strong>：主动<strong>清理渠道过剩库存</strong>导致短期营收下滑，但同步暴露供应链响应滞后与终端动销模型失灵问题</li>
-<li><strong>启示</strong>：国际品牌在华面临“增长惯性”与“模式重构”的深层矛盾，库存健康度已成为检验本地化运营能力的核心标尺</li>
+<li><strong>证据</strong>：GARMONT为女款徒步鞋推出树篱绿、玛瑙灰等<strong>低饱和自然色调</strong>；Salomon与RIER第三次联名XA JUNGLE RIER等鞋款，专攻女性越野场景<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fMXFBI8nd5Wq6CXKktrOsw">步外</a>）</span></li>
+<li><strong>机制</strong>：女性户外参与率提升驱动需求升级，从“基础功能满足”转向“审美表达+场景适配”；联名、配色、版型等非技术维度成为差异化抓手，反映消费决策中情感价值权重上升<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fMXFBI8nd5Wq6CXKktrOsw">步外</a>）</span></li>
+<li><strong>启示</strong>：性别不是细分标签，而是独立的产品哲学体系，需重构从研发、设计到传播的全链路逻辑。</li>
 </ul>
 
-<h2>⑥ <strong>[核心结论]</strong> <strong>高端运动消费加速分层，Miu Miu零售额飙升34.8% vs Prada品牌微降1%</strong></h2>
+<h2>⑥ <strong>[核心结论]</strong> <strong>奢侈品集团加速“运动化”渗透，Versace、Miu Miu成关键支点</strong></h2>
 
 <ul>
-<li><strong>证据</strong>：Prada集团2025年Miu Miu零售销售额<strong>同比增长34.8%至15.95亿欧元</strong>，Prada品牌零售销售额<strong>微降1.0%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Y9TNTwPS3BSrt46jdik_kQ">华丽志</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/jLQQeIIx8NsQDMpoTY10aQ">艾林华尚</a>）</span></li>
-<li><strong>机制</strong>：<strong>年轻客群对“轻奢化运动美学”需求爆发</strong>，Miu Miu将运动剪裁融入日常穿搭的定位精准切中Z世代消费心理</li>
-<li><strong>启示</strong>：高端运动消费不再仅由专业性能驱动，而呈现“硬核专业”与“软性时尚”并行的双轨分层趋势</li>
+<li><strong>证据</strong>：Prada集团2025年Miu Miu零售额<strong>增长34.8%至15.95亿欧元</strong>；Versace贡献净营收<strong>6510万欧元</strong>，门店达<strong>220家</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Y9TNTwPS3BSrt46jdik_kQ">华丽志</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/jLQQeIIx8NsQDMpoTY10aQ">艾林华尚</a>）</span></li>
+<li><strong>机制</strong>：运动基因被奢侈品集团视为破圈利器——Miu Miu以年轻化、街头感承接运动休闲风潮；Versace借力亚玛芬体育渠道网络，快速铺开运动支线；二者共同稀释传统奢侈品的“距离感”<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Y9TNTwPS3BSrt46jdik_kQ">华丽志</a>）</span></li>
+<li><strong>启示</strong>：运动品类正从“子业务”升级为奢侈品集团的“战略接口”，其价值在于连接增量人群与新兴场景。</li>
 </ul>
 
-<h2>⑦ <strong>[核心结论]</strong> <strong>女性户外装备进入精细化表达阶段，低饱和自然色调成新设计语言</strong></h2>
+<h2>⑦ <strong>[核心结论]</strong> <strong>库存周转压力成为行业共性风险，比音勒芬存货天数达近360天</strong></h2>
 
 <ul>
-<li><strong>证据</strong>：GARMONT女款徒步鞋推出<strong>树篱绿、玛瑙灰</strong>等低饱和自然色调；Salomon XA JUNGLE RIER联名款通过<strong>小红书、得物APP</strong>首发<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fMXFBI8nd5Wq6CXKktrOsw">步外</a>）</span></li>
-<li><strong>机制</strong>：<strong>女性用户决策链路更依赖社交平台种草</strong>（小红书/得物），色彩作为视觉符号成为建立身份认同的关键触点</li>
-<li><strong>启示</strong>：户外品牌需从“功能适配”升级为“审美共情”，渠道选择与产品设计必须同步响应女性用户的内容消费习惯</li>
+<li><strong>证据</strong>：比音勒芬2025年三季度末存货账面价值<strong>11.3亿元</strong>，存货周转天数拉长至<strong>近360天</strong>；彪马库存<strong>20.6亿欧元，同比增加10.7%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/UTZcr0pwggCo8oft3W9Xhg">艾林华尚</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></li>
+<li><strong>机制</strong>：消费理性化与渠道去库存周期延长双重作用，导致库存消化速度放缓；比音勒芬存货天数逼近一年，已触及健康运营红线；彪马主动“战略重置”清理渠道库存，印证行业性调整<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/UTZcr0pwggCo8oft3W9Xhg">艾林华尚</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></li>
+<li><strong>启示</strong>：库存健康度正取代GMV增速，成为衡量品牌经营质量的核心指标，柔性供应链与精准需求预测能力成护城河。</li>
 </ul>
 
-<h2>⑧ <strong>[核心结论]</strong> <strong>日本户外品牌加速入华，nanamica上海首店成继纽约后第二家海外门店</strong></h2>
+<h2>⑧ <strong>[核心结论]</strong> <strong>中国品牌出海呈现“双轨并行”，nanamica首店落沪与Outopia六城拓店同步发生</strong></h2>
 
 <ul>
-<li><strong>证据</strong>：nanamica将于<strong>3月7日</strong>在上海武康路开设中国首家门店，为继纽约后的<strong>第二家海外门店</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Gr2RkDZGpqnOnWhQldIUUQ">中服圈</a>）</span></li>
-<li><strong>机制</strong>：<strong>中国高端消费市场对“日系精致户外”接受度提升</strong>，上海作为文化高地成为国际品牌试水中国市场的首选落点</li>
-<li><strong>启示</strong>：细分风格流派（如日系、北欧、美式）正成为高端户外市场差异化破局点，渠道卡位优先级高于规模扩张</li>
+<li><strong>证据</strong>：日本nanamica于<strong>3月7日</strong>在上海武康路开中国首店；Outopia于<strong>2025年6月起</strong>在北京、上海等六城陆续开出城市首店及快闪店<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Gr2RkDZGpqnOnWhQldIUUQ">中服圈</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
+<li><strong>机制</strong>：国际品牌以“旗舰店+买手渠道”切入中国高端市场，强调文化适配与场景沉浸；中国新锐品牌则以“快闪+城市首店”模式试水线下，依托本土供应链与数字营销快速迭代；二者均避开传统百货，聚焦高净值人群生活半径<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Gr2RkDZGpqnOnWhQldIUUQ">中服圈</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
+<li><strong>启示</strong>：全球化不再是单向输出，而是基于本地洞察的双向价值交换，渠道选择折射出对目标客群生活方式的理解深度。</li>
 </ul>
 
 <hr />
@@ -478,7 +559,7 @@ body {
 <tr>
   <td style="text-align:left;"><strong>On昂跑</strong></td>
   <td style="text-align:left;">增长结构</td>
-  <td style="text-align:left;">亚太地区净销售额同比增速：<strong>96.4%</strong>；DTC渠道销售额同比增速：<strong>33.7%</strong></td>
+  <td style="text-align:left;">亚太区净销售额同比增速：<strong>96.4%</strong>；DTC渠道销售额同比增速：<strong>33.7%</strong></td>
   <td style="text-align:left;">2025年</td>
   <td style="text-align:center;">高</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/B9h7kjVJwaw8lBHJxYf2GA">中服圈</a>）</span></td>
@@ -494,26 +575,10 @@ body {
 <tr>
   <td style="text-align:left;"><strong>阿迪达斯</strong></td>
   <td style="text-align:left;">增长结构</td>
-  <td style="text-align:left;">大中华区营收同比增速：<strong>13%</strong>（连续十一个季度增长）；跑步业务收入同比增速：<strong>超30%</strong></td>
+  <td style="text-align:left;">大中华区营收同比增速：<strong>13%</strong>，连续十一个季度增长；跑步业务收入同比增速：<strong>超30%</strong></td>
   <td style="text-align:left;">2025年</td>
   <td style="text-align:center;">高</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/-kQCV_dwvwwiOzxPjxZuhw">中服圈</a>）</span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>彪马</strong></td>
-  <td style="text-align:left;">规模结果</td>
-  <td style="text-align:left;">全年销售额：<strong>72.96亿欧元</strong>；大中华区销售额：<strong>4.884亿欧元</strong></td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>彪马</strong></td>
-  <td style="text-align:left;">库存供应</td>
-  <td style="text-align:left;">全球库存：<strong>20.6亿欧元</strong>；库存同比增速：<strong>10.7%</strong></td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>FILA</strong></td>
@@ -524,68 +589,84 @@ body {
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/F7fyz1ITJXsXIy-lUm071g">哥德巴赫的思考</a>）</span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>Prada集团</strong></td>
-  <td style="text-align:left;">规模结果</td>
-  <td style="text-align:left;">集团净营收：<strong>57.175亿欧元</strong>；Miu Miu零售销售额：<strong>15.95亿欧元</strong></td>
-  <td style="text-align:left;">2025年</td>
+  <td style="text-align:left;"><strong>FILA</strong></td>
+  <td style="text-align:left;">赛事合作</td>
+  <td style="text-align:left;">米兰-科尔蒂纳冬奥会合作代表队：<strong>12支</strong>；总奖牌数：<strong>69枚</strong>（含<strong>29枚金牌</strong>）</td>
+  <td style="text-align:left;">米兰冬奥会</td>
   <td style="text-align:center;">高</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/Y9TNTwPS3BSrt46jdik_kQ">华丽志</a>）</span></td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/H9VnJxE3CF2Poy35YOukzw">华丽志</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>Outopia</strong></td>
   <td style="text-align:left;">产品与科技</td>
-  <td style="text-align:left;">Vita Shell冲锋衣防水性：<strong>≥20000mm</strong>；透湿性：<strong>≥15000g/m²/24h</strong></td>
+  <td style="text-align:left;">Vita Shell冲锋衣防水性：<strong>≥20000mm</strong>；透湿性：<strong>≥15000g/m²/24h</strong>；耐磨性：<strong>15000次循环</strong></td>
   <td style="text-align:left;">2025年秋冬款</td>
   <td style="text-align:center;">高</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>美丽诺羊毛</strong></td>
-  <td style="text-align:left;">增长结构</td>
-  <td style="text-align:left;">天猫与WOOLMARK数据显示成交额同比增速：<strong>119%</strong></td>
+  <td style="text-align:left;">市场表现</td>
+  <td style="text-align:left;">天猫与WOOLMARK成交额同比增速：<strong>119%</strong></td>
   <td style="text-align:left;">2024年7月—2025年7月</td>
   <td style="text-align:center;">高</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>逸仙电商</strong></td>
-  <td style="text-align:left;">规模结果</td>
-  <td style="text-align:left;">全年总净营收：<strong>43亿元人民币</strong>；护肤品牌营收：<strong>22.8亿元人民币</strong></td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/2bs65i8yK1CPrFio0Q65bw">华丽志</a>）</span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>唯品会</strong></td>
-  <td style="text-align:left;">规模结果</td>
-  <td style="text-align:left;">全年净营收：<strong>1059亿元人民币</strong>；Non-GAAP净利润：<strong>87亿元人民币</strong></td>
-  <td style="text-align:left;">2025年</td>
-  <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/U-Z1WAVpeWb4Z60sJWqNOA">中服圈</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>比音勒芬</strong></td>
   <td style="text-align:left;">库存供应</td>
   <td style="text-align:left;">存货账面价值：<strong>11.3亿元人民币</strong>；存货周转天数：<strong>近360天</strong></td>
   <td style="text-align:left;">2025年三季度末</td>
-  <td style="text-align:center;">中</td>
+  <td style="text-align:center;">高</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/UTZcr0pwggCo8oft3W9Xhg">艾林华尚</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>彪马</strong></td>
+  <td style="text-align:left;">库存供应</td>
+  <td style="text-align:left;">全球库存：<strong>20.6亿欧元</strong>，同比增加<strong>10.7%</strong>；大中华区销售额：<strong>4.884亿欧元</strong>，同比下降<strong>19.1%</strong></td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>安踏</strong></td>
+  <td style="text-align:left;">组织策略</td>
+  <td style="text-align:left;">收购彪马股权金额：<strong>15亿欧元</strong>（约123亿元人民币），获<strong>29.06%股权</strong></td>
+  <td style="text-align:left;">2026年1月</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/F7fyz1ITJXsXIy-lUm071g">哥德巴赫的思考</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>nanamica</strong></td>
   <td style="text-align:left;">组织策略</td>
-  <td style="text-align:left;">中国首家门店开业日期：<strong>3月7日</strong>；选址：<strong>上海武康路374号</strong></td>
+  <td style="text-align:left;">中国首家门店开业日期：<strong>3月7日</strong>；地点：<strong>上海武康路374号</strong></td>
   <td style="text-align:left;">2026年3月</td>
   <td style="text-align:center;">中</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/Gr2RkDZGpqnOnWhQldIUUQ">中服圈</a>）</span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>adidas Originals</strong></td>
-  <td style="text-align:left;">营销动作</td>
-  <td style="text-align:left;">全系代言人：<strong>王鹤棣</strong>；官宣日期：<strong>3月1日</strong>；同步上架“王鹤棣同款”单品</td>
-  <td style="text-align:left;">2026年3月</td>
+  <td style="text-align:left;"><strong>Urban Outfitters</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">2025年全年销售额：<strong>61.7亿美元</strong>，同比增长<strong>11.1%</strong></td>
+  <td style="text-align:left;">2025年</td>
   <td style="text-align:center;">中</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/cs2Zdv4LDnobS0jCFUnUUg">中服圈</a>）</span></td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Victoria's Secret</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">2025年第四季度销售额：<strong>23亿美元</strong>，同比增长<strong>8%</strong>；2026年预计销售额：<strong>69-70亿美元</strong></td>
+  <td style="text-align:left;">2025年Q4 / 2026年</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>逸仙电商</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">2025年全年总净营收：<strong>43亿元人民币</strong>，同比增长<strong>26.7%</strong>；护肤品牌营收：<strong>22.8亿元人民币</strong>，同比增长<strong>63.5%</strong></td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/2bs65i8yK1CPrFio0Q65bw">华丽志</a>）</span></td>
 </tr>
 </tbody>
 </table>
@@ -597,75 +678,57 @@ body {
 
         <div class="section-card" id="section-3">
             <h3 class="section-title">🧩 行业深度洞察</h3>
-            <h4>A. <strong>行业与需求</strong>：<strong>高端运动消费分层加速，专业性能与时尚表达形成双轨并行</strong></h4>
+            <h4>A. <strong>行业与需求：高端运动消费分层加速，高净值人群需求从“功能满足”转向“价值认同”</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> On昂跑2025年服装及配饰销售占比达<strong>7.0%</strong>，较上年提升<strong>190个基点</strong>；服装业务销售额同比+<strong>68.2%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/rloCrtmwEjUR6BvXnCYpGg">艾林华尚</a>）</span></li>
-<li><strong>②</strong> Pinterest报告显示，“苏格兰高地美学”搜索量一年内飙升<strong>465%</strong>，超现实自然目的地成内容爆款<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Izjxe5ksZgANaKtdbQ10Uw">步外</a>）</span></li>
-<li><strong>③</strong> 逸仙电商护肤品牌2025年营收占总营收比例达<strong>53.0%</strong>，较上年提升<strong>11.9个百分点</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/2bs65i8yK1CPrFio0Q65bw">华丽志</a>）</span></li>
+<li><strong>①</strong> On昂跑2025年服装及配饰销售占比达<strong>7.0%</strong>，较上年提升<strong>190个基点</strong>；服装业务销售额同比增速<strong>68.2%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/rloCrtmwEjUR6BvXnCYpGg">艾林华尚</a>）</span></li>
+<li><strong>②</strong> Pinterest报告显示，“苏格兰高地美学”搜索量一年内飙升<strong>465%</strong>，超现实户外美学成内容新热点<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Izjxe5ksZgANaKtdbQ10Uw">步外</a>）</span></li>
+<li><strong>③</strong> 65%的高端美妆消费者认为包装应延续产品高端体验，十年前该比例仅<strong>15%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/xs5hvZTXodisqQBqjZpdiw">华丽志</a>）</span></li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>消费动机从单一功能诉求裂变为复合型价值追求</strong>——专业运动员需要极致性能（如On昂跑服装增速68.2%），都市白领需要场景化穿搭（如Miu Miu增速34.8%），Z世代则通过“超现实美学”完成社交身份表达。三者共同推动市场按“硬核专业—轻奢运动—生活化户外”分层。</li>
+<li><strong>Why（驱动机制）</strong>：高净值人群的消费决策正经历“工具理性”向“价值理性”跃迁——运动装备不仅是身体延伸，更是身份符号与生活哲学的载体；“苏格兰高地美学”等趋势本质是用户对<strong>精神归属感</strong>的渴求，而包装、配色、联名等非功能要素，成为传递价值观最高效的媒介。</li>
 <li><strong>Implication（对市场格局的含义）</strong>：
 <ul>
-<li>对品牌：需明确自身在分层中的坐标，避免在专业与时尚间摇摆导致定位模糊；</li>
-<li>对渠道：小红书/得物等内容平台对“轻奢运动”种草效率显著高于传统电商，渠道权重再分配；</li>
-<li>对产品/供应链：“超现实美学”要求设计端前置介入，面料开发需兼顾视觉表现力与功能稳定性。</li>
+<li>对品牌：需构建超越产品说明书的叙事体系，将科技参数转化为可感知的生活主张（如Outopia用“Vita Shell”命名传递生命活力）；</li>
+<li>对渠道：买手店、精品集合店等强调策展能力的渠道价值凸显，其选品逻辑正从“卖得动”转向“讲得好”；</li>
+<li>对产品/供应链：柔性小单快反能力成为标配，以支撑高频次、小批量的美学实验与场景化上新。</li>
 </ul></li>
 </ul>
 
-<h4>B. <strong>竞品与品牌</strong>：<strong>中国运动集团完成全球产业矩阵构建，进入技术整合深水区</strong></h4>
+<h4>D. <strong>产品与科技：美丽诺羊毛与超轻量化技术成高端户外新基准，材料话语权争夺白热化</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> 安踏2026年1月以<strong>15亿欧元</strong>收购彪马<strong>29.06%股权</strong>，成其最大单一股东<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/F7fyz1ITJXsXIy-lUm071g">哥德巴赫的思考</a>）</span></li>
-<li><strong>②</strong> 英国Frasers Group持有彪马<strong>近6%股份</strong>，成实质第二大股东<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></li>
-<li><strong>③</strong> 亚玛芬体育新发行<strong>7.5亿美元</strong>普通股，用于支持全球增长<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/nlCC1hpGBHrLHXpUk0wkHw">华丽志</a>）</span></li>
+<li><strong>①</strong> Outopia Vita Shell冲锋衣自重仅<strong>180~200g</strong>，却实现<strong>20000+防水、15000+透湿、15000次耐磨</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
+<li><strong>②</strong> 天猫与WOOLMARK数据显示，美丽诺羊毛产品成交额同比增速达<strong>119%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
+<li><strong>③</strong> GARMONT女款徒步鞋采用树篱绿、玛瑙灰等<strong>低饱和自然色调</strong>，拓展穿搭表达<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fMXFBI8nd5Wq6CXKktrOsw">步外</a>）</span></li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>并购逻辑已从渠道扩张（FILA）升级为技术资产整合（始祖鸟的山地科技、萨洛蒙的越野系统、彪马的欧洲足球基因）</strong>，目标是构建覆盖滑雪、越野、足球、铁三等全场景的技术专利池与人才网络。</li>
+<li><strong>Why（驱动机制）</strong>：“轻量化”与“自然感”并非孤立技术指标，而是用户对<strong>无感体验</strong>与<strong>生态伦理</strong>的双重回应；美丽诺羊毛因生物可降解、动物福利认证等ESG属性，成为高端市场“可持续奢华”的具象载体；Outopia等品牌以严苛测试数据（如15000次耐磨）将抽象概念转化为可验证标准，重塑行业信任机制。</li>
 <li><strong>Implication（对市场格局的含义）</strong>：
 <ul>
-<li>对品牌：单点技术突破（如某款跑鞋中底）价值下降，跨品类技术复用能力（如始祖鸟GORE-TEX在滑雪与徒步场景的通用性）成新竞争门槛；</li>
-<li>对渠道：亚玛芬旗下多品牌需协同制定中国渠道策略，避免内部资源争夺；</li>
-<li>对产品/供应链：技术整合要求供应链柔性提升，同一面料体系需适配不同运动场景的工艺标准。</li>
+<li>对品牌：材料研发投入正从成本中心转向价值中心，具备自主面料实验室或深度绑定上游纱线厂的品牌将获得定价主导权；</li>
+<li>对渠道：专业导购需掌握材料学知识，向消费者解释“为什么15000g/m²/24h透湿比10000g更关键”；</li>
+<li>对供应链：检测认证服务（如WOOLMARK）重要性提升，第三方背书成为触达高端用户的必经入口。</li>
 </ul></li>
 </ul>
 
-<h4>D. <strong>产品与科技</strong>：<strong>天然材质功能化成为高端户外新分水岭，羊毛科技领跑赛道</strong></h4>
+<h4>B. <strong>竞品与品牌：FILA与On昂跑代表两种高端化路径，前者重文化叙事，后者重技术基建</strong></h4>
 
 <ul>
 <li><strong>Facts（引子）</strong>：
 <ul>
-<li><strong>①</strong> Outopia Vita Shell冲锋衣实现<strong>20000mm防水+15000g/m²/24h透湿</strong>，成衣自重仅<strong>180~200g</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
-<li><strong>②</strong> 天猫与WOOLMARK数据显示，美丽诺羊毛产品成交额同比+<strong>119%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
-<li><strong>③</strong> GARMONT女款徒步鞋采用<strong>树篱绿、玛瑙灰</strong>等低饱和自然色调<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fMXFBI8nd5Wq6CXKktrOsw">步外</a>）</span></li>
+<li><strong>①</strong> FILA回归米兰时装周官方日程，发布MILANO系列，并同步登陆10 Corso Como<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/H9VnJxE3CF2Poy35YOukzw">华丽志</a>）</span></li>
+<li><strong>②</strong> On昂跑亚太区净销售额达<strong>5.111亿瑞士法郎</strong>，占全球营收<strong>17%</strong>；自有零售门店扩展至<strong>近70家</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/B9h7kjVJwaw8lBHJxYf2GA">中服圈</a>）</span></li>
+<li><strong>③</strong> adidas Originals官宣王鹤棣为全系代言人，同步上线“王鹤棣同款”并投放线下潮流地标海报<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/cs2Zdv4LDnobS0jCFUnUUg">中服圈</a>）</span></li>
 </ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>消费者对“可持续”与“舒适性”的双重诉求倒逼天然材质技术升级</strong>——美丽诺羊毛通过超细纤维处理解决刺痒感，Outopia通过纳米涂层赋予羊毛防风防水性能，使天然材质在参数上可对标化纤。</li>
+<li><strong>Why（驱动机制）</strong>：FILA路径以“文化事件”为杠杆，通过时装周、奥运赞助等高势能场景，将品牌资产沉淀为集体记忆；On昂跑路径以“渠道基建”为杠杆，用DTC门店密度与数据闭环，将用户行为转化为产品迭代燃料；adidas Originals则代表大众运动品牌向潮流化突围，依赖明星流量快速抢占心智。</li>
 <li><strong>Implication（对市场格局的含义）</strong>：
 <ul>
-<li>对品牌：面料研发重心从“合成材料极限突破”转向“天然材质功能再造”，需与上游牧场、纺织厂深度绑定；</li>
-<li>对渠道：专业导购需掌握羊毛等级、克重、工艺等知识，内容种草需强化“科技感”叙事而非仅强调“天然”；</li>
-<li>对产品/供应链：羊毛供应链更长（牧场→纺纱→织造→成衣），对品控与交期管理提出更高要求。</li>
-</ul></li>
-</ul>
-
-<h4>F. <strong>供应链与履约</strong>：<strong>库存健康度成国际品牌在华运营能力试金石，战略重置暴露响应滞后</strong></h4>
-
-<ul>
-<li><strong>Facts（引子）</strong>：
-<ul>
-<li><strong>①</strong> 彪马2025年全球库存达<strong>20.6亿欧元</strong>，同比+<strong>10.7%</strong>；大中华区销售额-<strong>19.1%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></li>
-<li><strong>②</strong> 比音勒芬存货周转天数拉长至<strong>近360天</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/UTZcr0pwggCo8oft3W9Xhg">艾林华尚</a>）</span></li>
-<li><strong>③</strong> 三夫户外因上海悉乐业绩承诺未完成，起诉追偿<strong>1.21亿元</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/b_A3zPMxncmEs0T20cQfGA">中服圈</a>）</span></li>
-</ul></li>
-<li><strong>Why（驱动机制）</strong>：<strong>国际品牌本地化团队常受总部“全球统一定价/铺货”指令制约，无法及时响应中国市场需求变化</strong>，导致库存积压；而国内品牌（如比音勒芬）则因过度乐观预判消费趋势，造成结构性库存。</li>
-<li><strong>Implication（对市场格局的含义）</strong>：
-<ul>
-<li>对品牌：库存周转率将取代GMV增速，成为资本市场评估品牌运营质量的核心指标；</li>
-<li>对渠道：抖音/小红书等短周期内容平台倒逼“小单快反”供应链，传统季前订货模式面临重构；</li>
-<li>对产品/供应链：需建立“数据中台”，打通电商销售、社交媒体声量、雪场/球场动销数据，实现需求预测颗粒度细化。</li>
+<li>对品牌：高端化不再有唯一范式，但必须明确自身是“造梦者”还是“筑路者”，资源分配逻辑截然不同；</li>
+<li>对渠道：购物中心需区分“打卡型”（FILA秀场周边）与“目的型”（On昂跑旗舰店）客流，优化空间规划；</li>
+<li>对产品/供应链：FILA需强化设计协同与限量发售能力；On昂跑需持续投入自动化工厂与本地化产能。</li>
 </ul></li>
 </ul>
 
@@ -691,106 +754,106 @@ body {
   <td style="text-align:left;"><strong>Outopia</strong></td>
   <td style="text-align:left;"><strong>开店</strong></td>
   <td style="text-align:left;">2025年6月起在北京、上海、杭州、南京、成都、重庆六城陆续开出城市首店及快闪店</td>
-  <td style="text-align:left;">新锐品牌以高密度一线/新一线城市首店抢占高端户外心智入口</td>
+  <td style="text-align:left;">新锐品牌以“区域集中突破”策略抢占高端运动线下心智，避开与巨头正面渠道竞争</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></td>
 </tr>
 <tr>
+  <td style="text-align:left;"><strong>FILA</strong></td>
+  <td style="text-align:left;"><strong>赛事合作</strong></td>
+  <td style="text-align:left;">为中国自由式滑雪空中技巧队合作十二年，助力中国队揽得<strong>5枚奖牌</strong>创历史最佳</td>
+  <td style="text-align:left;">以长期主义专业背书巩固“中国奥运合作伙伴”心智，强化本土情感联结</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/7KEoWrjvC8Clvc0IMtQbRw">懒熊体育</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>FILA</strong></td>
+  <td style="text-align:left;"><strong>营销</strong></td>
+  <td style="text-align:left;">米兰时装周大秀当天下午，部分秀款及全新薄底鞋系列即登陆米兰殿堂级买手店10 Corso Como</td>
+  <td style="text-align:left;">打通“秀场—买手渠道—消费者”链路，验证高级运动时装的商业可行性</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/qOh0BBfXcRBzuio5z5pADA">艾林华尚</a>）</span></td>
+</tr>
+<tr>
   <td style="text-align:left;"><strong>GARMONT</strong></td>
-  <td style="text-align:left;"><strong>新品</strong></td>
-  <td style="text-align:left;">为女款徒步鞋「9.81 ONYX MID GTX」及「9.81 ONYX GTX」推出树篱绿、玛瑙灰等低饱和自然色调</td>
-  <td style="text-align:left;">女性户外装备设计语言从功能导向转向审美共情，强化社交传播属性</td>
+  <td style="text-align:left;"><strong>产品</strong></td>
+  <td style="text-align:left;">为女款徒步鞋「9.81 ONYX MID GTX」推出树篱绿、玛瑙灰等<strong>低饱和自然色调</strong></td>
+  <td style="text-align:left;">女性细分市场从功能升级转向审美表达，配色成为差异化核心武器</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/fMXFBI8nd5Wq6CXKktrOsw">步外</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>Salomon</strong></td>
   <td style="text-align:left;"><strong>联名</strong></td>
-  <td style="text-align:left;">与RIER第三次合作联名鞋款XA JUNGLE RIER及XA PRO 3D RIER，于3月5日通过小红书、得物APP及官方小程序发售</td>
-  <td style="text-align:left;">小红书/得物成专业户外联名款首发主阵地，渠道选择即用户定位</td>
+  <td style="text-align:left;">与RIER第三次合作联名鞋款XA JUNGLE RIER及XA PRO 3D RIER，于3月5日登陆小红书、得物APP及官方小程序</td>
+  <td style="text-align:left;">联名常态化，聚焦垂直场景（女性越野），借力内容平台与潮流电商精准触达圈层用户</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/fMXFBI8nd5Wq6CXKktrOsw">步外</a>）</span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>FILA</strong></td>
-  <td style="text-align:left;"><strong>代言</strong></td>
-  <td style="text-align:left;">官宣王鹤棣为品牌全系代言人，并在线下潮流地标投放大幅海报、APP切换视觉界面</td>
-  <td style="text-align:left;">运动品牌代言人策略从“专业运动员”向“泛时尚偶像”延伸，扩大圈层影响力</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/cs2Zdv4LDnobS0jCFUnUUg">中服圈</a>）</span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>FILA</strong></td>
-  <td style="text-align:left;"><strong>营销</strong></td>
-  <td style="text-align:left;">回归米兰时装周官方日程，发布MILANO系列，并在10 Corso Como首发薄底鞋系列</td>
-  <td style="text-align:left;">运动品牌秀场化成为标配，米兰时装周成全球高端运动时尚话语权争夺高地</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/H9VnJxE3CF2Poy35YOukzw">华丽志</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>nanamica</strong></td>
   <td style="text-align:left;"><strong>开店</strong></td>
   <td style="text-align:left;">3月7日在上海武康路374号开设中国首家门店，为继纽约后第二家海外门店</td>
-  <td style="text-align:left;">日系精致户外风格正式进入中国市场，上海成国际品牌试水中国首选地</td>
+  <td style="text-align:left;">国际专业户外品牌以“文化地标旗舰店”切入中国市场，强调在地化场景融合</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/Gr2RkDZGpqnOnWhQldIUUQ">中服圈</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>adidas Originals</strong></td>
   <td style="text-align:left;"><strong>代言</strong></td>
-  <td style="text-align:left;">3月1日正式宣布王鹤棣为全系代言人，同步上架多款“王鹤棣同款”单品</td>
-  <td style="text-align:left;">运动子品牌通过明星同款快速转化粉丝经济，缩短种草到成交链路</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/4dWHmvehu2zbHAcvAAs74g">艾林华尚</a>）</span></td>
+  <td style="text-align:left;">3月1日正式宣布王鹤棣为品牌全系代言人，并同步上线“王鹤棣同款”单品</td>
+  <td style="text-align:left;">大众运动品牌借力顶流明星加速潮流化转型，抢占年轻消费群体注意力</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/cs2Zdv4LDnobS0jCFUnUUg">中服圈</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>On昂跑</strong></td>
   <td style="text-align:left;"><strong>开店</strong></td>
-  <td style="text-align:left;">中国最大旗舰店落户深圳，目标2026年底完成全国100家门店布局，目前已在30多个城市布局超80家门店</td>
-  <td style="text-align:left;">高端运动品牌线下渠道建设从“旗舰店标杆”转向“城市网络密度”，强化区域渗透</td>
+  <td style="text-align:left;">中国最大旗舰店落户深圳；目标2026年底全国门店达<strong>100家</strong>，目前已布局超<strong>80家</strong></td>
+  <td style="text-align:left;">以高密度直营网络构建用户触点壁垒，DTC模式成为高端运动品牌规模化核心路径</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/EK0y6htbzXG3aVwsRI6RiQ">华丽志</a>）</span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>劳力士</strong></td>
-  <td style="text-align:left;"><strong>组织策略</strong></td>
-  <td style="text-align:left;">在美国得克萨斯州达拉斯开设全新制表培训中心，课程为期约18个月，培养售后服务与保养技师</td>
-  <td style="text-align:left;">顶级品牌将服务能力建设视为核心资产，通过认证技师网络构筑长期用户粘性</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/NmNH2fDHTdx6Wn_beGth6A">华丽志</a>）</span></td>
-</tr>
-<tr>
-  <td style="text-align:left;"><strong>始祖鸟</strong></td>
-  <td style="text-align:left;"><strong>营销</strong></td>
-  <td style="text-align:left;">2025年9月在喜马拉雅山脉举办烟花秀，引发舆论争议，安踏体育市值蒸发125亿港元</td>
-  <td style="text-align:left;">高端户外品牌文化表达与大众认知存在鸿沟，事件营销需严守专业主义底线</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/E6y-o4WQQzUR9UUbsp9v9w">哥德巴赫的思考</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>彪马</strong></td>
   <td style="text-align:left;"><strong>组织策略</strong></td>
-  <td style="text-align:left;">安踏2026年1月以15亿欧元收购彪马29.06%股权，成其最大单一股东</td>
-  <td style="text-align:left;">中国资本深度介入国际运动巨头治理结构，或将重塑全球运动产业权力格局</td>
+  <td style="text-align:left;">安踏于2026年1月以<strong>15亿欧元</strong>收购其<strong>29.06%股权</strong>，成为最大单一股东</td>
+  <td style="text-align:left;">中国资本深度介入国际运动巨头治理，或将推动彪马在亚太市场战略重置与资源倾斜</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/F7fyz1ITJXsXIy-lUm071g">哥德巴赫的思考</a>）</span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>Victoria's Secret</strong></td>
-  <td style="text-align:left;"><strong>营销</strong></td>
-  <td style="text-align:left;">2025年第四季度销售额同比增长8%至23亿美元，全年营业利润4.03亿美元</td>
-  <td style="text-align:left;">内衣品牌通过运动休闲化转型验证“舒适即性感”逻辑，为运动品牌跨界提供参照</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></td>
+  <td style="text-align:left;"><strong>劳力士</strong></td>
+  <td style="text-align:left;"><strong>组织策略</strong></td>
+  <td style="text-align:left;">于美国得克萨斯州达拉斯开设全新制表培训中心，课程为期<strong>约18个月</strong></td>
+  <td style="text-align:left;">顶级奢侈品牌以人才培养为支点，强化售后服务壁垒，巩固长期用户忠诚度</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/NmNH2fDHTdx6Wn_beGth6A">华丽志</a>）</span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>Urban Outfitters</strong></td>
-  <td style="text-align:left;"><strong>增长</strong></td>
-  <td style="text-align:left;">2025年全年销售额61.7亿美元，同比增长11.1%，创历史新高</td>
-  <td style="text-align:left;">美式青年文化零售商持续增长，印证“运动+生活”融合业态的市场韧性</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></td>
+  <td style="text-align:left;"><strong>始祖鸟</strong></td>
+  <td style="text-align:left;"><strong>舆情事件</strong></td>
+  <td style="text-align:left;">2025年9月在喜马拉雅山脉举办烟花秀，致安踏体育市值蒸发<strong>125亿港元</strong></td>
+  <td style="text-align:left;">高端户外品牌的文化表达与环保责任边界面临公众审视，ESG合规成隐形门槛</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/E6y-o4WQQzUR9UUbsp9v9w">哥德巴赫的思考</a>）</span></td>
 </tr>
 <tr>
   <td style="text-align:left;"><strong>拉夏贝尔</strong></td>
   <td style="text-align:left;"><strong>开店</strong></td>
-  <td style="text-align:left;">2025年新开线下门店超200家，GMV增长近30%，裤子及小西装等品类增长超180%</td>
-  <td style="text-align:left;">本土快时尚品牌借力线上流量反攻线下，以高性价比品类切入运动休闲细分市场</td>
+  <td style="text-align:left;">2025年新开线下门店<strong>超200家</strong>，GMV增长<strong>近30%</strong>，裤子及小西装等品类增长<strong>超180%</strong></td>
+  <td style="text-align:left;">传统女装品牌以“线上引流+线下体验”模式重启扩张，验证运动休闲风对泛时尚品类的渗透力</td>
   <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/61NJ1skvx7HSDrjtY9dlZw">艾林华尚</a>）</span></td>
 </tr>
 <tr>
-  <td style="text-align:left;"><strong>Color Wow</strong></td>
-  <td style="text-align:left;"><strong>并购</strong></td>
-  <td style="text-align:left;">被欧莱雅集团以约10亿美元估值收购，年销售额略高于3亿美元，连续数年实现100%增长</td>
-  <td style="text-align:left;">美妆细分赛道成功验证“专业功效+精准种草”模式，可迁移至运动个护领域</td>
-  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/PDP8Xlsbng1L0bGt2kt0aQ">华丽志</a>）</span></td>
+  <td style="text-align:left;"><strong>X-BIONIC</strong></td>
+  <td style="text-align:left;"><strong>产品</strong></td>
+  <td style="text-align:left;">2025年前三季度营收<strong>2.14亿元</strong>，同比增长<strong>34.62%</strong>，营收占比达<strong>36.58%</strong></td>
+  <td style="text-align:left;">专业功能性科技品牌在三夫户外体系内成为增长引擎，反映硬核科技对细分市场的吸引力</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/3sUsdpk7KaA-AggXFH0HpA">艾林华尚</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Victoria's Secret</strong></td>
+  <td style="text-align:left;"><strong>营销</strong></td>
+  <td style="text-align:left;">2025年第四季度销售额同比增长<strong>8%至23亿美元</strong>，全年营业利润<strong>4.03亿美元</strong></td>
+  <td style="text-align:left;">内衣品牌通过运动休闲化产品线（如运动文胸）成功拓宽客群，证明运动场景对泛时尚品类的拉动力</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Urban Outfitters</strong></td>
+  <td style="text-align:left;"><strong>规模结果</strong></td>
+  <td style="text-align:left;">2025年全年销售额<strong>61.7亿美元</strong>，同比增长<strong>11.1%</strong>，创历史新高</td>
+  <td style="text-align:left;">美国潮流零售商持续受益于Z世代对复古运动风的追捧，印证运动元素在泛时尚领域的普适性</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></td>
 </tr>
 </tbody>
 </table>
@@ -805,25 +868,31 @@ body {
             <p><strong>😫 本周痛点</strong></p>
 
 <ul>
-<li><strong>①</strong> <strong>库存周转压力</strong>导致彪马大中华区毛利下滑24.9%，反映国际品牌本地化响应机制失灵<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></li>
-<li><strong>②</strong> <strong>退换货体验差</strong>成为小红书用户吐槽焦点，多位消费者反馈高端运动品牌售后流程冗长、补发周期超15天<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fMXFBI8nd5Wq6CXKktrOsw">步外</a>）</span></li>
-<li><strong>③</strong> <strong>专业背书弱</strong>被指为新兴国产品牌通病，部分消费者质疑“科技面料”宣传缺乏第三方检测报告支撑<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/rloCrtmwEjUR6BvXnCYpGg">艾林华尚</a>）</span></li>
+<li><strong>①</strong> <strong>库存周转压力</strong>：比音勒芬存货周转天数拉长至<strong>近360天</strong>，反映行业性去库存周期延长与需求疲软<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/UTZcr0pwggCo8oft3W9Xhg">艾林华尚</a>）</span></li>
+<li><strong>②</strong> <strong>专业背书弱化</strong>：Lululemon创始人怒斥董事会致股价<strong>蒸发200亿美元</strong>，暴露专业运动品牌在高速扩张中治理结构与初心的张力<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/79F6d2dYgXB7v8SEkx_-vw">GOIF户外创新</a>）</span></li>
+<li><strong>③</strong> <strong>ESG合规风险</strong>：始祖鸟喜马拉雅烟花秀引发环保争议，致安踏体育市值<strong>蒸发125亿港元</strong>，显示高端户外品牌文化表达与生态保护的平衡难题<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/E6y-o4WQQzUR9UUbsp9v9w">哥德巴赫的思考</a>）</span></li>
+<li><strong>④</strong> <strong>渠道信任危机</strong>：锐步中国业务2025年上半年收入同比下滑<strong>21%</strong>，较2024年全年的19%进一步扩大，渠道信心持续承压<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/9MywHT4glYVtKcSJsUXuFg">艾林华尚</a>）</span></li>
+<li><strong>⑤</strong> <strong>技术转化断层</strong>：On昂跑服装业务增速<strong>68.2%</strong>但占比仅<strong>7.0%</strong>，反映高性能科技向日常穿着场景的转化仍需时间与教育<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/rloCrtmwEjUR6BvXnCYpGg">艾林华尚</a>）</span></li>
 </ul>
 
 <p><strong>😍 本周爽点</strong></p>
 
 <ul>
-<li><strong>①</strong> <strong>专业背书强</strong>成为FILA米兰冬奥装备支持的最大爽点，小红书笔记中“中国队同款”相关话题互动量超50万次<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/7KEoWrjvC8Clvc0IMtQbRw">懒熊体育</a>）</span></li>
-<li><strong>②</strong> <strong>设计语言新</strong>获女性用户高度认可，GARMONT树篱绿徒步鞋在得物APP好评率达98.2%，用户评价“终于有不丑的户外鞋”<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fMXFBI8nd5Wq6CXKktrOsw">步外</a>）</span></li>
-<li><strong>③</strong> <strong>渠道体验优</strong>被多次提及，On昂跑深圳旗舰店提供免费运动损伤筛查服务，用户自发传播“买衣服送专业建议”<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/EK0y6htbzXG3aVwsRI6RiQ">华丽志</a>）</span></li>
+<li><strong>①</strong> <strong>专业背书强</strong>：FILA赞助6国12支代表队斩获<strong>69枚奖牌（含29枚金牌）</strong>，以奥运级成就夯实专业运动领导地位<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/H9VnJxE3CF2Poy35YOukzw">华丽志</a>）</span></li>
+<li><strong>②</strong> <strong>科技体验优</strong>：Outopia Vita Shell冲锋衣实现<strong>20000mm防水+15000g/m²/24h透湿+15000次耐磨</strong>，以严苛数据定义超轻量化新标准<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
+<li><strong>③</strong> <strong>文化共鸣深</strong>：Pinterest“苏格兰高地美学”搜索量飙升<strong>465%</strong>，印证超现实户外美学成功触发用户情感共振<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Izjxe5ksZgANaKtdbQ10Uw">步外</a>）</span></li>
+<li><strong>④</strong> <strong>渠道体验新</strong>：nanamica上海首店选址武康路文化地标，将户外专业性与在地生活美学深度融合<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Gr2RkDZGpqnOnWhQldIUUQ">中服圈</a>）</span></li>
+<li><strong>⑤</strong> <strong>增长确定性高</strong>：On昂跑亚太区销售额<strong>同比增长96.4%</strong>，贡献全球营收<strong>17%</strong>，验证高端运动在区域市场的爆发潜力<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/B9h7kjVJwaw8lBHJxYf2GA">中服圈</a>）</span></li>
 </ul>
 
 <p><strong>⚠️ 本周风险信号</strong></p>
 
 <ul>
-<li><strong>①</strong> <strong>股价波动大</strong>成为Lululemon显著风险，过去五年股价接近腰斩，股东损失约200亿美元<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/79F6d2dYgXB7v8SEkx_-vw">GOIF户外创新</a>）</span></li>
-<li><strong>②</strong> <strong>并购整合难</strong>风险浮现，安踏收购彪马后，Frasers Group迅速建仓近6%股份，或引发公司治理分歧<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/hMiHWefwDjYyvjaWdcrKpA">LADYMAX</a>）</span></li>
-<li><strong>③</strong> <strong>文化表达错位</strong>风险加剧，始祖鸟喜马拉雅烟花秀被批“破坏生态”，高端户外品牌需重新审视文化叙事边界<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/E6y-o4WQQzUR9UUbsp9v9w">哥德巴赫的思考</a>）</span></li>
+<li><strong>①</strong> <strong>库存周转压力</strong>：彪马全球库存达<strong>20.6亿欧元</strong>，同比增加<strong>10.7%</strong>，叠加大中华区销售额下滑<strong>19.1%</strong>，显示渠道库存冗余与需求错配风险加剧<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></li>
+<li><strong>②</strong> <strong>治理结构复杂</strong>：安踏收购彪马29.06%股权后，Frasers集团又以<strong>近6%持股</strong>成为第二大股东，多方博弈或影响战略执行效率<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/WDCXIHrKxRQsIUi7Cjwa7Q">华丽志</a>）</span></li>
+<li><strong>③</strong> <strong>技术替代风险</strong>：美丽诺羊毛成交额增速<strong>119%</strong>，若其他生物基材料（如藻类纤维）实现同等性能突破，现有技术壁垒或被快速瓦解<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/eFfNtyNh804HVnU6wby0fg">华丽志</a>）</span></li>
+<li><strong>④</strong> <strong>政策合规风险</strong>：劳力士在美国得州设立制表学校，强化本地化服务能力，预示全球奢侈品牌或加速响应各国关于“本地就业”与“技术转移”的监管要求<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/NmNH2fDHTdx6Wn_beGth6A">华丽志</a>）</span></li>
+<li><strong>⑤</strong> <strong>品牌定位稀释</strong>：adidas Originals启用王鹤棣代言并推“同款”，虽提升热度，但可能削弱Originals系列原有的街头文化纯粹性<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/cs2Zdv4LDnobS0jCFUnUUg">中服圈</a>）</span></li>
 </ul>
 
 <hr />
@@ -1010,7 +1079,12 @@ body {
   <p style="margin-top:8px; font-size:12px; opacity:0.8;">Internal Use Only</p>
 </footer>
 
-<!-- ⑤ 回顶按钮 -->
+<!-- ⑤ 横屏布局按钮 -->
+<div id="landscape-toggle" role="button" aria-label="横屏布局切换">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+</div>
+
+<!-- ⑥ 回顶按钮 -->
 <div id="back-top" role="button" aria-label="回到顶部" onclick="window.scrollTo({top:0,behavior:'smooth'})">
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
 </div>
@@ -1040,7 +1114,16 @@ body {
     }
   }, { passive: true });
 
-  // 3. 平滑滚动
+  // 3. 横屏切换逻辑
+  var landscapeBtn = document.getElementById('landscape-toggle');
+  landscapeBtn.addEventListener('click', function() {
+    document.body.classList.toggle('force-landscape');
+    if (document.body.classList.contains('force-landscape')) {
+        alert('已切换至横屏模式，请旋转手机查看表格。');
+    }
+  });
+
+  // 4. 平滑滚动
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
       e.preventDefault();
