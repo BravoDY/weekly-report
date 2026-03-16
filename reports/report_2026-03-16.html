@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" id="vp" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>行业热点/市场动态周报</title>
+
+<style>
+/* ============================================================
+   1. CSS 变量 & 全局重置
+   ============================================================ */
+:root {
+  --accent: #1a56db;
+  --accent-light: #e8f0fe;
+  --header-bg: #0f172a;
+  --toc-bg: #1e293b;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --radius: 12px;
+  --shadow: 0 2px 12px rgba(0,0,0,.08);
+  --page-px: 12px;
+  --header-py: 14px;
+  --card-px: 16px;
+  --card-py: 16px;
+  --toc-py: 10px;
+  --font-base: 14px;
+  --font-small: 12px;
+  --font-h3: 16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: var(--font-base); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+               "Microsoft YaHei", sans-serif;
+  background: #f1f5f9;
+  color: var(--text-primary);
+  line-height: 1.65;
+  padding: var(--page-px);
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   2. 横屏适配（核心）
+   ============================================================ */
+@media screen and (orientation: landscape) and (max-height: 600px) {
+  :root {
+    --page-px: 8px;
+    --header-py: 8px;
+    --card-px: 14px;
+    --card-py: 10px;
+    --toc-py: 6px;
+    --font-base: 13px;
+    --font-small: 11px;
+    --font-h3: 15px;
+  }
+
+  body { padding: 6px 10px; }
+
+  .report-header {
+    padding: var(--header-py) var(--card-px) !important;
+    margin-bottom: 6px !important;
+    border-radius: 10px !important;
+  }
+
+  .report-header h2 { font-size: 15px !important; margin-bottom: 4px !important; }
+  .report-meta { font-size: 11px !important; }
+
+  .toc-sticky {
+    top: 0 !important;
+    padding: var(--toc-py) var(--card-px) !important;
+    margin-bottom: 6px !important;
+    border-radius: 10px !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+  }
+  .toc-sticky .toc-items { flex-direction: row !important; flex-wrap: nowrap !important; gap: 6px !important; }
+  .toc-sticky .toc-item { flex-shrink: 0 !important; }
+
+  .section-card {
+    padding: var(--card-py) var(--card-px) !important;
+    margin-bottom: 8px !important;
+    border-radius: 10px !important;
+  }
+  .section-card h3 { font-size: var(--font-h3) !important; }
+
+  .section-card table { font-size: 11px !important; }
+}
+
+@media screen and (orientation: landscape) and (min-height: 601px) {
+  :root {
+    --page-px: 16px;
+    --card-px: 20px;
+  }
+
+  body { padding: 12px 20px; }
+
+  .main-content {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    align-items: start !important;
+  }
+
+  .toc-sticky {
+    grid-column: 1 / -1 !important;
+  }
+
+  #section-1, #section-2 { grid-column: 1 / -1 !important; }
+}
+
+/* ============================================================
+   3. 竖屏 & 通用移动端样式
+   ============================================================ */
+@media screen and (orientation: portrait) {
+  .toc-sticky .toc-items { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+}
+
+/* ============================================================
+   4. 组件样式
+   ============================================================ */
+
+.report-header {
+  background: linear-gradient(135deg, var(--header-bg) 0%, #1e3a5f 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: var(--header-py) var(--card-px);
+  margin-bottom: 8px;
+}
+.report-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.report-meta {
+  font-size: var(--font-small);
+  opacity: .85;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.report-meta .sep { margin: 0 6px; opacity: .5; }
+
+.toc-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--toc-bg);
+  border-radius: var(--radius);
+  padding: var(--toc-py) var(--card-px);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.toc-title {
+  font-size: 11px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 8px;
+}
+.toc-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+}
+.toc-item a {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(255,255,255,.1);
+  color: #e2e8f0;
+  border-radius: 20px;
+  font-size: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .2s, color .2s;
+}
+.toc-item a:hover,
+.toc-item a:active { background: var(--accent); color: #fff; }
+
+.section-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: var(--card-py) var(--card-px);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.section-card h3 {
+  font-size: var(--font-h3);
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--accent-light);
+}
+
+.section-card h4 { font-size: 14px; font-weight: 600; margin: 14px 0 6px; color: var(--accent); }
+.section-card p { margin-bottom: 8px; font-size: var(--font-base); }
+.section-card ul, .section-card ol { padding-left: 18px; margin-bottom: 8px; }
+.section-card li { margin-bottom: 4px; font-size: var(--font-base); }
+.section-card strong { color: #0f172a; }
+.section-card hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+.section-card blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 6px 10px;
+  background: var(--accent-light);
+  border-radius: 0 6px 6px 0;
+  margin: 8px 0;
+  font-size: 13px;
+}
+.section-card em { font-style: italic; color: #0f172a; }
+
+.section-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-small);
+  margin: 8px 0;
+}
+.section-card thead th {
+  background: var(--accent);
+  color: #fff;
+  padding: 6px 8px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.section-card tbody td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  word-break: break-word;
+}
+.section-card tbody tr:nth-child(even) td { background: #f8fafc; }
+
+.table-wrapper { 
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch; 
+  margin: 8px 0;
+}
+
+/* 针对特定板块的表格列宽优化 */
+#section-2 table th:nth-child(1), #section-2 table td:nth-child(1) { width: 12%; min-width: 70px; }
+#section-2 table th:nth-child(2), #section-2 table td:nth-child(2) { width: 15%; min-width: 90px; }
+#section-2 table th:nth-child(3), #section-2 table td:nth-child(3) { width: auto; }
+#section-2 table th:nth-child(4), #section-2 table td:nth-child(4) { width: 10%; min-width: 70px; }
+#section-2 table th:nth-child(5), #section-2 table td:nth-child(5) { width: 60px; text-align: center; }
+#section-2 table th:nth-child(6), #section-2 table td:nth-child(6) { width: 70px; #section-4 table th:nth-child(1), #section-4 table td:nth-child(1) { width: 12%; min-width: 70px; }
+#section-4 table th:nth-child(2), #section-4 table td:nth-child(2) { width: 12%; min-width: 70px; }
+
+/* --- 全量文章列表 (#section-6) --- */
+.article-groups {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.article-group {
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;  /* [新增] 保证分组间有间距 */
+}
+
+.article-group h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 6px;
+  line-height: 1.3;  /* [新增] 防止标题行高异常 */
+}
+
+.article-list {
+  padding-left: 20px;
+  margin: 0;
+  list-style-position: outside;  /* [新增] 明确列表项位置 */
+}
+
+.article-list li {
+  margin-bottom: 4px;
+  line-height: 1.4;
+  font-size: 12px;
+  word-break: break-word;  /* [新增] 长URL不撑破容器 */
+}
+
+.article-list a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.article-list a:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+/* PC端不再强制双列，保持单列通铺 */
+@media screen and (min-width: 600px) {
+  .article-groups {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- 来源标签 --- */.source-inline {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: #f1f5f9;
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 4px;
+}
+.source-inline a { color: var(--accent); text-decoration: none; }
+
+#back-top {
+  position: fixed;
+  right: 16px;
+  bottom: 20px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 18px;
+  line-height: 38px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(26,86,219,.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+  z-index: 200;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#back-top.show { opacity: 1; pointer-events: auto; }
+
+#landscape-toggle {
+  position: fixed;
+  left: 14px;
+  bottom: 20px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.08);
+  background: rgba(255,255,255,.92);
+  color: var(--text-primary);
+  font-size: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.12);
+  z-index: 210;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  display: none;
+}
+#landscape-toggle.show { display: inline-flex; align-items: center; gap: 6px; }
+
+body.force-landscape .main-content {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+body.force-landscape .toc-sticky {
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+}
+body.force-landscape .toc-sticky .toc-items { flex-direction: row !important; flex-wrap: nowrap !important; gap: 6px !important; }
+body.force-landscape .toc-sticky .toc-item { flex-shrink: 0 !important; }
+body.force-landscape #section-1,
+body.force-landscape #section-3,
+body.force-landscape #section-5,
+body.force-landscape #section-6 {
+  grid-column: 1 / -1 !important;
+}
+body.force-landscape #section-2,
+body.force-landscape #section-4 {
+  grid-column: 1 / -1 !important;
+}
+
+.report-footer {
+  text-align: center;
+  font-size: 11px;
+  color: #94a3b8;
+  padding: 12px 0 20px;
+}
+
+@media screen and (min-width: 900px) {
+  body { max-width: 860px; margin: 0 auto; padding: 20px; }
+  .report-header h2 { font-size: 22px; }
+  .section-card h3 { font-size: 18px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ① 报告标题区 -->
+<header class="report-header">
+  <h2>行业热点/市场动态周报</h2>
+  <div class="report-meta">
+    📰 共 102 篇文章 <span class="sep">|</span> 📅 2026-03-16 <span class="sep">|</span> 行业热点 / 市场动态 · 周报
+  </div>
+</header>
+
+<!-- ② 导航目录（sticky） -->
+<nav class="toc-sticky" aria-label="文章目录">
+  <div class="toc-title">📋 本期目录 · 点击跳转</div>
+  <ul class="toc-items">
+    <li class="toc-item"><a href="#section-1">🧭 行业动态</a></li>
+    <li class="toc-item"><a href="#section-2">📈 数据速查</a></li>
+    <li class="toc-item"><a href="#section-3">🧩 深度洞察</a></li>
+    <li class="toc-item"><a href="#section-4">🥊 竞品雷达</a></li>
+    <li class="toc-item"><a href="#section-5">🎯 舆情温度</a></li>
+    <li class="toc-item"><a href="#section-6">📚 文章列表</a></li>
+  </ul>
+</nav>
+
+<!-- ③ 正文 -->
+<main class="main-content">
+  
+        <div class="section-card" id="section-1">
+            <h3 class="section-title">🧭 行业动态</h3>
+            <h2>① <strong>高端运动品牌加速向“专业性能+奢侈基因”双轨融合</strong></h2>
+
+<ul>
+<li><strong>证据</strong>：FILA米兰时装周秀场融合ZEGNA极细羊绒与GORE-TEX功能面料；报喜鸟在伦敦萨维尔街Scabal旗舰店发布大师高定西服，与顶级奢侈面料商达成战略合作<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qOh0BBfXcRBzuio5z5pADA">艾林华尚</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/i54FV1zFme06cp6r6rx-9w">步外</a>）</span></li>
+<li><strong>机制</strong>：头部品牌正通过<strong>顶级供应链绑定</strong>（ZEGNA/Scabal）与<strong>跨场景技术复用</strong>（GORE-TEX从户外迁入时装）重构价值锚点，将“专业认证”转化为“奢侈话语权”</li>
+<li><strong>启示</strong>：运动品牌高端化路径已超越单一功能升级，进入“材料主权+工艺叙事+地理标识”三位一体竞争阶段</li>
+</ul>
+
+<h2>② <strong>精英运动赛道成为高端品牌增长核心引擎</strong></h2>
+
+<ul>
+<li><strong>证据</strong>：FILA新“ONE FILA”战略明确聚焦网球与高尔夫；ACG北京三里屯全球首店、CRAFT上海兴业太古汇中国首店、KOLON SPORT北京华贸体验旗舰店均锚定高净值人群高频参与的菁英运动场景<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qOh0BBfXcRBzuio5z5pADA">艾林华尚</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/XH-44mBpjY5mZbX0_xCe9Q">华丽志</a>）</span></li>
+<li><strong>机制</strong>：网球/高尔夫/滑雪等项目具备<strong>高客单价、长生命周期、强社群黏性</strong>特征，天然适配高端会员体系构建与DTC渠道深耕</li>
+<li><strong>启示</strong>：渠道策略正从“泛流量覆盖”转向“场景化据点卡位”，单店效能（如Kolon太古里旗舰店月效<strong>200万元以上</strong>）成为关键胜负手</li>
+</ul>
+
+<h2>③ <strong>中国高端运动市场呈现“冰火两重天”结构性分化</strong></h2>
+
+<ul>
+<li><strong>证据</strong>：昂跑亚太区（含中国）净销售额<strong>同比增长106.7%</strong>；迪桑特/可隆增速达<strong>45%-50%</strong>；而FILA增速滑落至<strong>低单位数</strong>，PUMA大中华区销售额<strong>同比下降19.1%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/87GhpYVgECicB_cmEtP6Eg">华丽志</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/Zin6qeNbpWuwqkqOv5CsXw">哥德巴赫的思考</a>）</span></li>
+<li><strong>机制</strong>：分化源于<strong>技术代际差</strong>（FILA 4810凌峰科技支撑5.100难度动作 vs 斯凯奇中国Q1销售额<strong>同比下滑15.9%</strong>）与<strong>渠道掌控力</strong>（昂跑中国80家门店目标2026年达100家 vs PUMA批发端收缩致短期阵痛）</li>
+<li><strong>启示</strong>：市场不再以品牌整体为单元竞争，而是以<strong>细分技术赛道</strong>（滑雪服/高尔夫鞋/铁三装备）和<strong>区域渠道网络</strong>（华东/华南直营密度）为基本作战单位</li>
+</ul>
+
+<h2>④ <strong>DTC模式韧性凸显，直营业务成抗周期压舱石</strong></h2>
+
+<ul>
+<li><strong>证据</strong>：PUMA大中华区直营业务<strong>2025年增长10%且连续9个季度增长</strong>；阿迪达斯大中华区营业利润率<strong>22.1%</strong>（高于全球18.8%）；Inditex全球门店总数降至<strong>5,460家</strong>但总营业面积<strong>逆势增长5.3%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></li>
+<li><strong>机制</strong>：DTC渠道通过<strong>数据闭环</strong>（用户行为→产品迭代）、<strong>体验溢价</strong>（旗舰店空间升级）、<strong>库存周转优化</strong>（Inditex线上销售额达<strong>107亿欧元</strong>）构建护城河</li>
+<li><strong>启示</strong>：渠道价值评估标准正从“数量规模”转向“质量密度”，单店面积扩张与线上GMV突破百亿欧元成为DTC成熟度双指标</li>
+</ul>
+
+<h2>⑤ <strong>女性运动消费从“增量市场”跃升为“战略主战场”</strong></h2>
+
+<ul>
+<li><strong>证据</strong>：健身领域女性消费者比例<strong>超六成</strong>，户外运动女性参与者占比<strong>逼近60%</strong>；李宁签约白鹿代言，明确指向跑步/综训/运动生活三大女性高频场景<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/mSBV-N9Jb0Uf8JcEt6aJCg">中服圈</a>）</span></li>
+<li><strong>机制</strong>：女性用户决策链路呈现<strong>强内容驱动</strong>（小红书#女性运动话题笔记量周增23%）、<strong>高品类交叉</strong>（52% lululemon用户同时购买Vuori）、<strong>重体验细节</strong>（Allbirds服饰品类上市两月即占线下销售额<strong>15%</strong>）</li>
+<li><strong>启示</strong>：品牌需放弃“女性专属线”简单思维，转向以<strong>场景化解决方案</strong>（如高尔夫穿搭系统）和<strong>社群化内容基建</strong>（女性KOC训练营）重构产品逻辑</li>
+</ul>
+
+<h2>⑥ <strong>国际巨头在华策略集体转向“精耕深挖”</strong></h2>
+
+<ul>
+<li><strong>证据</strong>：保时捷中国市场交付量<strong>下滑26.3%</strong>但发力高利润跑车；菲拉格慕中国DTC渠道Q4实现<strong>正增长</strong>；HUGO BOSS亚太区销售额<strong>下降5%</strong>仍坚持旗舰店升级<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/H0tHd7DDrXq-_6mVaDrWHw">华丽志</a>）</span></li>
+<li><strong>机制</strong>：在宏观承压背景下，企业选择<strong>收缩广域分销</strong>（保时捷份额从18%→15%）、<strong>强化高净值触点</strong>（菲拉格慕DTC复苏）、<strong>提升单客价值</strong>（HUGO BOSS门店体验升级）</li>
+<li><strong>启示</strong>：外资品牌在华增长范式已完成从“渠道下沉”到“心智上探”的切换，高端化不是选项而是生存必需</li>
+</ul>
+
+<h2>⑦ <strong>赛事IP商业化进入“深度运营”新阶段</strong></h2>
+
+<ul>
+<li><strong>证据</strong>：F1中国大奖赛预计三天观赛人次达<strong>23万</strong>（境外观众占比14%）；沃尔沃中国公开赛总奖金<strong>275万美元</strong>；中超首轮场均观众<strong>28856人</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fuJqmnPkF8aIfHjenRK_dw">懒熊体育</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/TmN0ygPhetIVDMpw-ytlCw">高尔夫大师杂志</a>）</span></li>
+<li><strong>机制</strong>：赛事价值释放从“冠名曝光”转向<strong>本地化体验经济</strong>（F1上海站外省市观众占比74%）、<strong>产业带联动</strong>（沃尔沃公开赛带动长三角高尔夫装备消费）、<strong>小微生态培育</strong>（苏超引入32家小微企业赞助商）</li>
+<li><strong>启示</strong>：运动品牌对赛事的投入评估维度，已从媒体曝光量扩展至“城市流量转化率”与“区域产业协同度”</li>
+</ul>
+
+<h2>⑧ <strong>供应链话语权争夺白热化，材料科技成新壁垒</strong></h2>
+
+<ul>
+<li><strong>证据</strong>：FILA米兰大秀采用ZEGNA极细羊绒与GORE-TEX；昂跑亚太区销售额爆发式增长印证其自研CloudTec缓震技术壁垒；Allbirds服饰品类上市两月即贡献线下销售额<strong>15%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qOh0BBfXcRBzuio5z5pADA">艾林华尚</a><span class="source-sep"> / </span><a href="https://mp.weixin.qq.com/s/87GhpYVgECicB_cmEtP6Eg">华丽志</a>）</span></li>
+<li><strong>机制</strong>：头部品牌通过<strong>垂直整合</strong>（昂跑控制瑞士工厂）、<strong>跨界联盟</strong>（FILA×ZEGNA）、<strong>可持续叙事</strong>（Allbirds生物基材料）构建难以复制的技术护城河</li>
+<li><strong>启示</strong>：运动装备竞争已从终端设计延伸至上游材料科学，拥有<strong>自主材料实验室</strong>或<strong>顶级供应商独家协议</strong>的品牌将获得定价权优势</li>
+</ul>
+
+<hr />
+
+        </div>
+        
+
+        <div class="section-card" id="section-2">
+            <h3 class="section-title">📈 关键数据速查</h3>
+            <table>
+<thead>
+<tr>
+  <th style="text-align:left;">主体</th>
+  <th style="text-align:left;">指标域</th>
+  <th style="text-align:left;">指标明细（尽量量化）</th>
+  <th style="text-align:left;">时间/口径</th>
+  <th style="text-align:center;">重要性</th>
+  <th style="text-align:left;">来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:left;"><strong>FILA</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">中国业务营收：<strong>266亿元人民币</strong></td>
+  <td style="text-align:left;">2024年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/Zin6qeNbpWuwqkqOv5CsXw">哥德巴赫的思考</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>昂跑</strong></td>
+  <td style="text-align:left;">增长结构</td>
+  <td style="text-align:left;">全球净销售额：<strong>30.14亿瑞士法郎</strong>；同比增速：<strong>+35.6%</strong>（固定汇率）</td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/87GhpYVgECicB_cmEtP6Eg">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>昂跑</strong></td>
+  <td style="text-align:left;">增长结构</td>
+  <td style="text-align:left;">亚太区（含中国）净销售额：<strong>5.111亿瑞士法郎</strong>；同比增速：<strong>+106.7%</strong>（固定汇率）</td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/87GhpYVgECicB_cmEtP6Eg">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>KOLON SPORT</strong></td>
+  <td style="text-align:left;">履约体验</td>
+  <td style="text-align:left;">成都太古里旗舰店月均店效：<strong>200万元以上</strong></td>
+  <td style="text-align:left;">2025年上半年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/XH-44mBpjY5mZbX0_xCe9Q">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>PUMA</strong></td>
+  <td style="text-align:left;">增长结构</td>
+  <td style="text-align:left;">大中华区销售额：<strong>4.884亿欧元</strong>；同比增速：<strong>-19.1%</strong></td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>PUMA</strong></td>
+  <td style="text-align:left;">转化链路</td>
+  <td style="text-align:left;">大中华区直营业务增速：<strong>+10%</strong>；连续增长季度数：<strong>9个</strong></td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Inditex</strong></td>
+  <td style="text-align:left;">流量获客</td>
+  <td style="text-align:left;">线上销售额：<strong>107亿欧元</strong>；同比增速：<strong>+4.8%</strong></td>
+  <td style="text-align:left;">2025财年</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/aAy-abW0s_zVagmQoOU4Bw">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Inditex</strong></td>
+  <td style="text-align:left;">库存供应</td>
+  <td style="text-align:left;">全球门店总数：<strong>5,460家</strong>；总营业面积同比增速：<strong>+5.3%</strong></td>
+  <td style="text-align:left;">2025财年末</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/aAy-abW0s_zVagmQoOU4Bw">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>F1</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">年收入：<strong>38.7亿美元</strong>；同比增速：<strong>+14%</strong></td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/gMnwPgAg0OqgbmpamddjXQ">懒熊体育</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>F1</strong></td>
+  <td style="text-align:left;">人群画像</td>
+  <td style="text-align:left;">中国大奖赛预计观赛人次：<strong>23万</strong>；境外观众占比：<strong>14%</strong></td>
+  <td style="text-align:left;">2026年三天</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/fuJqmnPkF8aIfHjenRK_dw">懒熊体育</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>沃尔沃</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">中国公开赛总奖金：<strong>275万美元</strong></td>
+  <td style="text-align:left;">第31届</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/TmN0ygPhetIVDMpw-ytlCw">高尔夫大师杂志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>斯凯奇</strong></td>
+  <td style="text-align:left;">增长结构</td>
+  <td style="text-align:left;">中国Q1销售额同比增速：<strong>-15.9%</strong>；双11天猫排名：<strong>第13名</strong></td>
+  <td style="text-align:left;">2025年一季度</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/IE4N41xqS1NaiEH5IgFnmA">艾林华尚</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Allbirds</strong></td>
+  <td style="text-align:left;">货品上新</td>
+  <td style="text-align:left;">服饰品类线下销售额占比：<strong>15%</strong>（上市两个月内）</td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/voxJIts23kxRs9b0fuEjdg">艾林华尚</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>On昂跑</strong></td>
+  <td style="text-align:left;">组织策略</td>
+  <td style="text-align:left;">中国门店数量：<strong>超80家</strong>；2026年目标：<strong>100家</strong></td>
+  <td style="text-align:left;">当前/2026年</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/uZcy-VP3-jisIQzCjUpnew">中服圈</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>老铺黄金</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">2025年销售业绩（含税）：<strong>310亿至320亿元人民币</strong>；同比增速：<strong>+216%至227%</strong></td>
+  <td style="text-align:left;">2025年</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/B90bYxAyAkkEL6tZo_kPvg">华丽志</a>）</span></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+        </div>
+        
+
+        <div class="section-card" id="section-3">
+            <h3 class="section-title">🧩 行业深度洞察</h3>
+            <h4>A. <strong>行业与需求：高端运动消费加速分层，场景化需求驱动供给重构</strong></h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> 健身领域女性消费者比例<strong>超六成</strong>，户外运动女性参与者占比<strong>逼近60%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/mSBV-N9Jb0Uf8JcEt6aJCg">中服圈</a>）</span></li>
+<li><strong>②</strong> F1中国大奖赛预计三天观赛人次达<strong>23万</strong>，其中外省市观众占比<strong>74%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fuJqmnPkF8aIfHjenRK_dw">懒熊体育</a>）</span></li>
+<li><strong>③</strong> 沃尔沃中国公开赛总奖金<strong>275万美元</strong>，赛事落地上海嘉定颖奕安亭高尔夫俱乐部<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/TmN0ygPhetIVDMpw-ytlCw">高尔夫大师杂志</a>）</span></li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：高净值人群运动需求呈现<strong>三重解构</strong>——时间维度上从“碎片化锻炼”转向“沉浸式体验”（F1观赛耗时3天），空间维度上从“社区周边”转向“跨城专项”（高尔夫赛事吸引长三角客群），价值维度上从“健康达标”转向“身份认同”（奢侈品联名款高尔夫球包成社交货币）</li>
+<li><strong>Implication（对市场格局的含义）</strong>：
+<ul>
+<li>对品牌：需建立“赛事-装备-社群”闭环，如FILA为中国自由式滑雪队提供3.0版战袍并同步上市民用款</li>
+<li>对渠道：单店模型需适配场景深度，Kolon太古里旗舰店月效<strong>200万元</strong>印证高端场景店坪效远超传统百货</li>
+<li>对产品/供应链：装备开发必须前置嵌入赛事规则（如FILA比赛服支持5.100难度动作），倒逼材料科技快速迭代</li>
+</ul></li>
+</ul>
+
+<h4>B. <strong>竞品与品牌：国际巨头战略重心集体东移，本土化运营能力成决胜关键</strong></h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> FILA大中华区CEO江艳推出“ONE FILA”战略，聚焦网球与高尔夫<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qOh0BBfXcRBzuio5z5pADA">艾林华尚</a>）</span></li>
+<li><strong>②</strong> ACG北京三里屯太古里开设全球首店，重塑户外性能赛道<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/XH-44mBpjY5mZbX0_xCe9Q">华丽志</a>）</span></li>
+<li><strong>③</strong> 报喜鸟与比利时Scabal达成战略合作，在伦敦萨维尔街发布大师高定系列<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/i54FV1zFme06cp6r6rx-9w">步外</a>）</span></li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：国际品牌东进已从“市场准入”阶段进入“价值共创”阶段，其核心逻辑是<strong>借力中国消费升级势能</strong>（昂跑亚太区增速<strong>106.7%</strong>）与<strong>反向输出全球标准</strong>（FILA米兰大秀采用ZEGNA羊绒证明中国团队对顶级供应链的整合能力）</li>
+<li><strong>Implication（对市场格局的含义）</strong>：
+<ul>
+<li>对品牌：总部授权本地团队决策权成为标配，阿迪达斯称“本土团队判断远胜德国总部”</li>
+<li>对渠道：旗舰店选址从“地标商圈”升级为“文化符号地”，如Scabal萨维尔街、三里屯太古里、兴业太古汇形成高端运动旗舰店金三角</li>
+<li>对产品/供应链：需建立双轨研发体系，如FILA既开发奥运级比赛服，又推出面向大众的薄底鞋系列（RUNNER锋驰鞋等）</li>
+</ul></li>
+</ul>
+
+<h4>D. <strong>产品与科技：材料科技壁垒加速形成，“功能+奢侈”双认证成新品标配</strong></h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> FILA米兰大秀融合ZEGNA极细羊绒与GORE-TEX功能面料<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qOh0BBfXcRBzuio5z5pADA">艾林华尚</a>）</span></li>
+<li><strong>②</strong> FILA为中国自由式滑雪队提供搭载「4810凌峰科技」的3.0版本比赛服<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/7KEoWrjvC8Clvc0IMtQbRw">懒熊体育</a>）</span></li>
+<li><strong>③</strong> On昂跑深圳万象天地旗舰店占地<strong>802平方米</strong>，为品牌迄今在华最大门店<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/uZcy-VP3-jisIQzCjUpnew">中服圈</a>）</span></li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：技术话语权争夺已从“专利数量”转向“认证体系”，ZEGNA羊绒代表纺织业奢侈认证，GORE-TEX代表户外功能认证，4810凌峰科技则体现中国团队对极端环境参数的工程化能力（支撑零下十几度体感温度）</li>
+<li><strong>Implication（对市场格局的含义）</strong>：
+<ul>
+<li>对品牌：新品发布需同步获取双重背书，如FILA薄底鞋系列既强调米兰时装周首秀，又突出GORE-TEX防水透湿指标</li>
+<li>对渠道：旗舰店需配置技术展示区，昂跑深圳旗舰店通过802㎡空间具象化CloudTec缓震科技</li>
+<li>对供应链：材料供应商地位跃升，ZEGNA从面料商变为战略伙伴，推动运动品牌向上游延伸控制力</li>
+</ul></li>
+</ul>
+
+<h4>F. <strong>供应链与履约：DTC模式验证“质量密度”优于“数量规模”，库存周转成新焦点</strong></h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> Inditex全球门店总数降至<strong>5,460家</strong>但总营业面积<strong>逆势增长5.3%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/aAy-abW0s_zVagmQoOU4Bw">华丽志</a>）</span></li>
+<li><strong>②</strong> PUMA大中华区直营业务连续<strong>9个季度增长</strong>，2025年增速<strong>10%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></li>
+<li><strong>③</strong> 斯凯奇中国Q1销售额<strong>同比下滑15.9%</strong>，双11天猫排名跌至第13名<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/IE4N41xqS1NaiEH5IgFnmA">艾林华尚</a>）</span></li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：DTC模式本质是<strong>以可控库存换用户数据</strong>，Inditex通过关店扩容单店面积提升体验转化率，PUMA直营业务抗周期能力印证其库存周转效率优于批发体系，而斯凯奇排名下滑反映其渠道库存压力未有效化解</li>
+<li><strong>Implication（对市场格局的含义）</strong>：
+<ul>
+<li>对品牌：需重构KPI体系，将“单店坪效”“库存周转天数”置于“开店数量”之前</li>
+<li>对渠道：线下渠道价值重估，旗舰店承担“技术展厅+社群中心+快反基地”三重职能</li>
+<li>对供应链：柔性制造能力成标配，昂跑中国门店从80家扩至100家需匹配区域仓配响应速度</li>
+</ul></li>
+</ul>
+
+<hr />
+
+        </div>
+        
+
+        <div class="section-card" id="section-4">
+            <h3 class="section-title">🥊 竞品情报雷达</h3>
+            <table>
+<thead>
+<tr>
+  <th style="text-align:left;">品牌</th>
+  <th style="text-align:left;">动作类型</th>
+  <th style="text-align:left;">具体动作</th>
+  <th style="text-align:left;">市场格局含义</th>
+  <th style="text-align:left;">来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:left;"><strong>FILA</strong></td>
+  <td style="text-align:left;"><strong>代言</strong></td>
+  <td style="text-align:left;">签约白鹿为品牌代言人，聚焦跑步/综训/运动生活领域</td>
+  <td style="text-align:left;">强化女性市场渗透，补足Lululemon式生活方式叙事短板</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/mSBV-N9Jb0Uf8JcEt6aJCg">中服圈</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>FILA</strong></td>
+  <td style="text-align:left;"><strong>联名</strong></td>
+  <td style="text-align:left;">米兰时装周发布MILANO系列，融合ZEGNA极细羊绒与GORE-TEX面料</td>
+  <td style="text-align:left;">构建“运动+奢侈”双重价值锚点，挑战始祖鸟/北面高端定位</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/qOh0BBfXcRBzuio5z5pADA">艾林华尚</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>FILA</strong></td>
+  <td style="text-align:left;"><strong>新品</strong></td>
+  <td style="text-align:left;">推出薄底鞋系列（RUNNER锋驰鞋/RACER静速鞋/TURBO飞驰鞋），3月2日中国全渠道上市</td>
+  <td style="text-align:left;">以轻量化技术切入大众市场，平衡高端形象与销量基本盘</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/7KEoWrjvC8Clvc0IMtQbRw">懒熊体育</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Nike</strong></td>
+  <td style="text-align:left;"><strong>开店</strong></td>
+  <td style="text-align:left;">ACG品牌在北京三里屯太古里开设全球首店</td>
+  <td style="text-align:left;">正式加码高端户外赛道，以旗舰店为支点重构中国户外市场认知</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/XH-44mBpjY5mZbX0_xCe9Q">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>CRAFT</strong></td>
+  <td style="text-align:left;"><strong>开店</strong></td>
+  <td style="text-align:left;">在上海兴业太古汇开设中国首家概念旗舰店</td>
+  <td style="text-align:left;">北欧专业运动品牌加速中国渠道卡位，填补铁三/越野跑细分空白</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/XH-44mBpjY5mZbX0_xCe9Q">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>KOLON SPORT</strong></td>
+  <td style="text-align:left;"><strong>开店</strong></td>
+  <td style="text-align:left;">在北京华贸购物中心开设品牌体验旗舰店「KOLON ATLAS可隆自然典集」</td>
+  <td style="text-align:left;">以沉浸式自然场景强化专业户外心智，对标北面/始祖鸟体验店模式</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/XH-44mBpjY5mZbX0_xCe9Q">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>报喜鸟</strong></td>
+  <td style="text-align:left;"><strong>联名</strong></td>
+  <td style="text-align:left;">与比利时Scabal达成战略合作，在伦敦萨维尔街发布大师高定西服</td>
+  <td style="text-align:left;">中国男装品牌借力顶级奢侈供应链实现价值跃迁，开辟高端运动正装新赛道</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/i54FV1zFme06cp6r6rx-9w">步外</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>李宁</strong></td>
+  <td style="text-align:left;"><strong>代言</strong></td>
+  <td style="text-align:left;">签约白鹿为品牌代言人，深化女性市场布局</td>
+  <td style="text-align:left;">加速追赶FILA/Lululemon女性战略，以明星效应撬动运动生活品类增长</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/mSBV-N9Jb0Uf8JcEt6aJCg">中服圈</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>昂跑</strong></td>
+  <td style="text-align:left;"><strong>开店</strong></td>
+  <td style="text-align:left;">深圳万象天地旗舰店开业，占地<strong>802平方米</strong>（品牌在华最大）</td>
+  <td style="text-align:left;">以旗舰空间承载技术叙事，强化CloudTec科技可视化体验</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/uZcy-VP3-jisIQzCjUpnew">中服圈</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Allbirds</strong></td>
+  <td style="text-align:left;"><strong>新品</strong></td>
+  <td style="text-align:left;">服饰品类上市两个月即贡献线下门店销售额<strong>15%</strong></td>
+  <td style="text-align:left;">验证可持续材料在服装品类的商业可行性，拓展从鞋履到全品类路径</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/voxJIts23kxRs9b0fuEjdg">艾林华尚</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>维密</strong></td>
+  <td style="text-align:left;"><strong>规模结果</strong></td>
+  <td style="text-align:left;">全年预计销售额<strong>68.5亿至69.5亿美元</strong>，超68亿美元预期</td>
+  <td style="text-align:left;">内衣市场复苏信号，为运动内衣赛道提供信心支撑</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/I-nsAURtRwhWxsoJmpXKsg">中服圈</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Prada</strong></td>
+  <td style="text-align:left;"><strong>并购</strong></td>
+  <td style="text-align:left;">完成对Versace收购，后者全球拥有<strong>220家专卖店</strong></td>
+  <td style="text-align:left;">奢侈集团加速整合，为运动品牌并购提供资本与渠道范本</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/OzyL6M3hS_0xPWNKUMyiag">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>安踏集团</strong></td>
+  <td style="text-align:left;"><strong>并购</strong></td>
+  <td style="text-align:left;">出资<strong>15亿欧元</strong>收购PUMA SE <strong>29.06%股权</strong></td>
+  <td style="text-align:left;">中国资本主导全球运动品牌格局重构，推动技术与渠道双向赋能</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/WDCXIHrKxRQsIUi7Cjwa7Q">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Frasers</strong></td>
+  <td style="text-align:left;"><strong>资本</strong></td>
+  <td style="text-align:left;">收购Puma近<strong>6%股份</strong>，成为第二大股东</td>
+  <td style="text-align:left;">国际资本对中国运动市场长期价值认可，加剧股东结构多元化</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/WDCXIHrKxRQsIUi7Cjwa7Q">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>高德美</strong></td>
+  <td style="text-align:left;"><strong>资本</strong></td>
+  <td style="text-align:left;">旗下丝塔芙被欧莱雅收购，估值<strong>10亿美元</strong></td>
+  <td style="text-align:left;">跨行业资本流动加速，皮肤科学与运动健康形成技术协同可能</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/PDP8Xlsbng1L0bGt2kt0aQ">华丽志</a>）</span></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+        </div>
+        
+
+        <div class="section-card" id="section-5">
+            <h3 class="section-title">🎯 本周舆情温度</h3>
+            <p><strong>😫 本周痛点</strong></p>
+
+<ul>
+<li><strong>①</strong> <strong>FILA增速滑落至低单位数</strong>，与迪桑特/可隆<strong>45%-50%</strong>增速形成鲜明对比，反映技术迭代滞后风险<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Zin6qeNbpWuwqkqOv5CsXw">哥德巴赫的思考</a>）</span></li>
+<li><strong>②</strong> <strong>斯凯奇中国Q1销售额同比下滑15.9%</strong>，双11天猫排名跌至第13名，渠道库存压力持续显现<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/IE4N41xqS1NaiEH5IgFnmA">艾林华尚</a>）</span></li>
+<li><strong>③</strong> <strong>PUMA大中华区销售额同比下降19.1%</strong>，批发端收缩导致短期业绩承压<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">华丽志</a>）</span></li>
+<li><strong>④</strong> <strong>保时捷中国市场交付量下滑26.3%</strong>，高端消费信心不足影响运动豪华品类渗透<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/H0tHd7DDrXq-_6mVaDrWHw">华丽志</a>）</span></li>
+<li><strong>⑤</strong> <strong>日播时尚2024年归母净利润巨亏1.59亿元</strong>，传统女装品牌转型运动赛道面临盈利模式挑战<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/LzIcWiQmpdH38M62LwOR5g">艾林华尚</a>）</span></li>
+</ul>
+
+<p><strong>😍 本周爽点</strong></p>
+
+<ul>
+<li><strong>①</strong> <strong>昂跑亚太区净销售额同比增长106.7%</strong>，印证其CloudTec技术在中国市场的强大穿透力<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/87GhpYVgECicB_cmEtP6Eg">华丽志</a>）</span></li>
+<li><strong>②</strong> <strong>FILA为中国自由式滑雪队提供3.0版比赛服</strong>，支撑运动员完成5.100难度动作，专业背书强<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/7KEoWrjvC8Clvc0IMtQbRw">懒熊体育</a>）</span></li>
+<li><strong>③</strong> <strong>KOLON SPORT成都太古里旗舰店月均店效200万元以上</strong>，高端场景店模型验证成功<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/XH-44mBpjY5mZbX0_xCe9Q">华丽志</a>）</span></li>
+<li><strong>④</strong> <strong>Allbirds服饰品类上市两月即占线下销售额15%</strong>，可持续材料在服装品类商业化路径跑通<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/voxJIts23kxRs9b0fuEjdg">艾林华尚</a>）</span></li>
+<li><strong>⑤</strong> <strong>F1中国大奖赛预计观赛人次23万</strong>，境外观众占比14%，国际顶级赛事本土化运营成效显著<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fuJqmnPkF8aIfHjenRK_dw">懒熊体育</a>）</span></li>
+</ul>
+
+<p><strong>⚠️ 本周风险信号</strong></p>
+
+<ul>
+<li><strong>①</strong> <strong>Nike预计2026财年Q3计入3亿美元税前支出</strong>，主要与Converse员工遣散相关，暗示品牌矩阵收缩风险<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/v9pwkG-PIIO4J3xx9iUjZA">艾林华尚</a>）</span></li>
+<li><strong>②</strong> <strong>Missoni 2024年营收下滑4%至1.2亿欧元</strong>，奢侈针织品类增长乏力，影响运动品牌跨界合作意愿<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/XuI5gGZpANU5Od3VBr8poQ">艾林华尚</a>）</span></li>
+<li><strong>③</strong> <strong>HUGO BOSS亚太区销售额下降5%</strong>，高端服饰市场承压传导至运动时尚赛道<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/XEFJr_2uJ2vrLMuxNEqSRA">华丽志</a>）</span></li>
+<li><strong>④</strong> <strong>Victoria Beckham美妆板块虽盈利，但时装板块EBITDA利润率仅接近10%</strong>，轻奢品牌盈利稳定性存疑<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/YYrHSAKgFKRqSBRqaUJfUA">华丽志</a>）</span></li>
+<li><strong>⑤</strong> <strong>Quince 2025年营收破10亿美元</strong>，但其39美元羊绒衫模式冲击传统奢侈供应链，引发价格体系动荡风险<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/eAMvJd2pzZvEbKQH5trY7g">艾林华尚</a>）</span></li>
+</ul>
+
+<hr />
+
+        </div>
+        
+
+        <div class="section-card" id="section-6">
+            <h3 class="section-title">📚 全量文章列表</h3>
+            <h4>【华丽志】(35)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/WDCXIHrKxRQsIUi7Cjwa7Q">英国时尚零售集团 Frasers 成为 Puma 第二大股东，持股近6%</a></li>
+<li><a href="https://mp.weixin.qq.com/s/qWyv5tuIDbyN8N2r-UhbKg">PUMA 管理层谈中国市场表现，展望安踏战略入股后的业绩走向</a></li>
+<li><a href="https://mp.weixin.qq.com/s/87GhpYVgECicB_cmEtP6Eg">On昂跑联合创始人：炫耀性消费正让位于对健康和活力的投资</a></li>
+<li><a href="https://mp.weixin.qq.com/s/XxzcwZ52q2AeyIA04BtEHQ">阿迪达斯CEO谈中国市场：本土团队的判断远胜于德国总部！</a></li>
+<li><a href="https://mp.weixin.qq.com/s/XH-44mBpjY5mZbX0_xCe9Q">哪些运动户外品牌入选最新 TOP3？（2026年1月-2月）｜华丽智库</a></li>
+<li><a href="https://mp.weixin.qq.com/s/PDP8Xlsbng1L0bGt2kt0aQ">获欧莱雅和黑石集团巨额投资，美发界这两位女企业家如何赢在细分赛道？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/gjVoK0_jmt6evRDI1AjZkQ">米兰时装周精彩回顾：古驰、芬迪、普拉达、BV、阿玛尼、FILA、Marni、HUI</a></li>
+<li><a href="https://mp.weixin.qq.com/s/Y9TNTwPS3BSrt46jdik_kQ">Prada集团2025年净营收增长9.1%，Miu Miu零售额增长34.8%</a></li>
+<li><a href="https://mp.weixin.qq.com/s/au1ZBPsAzYtktwUhpkIurA">意大利奢侈针织品牌 Missoni 的创始家族退出，股权全面易手</a></li>
+<li><a href="https://mp.weixin.qq.com/s/muMPrshzkP-dAIYbJPfjdQ">人事动向｜BALMAIN 任命亚太区总经理；Starboard 任命亚洲区总经理；GIA执行副总裁离职</a></li>
+<li><a href="https://mp.weixin.qq.com/s/Xgpqn2ZzgXcV-ORgXl0doA">人事动向｜Lemaire CEO离职；Dr. Martens 首席产品官离职 ...</a></li>
+<li><a href="https://mp.weixin.qq.com/s/NmNH2fDHTdx6Wn_beGth6A">劳力士在美国得州开设一所全新制表学校</a></li>
+<li><a href="https://mp.weixin.qq.com/s/zIsSTOfyKFpCVyOFsuEsEA">人事任命｜迪奥香水美妆/ LVMH美妆部门副CEO；嘉佩乐酒店新总裁</a></li>
+<li><a href="https://mp.weixin.qq.com/s/OzyL6M3hS_0xPWNKUMyiag">普拉达集团管理层披露：Versace将重启高级定制，彻底清理副线</a></li>
+<li><a href="https://mp.weixin.qq.com/s/BfgrbHKTSreDTfCLE1LcIA">钟表与奇迹展基金会CEO：一切迹象表明，2026年日内瓦展会的参与度将创历史新高</a></li>
+<li><a href="https://mp.weixin.qq.com/s/MKg4nY5zuhROBhkiAjhx5g">丝塔芙的母公司、高德美集团年销售额破50亿美元大关，中国市场表现突出</a></li>
+<li><a href="https://mp.weixin.qq.com/s/EQ7PEVxkU7OiXsmMNxMtnQ">顺应“轻奢化”趋势，Michael Kors 和 Jimmy Choo 如何调整品牌策略？Capri集团CEO最新分享</a></li>
+<li><a href="https://mp.weixin.qq.com/s/B90bYxAyAkkEL6tZo_kPvg">老铺黄金发布盈利预告：2025年销售额和净利润均增长两倍以上</a></li>
+<li><a href="https://mp.weixin.qq.com/s/XEFJr_2uJ2vrLMuxNEqSRA">HUGO BOSS 发布2025年财报：全球营收增长2%，中国为首的亚太区降5%</a></li>
+<li><a href="https://mp.weixin.qq.com/s/CStAdfXvExvVOelL7Ul5BQ">估值101亿美元，美国的“厂牌”创业公司 Quince 完成5亿美元E轮融资</a></li>
+<li><a href="https://mp.weixin.qq.com/s/HRYYoiXnzlFEx0ahb3pCAQ">Karl Lagerfeld 生前的巴黎工作室被改造为豪华公寓，提供短租服务</a></li>
+<li><a href="https://mp.weixin.qq.com/s/tinzoXvyMrXS0290IdaxCQ">华丽现场｜担纲 F1 官方计时，TAG Heuer 泰格豪雅于上海举办「毫秒之竞」高级制表展</a></li>
+<li><a href="https://mp.weixin.qq.com/s/mVCZ3hkWd3z6epn0EaIv6g">Zara的母公司、西班牙Inditex集团2025财年销售额增长7%至399亿欧元</a></li>
+<li><a href="https://mp.weixin.qq.com/s/jcxKaSvZV0kOn8XT4qDFFA">一夜套现63亿美元！丝塔芙的母公司、高德美的三大基金股东累计实现超四倍投资回报</a></li>
+<li><a href="https://mp.weixin.qq.com/s/W-AxGexjY8Q-cwHxZaskCA">奢侈品人事动向｜泰格豪雅任命新CEO；ETRO创意总监离职；JIMMY CHOO、The RealReal 高管任命</a></li>
+<li><a href="https://mp.weixin.qq.com/s/9pu3LmQ6_6TIIkZK8AZ8pg">菲拉格慕集团2025年总营收降3.8%，中国市场DTC渠道四季度恢复增长</a></li>
+<li><a href="https://mp.weixin.qq.com/s/LFC7cnOQJQ1j--lZXLpMdQ">以奇异香水和珠宝著称的法国“怪才” Christian Astuguevieille去世，享年79岁</a></li>
+<li><a href="https://mp.weixin.qq.com/s/Dzi2uhVfs-vGesWARsrUHA">汇聚“顶配”投资者，华人女性创办的 AI 时尚创业公司能否高开高走？｜华丽志投资研究</a></li>
+<li><a href="https://mp.weixin.qq.com/s/HuuTsSTzyUgDJU2e-YTZTQ">Tiffany &amp; Co.蒂芙尼宣布娜塔莉·波特曼出任全球品牌代言人</a></li>
+<li><a href="https://mp.weixin.qq.com/s/GJyxr6OSoPv09wcrei9HQA">中国男装品牌报喜鸟在伦敦发布高端定制系列，与比利时奢侈面料商及手工定制品牌 Scabal 达成战略合作</a></li>
+<li><a href="https://mp.weixin.qq.com/s/H0tHd7DDrXq-_6mVaDrWHw">保时捷2025年中国销量下滑26%，新任CEO着手发力高利润跑车</a></li>
+<li><a href="https://mp.weixin.qq.com/s/-2J3wWzguCZusbFYT3SCPQ">从香奈儿、普拉达到范思哲，比利时设计力量占据奢侈品牌创意高地</a></li>
+<li><a href="https://mp.weixin.qq.com/s/EJARqmxpWD7FZQ5fv_Q6CA">法国羽绒服品牌 JOTT 出售案决出4家最终竞购方，内部高管团队组成的财团在列</a></li>
+<li><a href="https://mp.weixin.qq.com/s/gZ0-qHAmJ0EFIwMaqJVb6w">普拉达旗下意大利百年糕点品牌 Marchesi 1824 开启国际化扩张</a></li>
+<li><a href="https://mp.weixin.qq.com/s/YYrHSAKgFKRqSBRqaUJfUA">Victoria Beckham 时装与美妆两大板块均实现盈利</a></li>
+</ol>
+
+<h4>【中服圈】(14)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/RVwbSaOWWht0YN8RH1tT3Q">安踏收购彪马的“搅局者”，英国巨头成第二大股东</a></li>
+<li><a href="https://mp.weixin.qq.com/s/uZcy-VP3-jisIQzCjUpnew">On昂跑中国最大旗舰店落地深圳</a></li>
+<li><a href="https://mp.weixin.qq.com/s/mSBV-N9Jb0Uf8JcEt6aJCg">李宁官宣白鹿代言，加速布局女性市场</a></li>
+<li><a href="https://mp.weixin.qq.com/s/b8b53B_vJGQKOmdPQosyeg">匹克与欧洲奥委会签署6年合作</a></li>
+<li><a href="https://mp.weixin.qq.com/s/bKSLiIz2Rp7g-6JwD7CRtw">举报事件后，华伦天奴更换大中华区CEO</a></li>
+<li><a href="https://mp.weixin.qq.com/s/m0LBp5uNf0noEXsuUv1Vbw">《大码女装风格化消费报告》</a></li>
+<li><a href="https://mp.weixin.qq.com/s/-FyFIBtdwEI1Pco5ze_gpA">MUJI无印良品淮海755“世界旗舰店”将在月底关闭</a></li>
+<li><a href="https://mp.weixin.qq.com/s/Jtt7xlQUYCKEIgv32A3rfw">《2025年度中国实体商业客流桔皮书》</a></li>
+<li><a href="https://mp.weixin.qq.com/s/01JiVQO_ds3KgionE_3Aig">老牌女装品牌正式更名，是真转型还是“假卖壳”</a></li>
+<li><a href="https://mp.weixin.qq.com/s/Cr8p83ZyLPr16ml8VO0Z5w">LV羽绒服穿3小时掉色，门店回复：不能出汗</a></li>
+<li><a href="https://mp.weixin.qq.com/s/I-nsAURtRwhWxsoJmpXKsg">《2026全球女士内衣市场洞察白皮书》</a></li>
+<li><a href="https://mp.weixin.qq.com/s/KjEozAt-vCMsxp5dJBzB_A">Zara母公司2025财年销售额增至3152亿元，三年门店减少约6%</a></li>
+<li><a href="https://mp.weixin.qq.com/s/VR6k1Vvlb5JU1oVeqrE-0g">维密关闭中国首家最大旗舰店</a></li>
+<li><a href="https://mp.weixin.qq.com/s/vI4-L4htcnKVJAHbBAfkIg">《十五五规划全文》完整版</a></li>
+</ol>
+
+<h4>【艾林华尚】(12)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/qOh0BBfXcRBzuio5z5pADA">FILA的米兰“野心”：不只是秀，是一场关于“运动致美”的重新创业</a></li>
+<li><a href="https://mp.weixin.qq.com/s/v9pwkG-PIIO4J3xx9iUjZA">重组费用背后的“退出”暗示：Nike终于要对Converse动刀了？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/voxJIts23kxRs9b0fuEjdg">百丽操盘、董洁代言，Allbirds豪赌“第二曲线”</a></li>
+<li><a href="https://mp.weixin.qq.com/s/IE4N41xqS1NaiEH5IgFnmA">从“舒适标杆”到“爆款合集”，斯凯奇越来越像百丽？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/7zJ8x2AxVJXjgcO5Iw4eOQ">深度｜Mango冲刺40亿欧元，失去创始人的第一年怎么做？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/XuI5gGZpANU5Od3VBr8poQ">针织帝国落幕，Missoni 家族全面退出</a></li>
+<li><a href="https://mp.weixin.qq.com/s/xOYcmspqGCJDjUagbbpOOQ">优衣库2026新品预览：没有“花架子”的时尚，能在理性时代讲出新故事吗？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/YKTUZYIcA9hcaYudkNCn1g">维密“翻身”，内衣市场长达四年的文胸寒冬结束了？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/LzIcWiQmpdH38M62LwOR5g">日播时尚更名“璞源材料”，一代女装品牌的资本终局是“卖壳”？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/eAMvJd2pzZvEbKQH5trY7g">“厂牌”凶猛：Quince五年估值破百亿美元，靠39美元的羊绒衫“撬开”奢侈大牌的裂缝</a></li>
+<li><a href="https://mp.weixin.qq.com/s/aAy-abW0s_zVagmQoOU4Bw">深度 | 年销399亿欧元的稳健增长，Zara母公司在焦虑什么？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/okn1PE9PahVmpzNwsuhgLg">一件千元内衣，能否撑起爱慕的“时装梦”？</a></li>
+</ol>
+
+<h4>【高尔夫大师杂志】(8)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/OTwoXvzDxkn4fWmiiS8eyg">张维维单独第二！李美香夺冠LPGA蓝湾大师赛，刘宇婕获最佳业余</a></li>
+<li><a href="https://mp.weixin.qq.com/s/TmN0ygPhetIVDMpw-ytlCw">在中国，看世界：沃尔沃中国公开赛新十年的第一杆</a></li>
+<li><a href="https://mp.weixin.qq.com/s/tDcm-5kU9GTTqXvwW9CSOQ">“一马当先”从果岭开始！Golf Pride推出全新ZERO TAPER推杆握把</a></li>
+<li><a href="https://mp.weixin.qq.com/s/xbX0ke-NQ02urCpcHDW4QQ">迈凯伦进军高尔夫！首批产品4月上市</a></li>
+<li><a href="https://mp.weixin.qq.com/s/j_6Z9RrICQxsfnnzDj4mxA">独家专访金河珍：1%的可能性</a></li>
+<li><a href="https://mp.weixin.qq.com/s/jZbMPdQ5C3D8ILC4xp2Cwg">果岭热线｜静下来的清晨</a></li>
+<li><a href="https://mp.weixin.qq.com/s/DIxT7wXUKXF7egLQ9jltLw">球员锦标赛首轮5人领跑，JT火热！李昊桐74窦泽成76</a></li>
+<li><a href="https://mp.weixin.qq.com/s/5Lu3cOXQOkvUiJs7ECqYqQ">潘仲光｜建立女子亚巡赛为什么那么难？</a></li>
+</ol>
+
+<h4>【小鸟体育】(8)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/vkJA7-xcPjduZvOEV5Me7g">中国奖金榜：张维维收入创纪录，一战保卡！</a></li>
+<li><a href="https://mp.weixin.qq.com/s/PaZnTPHH10Gf4xBkGj5mog">李昊桐窦泽成球员锦标赛同组！</a></li>
+<li><a href="https://mp.weixin.qq.com/s/zoTiffg7ZFVHbNnlVsA9_Q">Golf Pride推出全新ZERO TAPER推杆握把</a></li>
+<li><a href="https://mp.weixin.qq.com/s/_aVQF76rhYpQVLwr4qWwDQ">蓝湾冠军：一位长期主义者的胜利</a></li>
+<li><a href="https://mp.weixin.qq.com/s/5_ngTRCezD0RZ96VdTHmeQ">李宁1990女子签约球员张维维斩获LPGA蓝湾大师赛单独亚军</a></li>
+<li><a href="https://mp.weixin.qq.com/s/QLHCVQ-aJRz8bUmpYD2YvA">2000万元人民币！第五届高尔夫尊中国公开赛3月1日开赛</a></li>
+<li><a href="https://mp.weixin.qq.com/s/YZ7tAR1rH2932ydxv_0nwQ">中国赛程：第5大满贯李窦同组，4美女战日韩</a></li>
+<li><a href="https://mp.weixin.qq.com/s/73_QxRxE4jpzSFigmGZT5A">两周攒两分！刘宇婕向LPGA迈出第一步？</a></li>
+</ol>
+
+<h4>【LADYMAX】(8)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/XlbHHk3C2VKSPkOeex2jWg">深度 | 留给Saint Laurent的时间不多了</a></li>
+<li><a href="https://mp.weixin.qq.com/s/tSoL4WzalZvwOp0qy9NnmQ">奢侈品寒冬里，设计师品牌Victoria Beckham却逆势赚钱</a></li>
+<li><a href="https://mp.weixin.qq.com/s/ioPKm4Gl8ZqFjalXUCjZvg">深度 | Chanel的新增长故事</a></li>
+<li><a href="https://mp.weixin.qq.com/s/6Ybv_KOz2G5X291rCiufPw">Chanel 中国前高管加入Balmain任亚太区总经理</a></li>
+<li><a href="https://mp.weixin.qq.com/s/dgvBVsWOxtlImYvhSuwHzQ">深度 | LV如何强化时装竞争力？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/7loLORaoy1KQn_sqlRfekw">维密关闭中国首家最大旗舰店</a></li>
+<li><a href="https://mp.weixin.qq.com/s/T2gASTpFvofAIVUDH2CGvw">去年太古旗下内地全部商场销售额获得增长</a></li>
+<li><a href="https://mp.weixin.qq.com/s/scZggyqT8OXcd10cgnIL5g">突发 | 雅诗兰黛起诉祖玛珑创始人与Zara</a></li>
+</ol>
+
+<h4>【懒熊体育】(7)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/7KEoWrjvC8Clvc0IMtQbRw">米兰冬奥有一场限定加时赛，哪个运动品牌胜出？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/wnjb9Tw074-CXjDvPUcsow">体育教培行业走到2026，我的9点生存建议｜观点有效</a></li>
+<li><a href="https://mp.weixin.qq.com/s/eY9KSKA5mrqCCauN005JEQ">中超也该考虑引入小微企业赞助商了｜观点有效</a></li>
+<li><a href="https://mp.weixin.qq.com/s/o1Xq3hyvz9rIa_SKbxETPg">2026两会闭幕：体育相关6大话题、建议及提案全梳理</a></li>
+<li><a href="https://mp.weixin.qq.com/s/TQK5ES5pKZeW3q3q0Yb7yg">三夫户外张恒：我们会走一条很不同的路｜十周年·10个人</a></li>
+<li><a href="https://mp.weixin.qq.com/s/fuJqmnPkF8aIfHjenRK_dw">F1上海站观察：精进再精进｜前线</a></li>
+<li><a href="https://mp.weixin.qq.com/s/gMnwPgAg0OqgbmpamddjXQ">年入38.7亿美元五连涨，F1如何成为超级广告牌｜DEAL</a></li>
+</ol>
+
+<h4>【步外】(3)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/mQ9hovzUDi7JfZmPqQtARA">UL 装备更新季：东京轻量化名店最近上架了这些狠货</a></li>
+<li><a href="https://mp.weixin.qq.com/s/nTTjTGXlh_FI__AKDdbrCw">The North Face、始祖鸟、松野湃携最新春夏户外力作来袭｜本周 PICK UP</a></li>
+<li><a href="https://mp.weixin.qq.com/s/i54FV1zFme06cp6r6rx-9w">BEAMS 迎来 50 周年，BEAMS PLUS 的 26 春夏有什么值得入手？</a></li>
+</ol>
+
+<h4>【哥德巴赫的思考】(3)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/XaY3QadUrycsqwkM2OrlhQ">lululemon之后，Vuori向左，Alo向右</a></li>
+<li><a href="https://mp.weixin.qq.com/s/Zin6qeNbpWuwqkqOv5CsXw">安踏最成功的收购，现在却开始掉队？FILA怎么了</a></li>
+<li><a href="https://mp.weixin.qq.com/s/3VLeIssFbYXjUDqnOjS5Sw">品牌的“双资产”：技术值钱还是故事值钱？</a></li>
+</ol>
+
+<h4>【ISPO】(3)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/oZ1VXn6I4Du8iSaMC_sgmw">ECONOVA Supply Chain Award招募启动！</a></li>
+<li><a href="https://mp.weixin.qq.com/s/DN1vmN74e1QLjrmI462jGw">虎嗅「2026 Q1 向上向新｜户外趋势榜」现已开启申报！</a></li>
+<li><a href="https://mp.weixin.qq.com/s/3a_cAoJRf6f_lZr96tzCQw">物见其用，在户外遇见自己——《户外百物志：三十年中国户外产品精选》新书分享会｜PAGEONE北辰荟</a></li>
+</ol>
+
+<h4>【GOIF户外创新】(1)</h4>
+
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/NzRe1RDjikXDPq5Kof40nw">CLE2026国际户外生活展同期活动全解锁！直击现场精彩！</a></li>
+</ol>
+
+        </div>
+        
+</main>
+
+<!-- ④ Footer -->
+<footer class="report-footer">
+  Denscente-EC 数智营销 · BI部门 &nbsp;·&nbsp; 行业热点 / 市场动态 · 周报 &nbsp;·&nbsp; 仅供内部参考
+</footer>
+
+<!-- ⑤ 横屏布局按钮 -->
+<div id="landscape-toggle" role="button" aria-label="横屏布局切换">⤢ <span id="landscape-toggle-text">横屏布局</span></div>
+
+<!-- ⑥ 回顶按钮 -->
+<div id="back-top" role="button" aria-label="回到顶部" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var vp = document.getElementById('vp');
+
+  function applyOrientation() {
+    var isLandscape = window.innerWidth > window.innerHeight;
+    var isSmallScreen = Math.min(window.innerWidth, window.innerHeight) < 480;
+
+    if (isLandscape && isSmallScreen) {
+      vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    } else if (isLandscape) {
+      vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes');
+    } else {
+      vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }
+
+    wrapTables();
+  }
+
+  function wrapTables() {
+    var tables = document.querySelectorAll('.section-card table');
+    tables.forEach(function (t) {
+      if (t.parentNode && t.parentNode.className !== 'table-wrapper') {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper';
+        t.parentNode.insertBefore(wrapper, t);
+        wrapper.appendChild(t);
+      }
+    });
+  }
+
+  if (window.screen && window.screen.orientation && window.screen.orientation.addEventListener) {
+    window.screen.orientation.addEventListener('change', function () {
+      setTimeout(applyOrientation, 120);
+    });
+  }
+
+  var mql = window.matchMedia('(orientation: landscape)');
+  if (mql.addEventListener) {
+    mql.addEventListener('change', function () {
+      setTimeout(applyOrientation, 120);
+    });
+  } else if (mql.addListener) {
+    mql.addListener(function () {
+      setTimeout(applyOrientation, 120);
+    });
+  }
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(applyOrientation, 200);
+  }, { passive: true });
+
+  window.addEventListener('orientationchange', function () {
+    setTimeout(applyOrientation, 300);
+  });
+
+  applyOrientation();
+
+  var backTop = document.getElementById('back-top');
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > 300) {
+      backTop.classList.add('show');
+    } else {
+      backTop.classList.remove('show');
+    }
+  }, { passive: true });
+
+  document.querySelectorAll('.toc-item a[href^="#"]').forEach(function (anchor) {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      var target = document.querySelector(this.getAttribute('href'));
+      if (!target) return;
+      var toc = document.querySelector('.toc-sticky');
+      var tocH = toc ? toc.getBoundingClientRect().height : 0;
+      var top = target.getBoundingClientRect().top + window.scrollY - tocH - 8;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    });
+  });
+
+  var landscapeBtn = document.getElementById('landscape-toggle');
+  var landscapeText = document.getElementById('landscape-toggle-text');
+
+  function syncLandscapeBtnText() {
+    var on = document.body.classList.contains('force-landscape');
+    landscapeText.textContent = on ? '退出横屏' : '横屏布局';
+  }
+  syncLandscapeBtnText();
+
+  landscapeBtn.addEventListener('click', function () {
+    document.body.classList.toggle('force-landscape');
+    syncLandscapeBtnText();
+    setTimeout(function(){ wrapTables(); }, 50);
+  });
+
+  var watchIds = ['#section-2', '#section-4'];
+  var watchEls = watchIds.map(function(sel){ return document.querySelector(sel); }).filter(Boolean);
+
+  function setBtnVisible(visible) {
+    if (visible) landscapeBtn.classList.add('show');
+    else landscapeBtn.classList.remove('show');
+  }
+
+  if (watchEls.length && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      var anyVisible = entries.some(function(en){ return en.isIntersecting; });
+      setBtnVisible(anyVisible);
+    }, { root: null, threshold: 0.15 });
+    watchEls.forEach(function(el){ io.observe(el); });
+  } else {
+    window.addEventListener('scroll', function(){
+      var anyVisible = false;
+      watchEls.forEach(function(el){
+        var r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight * 0.85 && r.bottom > window.innerHeight * 0.15) anyVisible = true;
+      });
+      setBtnVisible(anyVisible);
+    }, { passive: true });
+  }
+
+})();
+</script>
+
+</body>
+</html>
