@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" id="vp" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>行业热点/市场动态周报</title>
+<style>
+/* ═══════════════════════════════════════════════
+   晨光设计系统 · Morning Light Design System
+   调色板：暖白 / 日出橙 / 晨空蓝 / 各区块专属色
+   ═══════════════════════════════════════════════ */
+:root {
+  /* 基础色 */
+  --bg:           #FFFBF5;
+  --card:         #FFFFFF;
+  --border:       #F0EAE0;
+  --text:         #1C1917;
+  --muted:        #78716C;
+  --light:        #F5F0E8;
+
+  /* 主色：日出橙 */
+  --orange:       #F97316;
+  --orange-light: #FFF0E6;
+  --orange-mid:   #FED7AA;
+
+  /* 各板块专属色 */
+  --c1: #F97316;   /* 战略判断  橙 */
+  --c2: #0EA5E9;   /* 数据速查  天蓝 */
+  --c3: #10B981;   /* 深度洞察  翠绿 */
+  --c4: #EF4444;   /* 竞品雷达  红 */
+  --c5: #8B5CF6;   /* 舆情温度  紫 */
+  --c6: #64748B;   /* 文章列表  石板 */
+
+  /* 阴影 */
+  --shadow-sm:  0 1px 4px rgba(249,115,22,.06), 0 2px 8px rgba(0,0,0,.04);
+  --shadow-md:  0 4px 16px rgba(249,115,22,.10), 0 2px 8px rgba(0,0,0,.06);
+  --shadow-lg:  0 8px 32px rgba(249,115,22,.12), 0 4px 12px rgba(0,0,0,.08);
+
+  /* 尺寸 */
+  --radius:     14px;
+  --radius-sm:  8px;
+  --radius-pill:999px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 15px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+               "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* ─── 阅读进度条 ─── */
+#read-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--orange), #FBBF24);
+  z-index: 9999;
+  transition: width .1s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ─── 页面最大宽度容器 ─── */
+.page-wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 16px 14px 40px;
+}
+
+/* ═══════════════════════════════════
+   Header：日出渐变标题区
+   ═══════════════════════════════════ */
+.report-header {
+  background: linear-gradient(135deg, #1C1917 0%, #292524 40%, #1E3A5F 100%);
+  border-radius: var(--radius);
+  padding: 22px 22px 20px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 装饰光晕 */
+.report-header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(249,115,22,.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+.report-header::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: -30px;
+  width: 240px; height: 180px;
+  background: radial-gradient(circle, rgba(14,165,233,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(249,115,22,.18);
+  border: 1px solid rgba(249,115,22,.30);
+  color: #FED7AA;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.report-header h1 {
+  font-size: clamp(18px, 4vw, 24px);
+  font-weight: 800;
+  color: #FFFBF5;
+  line-height: 1.25;
+  margin-bottom: 10px;
+  letter-spacing: -.01em;
+}
+
+.report-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.80);
+  font-size: 12px;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+}
+
+/* ═══════════════════════════════════
+   TOC：悬浮胶囊式导航
+   ═══════════════════════════════════ */
+.toc-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255,251,245,.92);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+  padding: 9px 14px;
+  margin-bottom: 14px;
+  margin-left: -14px;
+  margin-right: -14px;
+}
+
+.toc-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.toc-inner::-webkit-scrollbar { display: none; }
+
+.toc-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .05em;
+  white-space: nowrap;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.toc-item {
+  flex-shrink: 0;
+}
+
+.toc-item a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all .18s ease;
+  box-shadow: var(--shadow-sm);
+}
+.toc-item a:hover  { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+.toc-item a.active { background: var(--orange); border-color: var(--orange); color: #fff; box-shadow: 0 2px 8px rgba(249,115,22,.35); }
+
+/* ═══════════════════════════════════
+   Section Cards：各板块卡片
+   ═══════════════════════════════════ */
+.section-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px 20px 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow .2s;
+}
+.section-card:hover { box-shadow: var(--shadow-md); }
+
+/* 左侧色条 */
+.section-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+#section-1::before { background: var(--c1); }
+#section-2::before { background: var(--c2); }
+#section-3::before { background: var(--c3); }
+#section-4::before { background: var(--c4); }
+#section-5::before { background: var(--c5); }
+#section-6::before { background: var(--c6); }
+
+/* 板块标题行 */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-icon {
+  width: 34px; height: 34px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+#section-1 .section-icon { background: #FFF0E6; }
+#section-2 .section-icon { background: #E0F2FE; }
+#section-3 .section-icon { background: #D1FAE5; }
+#section-4 .section-icon { background: #FEE2E2; }
+#section-5 .section-icon { background: #EDE9FE; }
+#section-6 .section-icon { background: #F1F5F9; }
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.01em;
+  flex: 1;
+}
+
+.section-count {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  color: #fff;
+  flex-shrink: 0;
+}
+#section-1 .section-count { background: var(--c1); }
+#section-2 .section-count { background: var(--c2); }
+#section-3 .section-count { background: var(--c3); }
+#section-4 .section-count { background: var(--c4); }
+#section-5 .section-count { background: var(--c5); }
+#section-6 .section-count { background: var(--c6); }
+
+/* ═══════════════════════════════════
+   正文内容排版
+   ═══════════════════════════════════ */
+.section-card .content-body p {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.75;
+}
+
+.section-card .content-body ul,
+.section-card .content-body ol {
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.section-card .content-body li {
+  margin-bottom: 6px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.section-card .content-body h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 16px 0 6px;
+  padding: 0;
+}
+
+/* h4 带颜色小标记 */
+#section-1 .content-body h4 { color: var(--c1); }
+#section-2 .content-body h4 { color: var(--c2); }
+#section-3 .content-body h4 { color: var(--c3); }
+#section-4 .content-body h4 { color: var(--c4); }
+#section-5 .content-body h4 { color: var(--c5); }
+
+.section-card .content-body strong { color: var(--text); font-weight: 700; }
+
+/* 引用块 */
+.section-card .content-body blockquote {
+  margin: 10px 0;
+  padding: 8px 14px;
+  border-left: 3px solid var(--orange);
+  background: var(--orange-light);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 13px;
+  color: #7C2D12;
+  line-height: 1.65;
+}
+
+.section-card .content-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 14px 0;
+}
+
+/* ═══════════════════════════════════
+   战略判断：带编号的条目卡片
+   ═══════════════════════════════════ */
+.strategy-item {
+  background: #FFFBF5;
+  border: 1px solid #FDDCB5;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  position: relative;
+  transition: all .18s;
+}
+.strategy-item:hover { background: var(--orange-light); border-color: var(--orange); }
+
+.strategy-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  background: var(--orange);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* ═══════════════════════════════════
+   表格：清爽晨光风
+   ═══════════════════════════════════ */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 10px 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.section-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.section-card thead th {
+  padding: 9px 12px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #fff;
+  letter-spacing: .03em;
+}
+#section-2 thead th { background: var(--c2); }
+#section-4 thead th { background: var(--c4); }
+.section-card thead th:not(#section-2 thead th, #section-4 thead th) { background: var(--orange); }
+
+.section-card tbody td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  word-break: break-word;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.section-card tbody tr:last-child td { border-bottom: none; }
+.section-card tbody tr:nth-child(even) td { background: #FFFDF9; }
+.section-card tbody tr:hover td { background: var(--orange-light); transition: background .12s; }
+
+/* 竞品雷达层级颜色 */
+.tier-1 td:first-child { border-left: 3px solid var(--c4); }
+.tier-2 td:first-child { border-left: 3px solid var(--orange); }
+.tier-3 td:first-child { border-left: 3px solid var(--c6); }
+
+/* ═══════════════════════════════════
+   舆情温度：三栏标签云
+   ═══════════════════════════════════ */
+.sentiment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.sentiment-col {
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  border: 1px solid transparent;
+}
+
+.sentiment-col.pain   { background: #FFF1F1; border-color: #FCA5A5; }
+.sentiment-col.joy    { background: #F0FDF4; border-color: #86EFAC; }
+.sentiment-col.risk   { background: #F5F3FF; border-color: #C4B5FD; }
+
+.sentiment-col-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sentiment-col.pain  .sentiment-col-title { color: #DC2626; }
+.sentiment-col.joy   .sentiment-col-title { color: #16A34A; }
+.sentiment-col.risk  .sentiment-col-title { color: #7C3AED; }
+
+.sentiment-col ul { padding-left: 14px; }
+.sentiment-col li  { font-size: 12px; line-height: 1.6; margin-bottom: 4px; color: var(--text); }
+
+/* ═══════════════════════════════════
+   全量文章列表
+   ═══════════════════════════════════ */
+.article-groups { display: grid; gap: 10px; }
+
+.article-group {
+  background: var(--light);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.article-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  background: #F5EFE6;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s;
+}
+.article-group-header:hover { background: #EDE5D8; }
+
+.article-group-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.article-group-badge {
+  font-size: 11px;
+  background: var(--c6);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.article-group-body { padding: 8px 14px 10px; }
+
+.article-list { list-style: none; padding: 0; }
+
+.article-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--border);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.article-list li:last-child { border-bottom: none; }
+
+.article-list .art-num {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-top: 2px;
+  width: 18px;
+  text-align: right;
+}
+
+.article-list a {
+  color: var(--c2);
+  text-decoration: none;
+  word-break: break-word;
+  transition: color .15s;
+}
+.article-list a:hover { color: var(--orange); text-decoration: underline; }
+
+/* ═══════════════════════════════════
+   来源标签
+   ═══════════════════════════════════ */
+.source-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--light);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-left: 5px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.source-tag a { color: var(--c2); text-decoration: none; }
+.source-tag a:hover { color: var(--orange); }
+
+/* ═══════════════════════════════════
+   固定按钮
+   ═══════════════════════════════════ */
+#back-top {
+  position: fixed;
+  right: 16px; bottom: 24px;
+  width: 40px; height: 40px;
+  background: var(--orange);
+  color: #fff;
+  font-size: 18px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(249,115,22,.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s, transform .2s;
+  z-index: 500;
+  user-select: none;
+}
+#back-top.show { opacity: 1; pointer-events: auto; }
+#back-top:hover { transform: scale(1.1); }
+
+/* ═══════════════════════════════════
+   Footer
+   ═══════════════════════════════════ */
+.report-footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 16px 0 24px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  line-height: 1.8;
+}
+
+.footer-logo {
+  font-weight: 800;
+  letter-spacing: .04em;
+  color: var(--orange);
+  font-size: 12px;
+}
+
+/* ═══════════════════════════════════
+   响应式适配
+   ═══════════════════════════════════ */
+@media (max-width: 520px) {
+  .sentiment-grid { grid-template-columns: 1fr; }
+  .report-meta-row { gap: 6px; }
+  .section-card { padding: 16px 14px 14px; }
+  .report-header { padding: 18px 16px 16px; }
+  html { font-size: 14px; }
+  .section-card .content-body li,
+  .section-card .content-body p { font-size: 13px; }
+}
+
+@media (min-width: 900px) {
+  .page-wrap { padding: 20px 24px 60px; }
+  .section-card { padding: 22px 24px 20px; }
+}
+
+/* ─── 无JS时文章分组默认展开 ─── */
+.article-group-body { display: block; }
+</style>
+</head>
+
+<body>
+
+<!-- 阅读进度条 -->
+<div id="read-progress"></div>
+
+<div class="page-wrap">
+
+<!-- ① Header 区 -->
+<header class="report-header">
+  <div class="header-badge">☀️ 晨报 · 行业情报</div>
+  <h1>行业热点/市场动态周报</h1>
+  <div class="report-meta-row">
+    <span class="meta-chip">📰 247 篇精选文章</span>
+    <span class="meta-chip">📅 2026-05-26</span>
+    <span class="meta-chip">🔒 内部参考</span>
+  </div>
+</header>
+
+<!-- ② TOC 导航 -->
+<nav class="toc-sticky" aria-label="目录导航">
+  <div class="toc-inner">
+    <span class="toc-label">目录</span>
+    <span class="toc-item"><a href="#section-1" data-section="section-1">🧭 战略判断</a></span>
+    <span class="toc-item"><a href="#section-2" data-section="section-2">📈 数据速查</a></span>
+    <span class="toc-item"><a href="#section-3" data-section="section-3">🧩 深度洞察</a></span>
+    <span class="toc-item"><a href="#section-4" data-section="section-4">🥊 竞品雷达</a></span>
+    <span class="toc-item"><a href="#section-5" data-section="section-5">🎯 舆情温度</a></span>
+    <span class="toc-item"><a href="#section-6" data-section="section-6">📚 文章列表</a></span>
+  </div>
+</nav>
+
+<!-- ③ 正文 -->
+<main class="main-content">
+  
+<div class="section-card" id="section-1">
+  <div class="section-header">
+    <div class="section-icon">🧭</div>
+    <div class="section-title">本周战略判断</div>
+  </div>
+  <div class="content-body"><h2>① <strong>高端运动消费加速增长</strong>，ASICS/On昂跑一季度业绩强劲</h2>
+
+<ul>
+<li><strong>证据</strong>：ASICS集团Q1净销售额同比增<strong>29.7%</strong>至<strong>2702亿</strong>日元，归母净利润增<strong>47.2%</strong>达历史新高；On昂跑Q1净销售额增<strong>14.5%</strong>至<strong>8.32亿</strong>瑞郎，首次单季突破<strong>8亿</strong>，净利润大涨<strong>82.2%</strong>，亚太市场增速<strong>44.4%</strong>。</li>
+<li><strong>机制</strong>：高端专业运动品牌受益于<strong>技术壁垒构建的定价护城河</strong>和全球运动消费升级，亚太市场尤其是中国成为核心增长引擎。ASICS的SportStyle业务增速高达<strong>69.9%</strong>，显示专业运动与潮流融合的强变现能力。</li>
+<li><strong>启示</strong>：专业运动品牌正通过<strong>科技与时尚双轮驱动</strong>实现高端化跃迁，亚太市场的高成长性已成为胜负手。</li>
+<li><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/mqc22NMkclrsFHw211t3Sg">中服圈</a>）</span></li>
+</ul>
+
+<h2>② <strong>加拿大鹅年营收首次突破15亿加元</strong>，大中华区成最强引擎</h2>
+
+<ul>
+<li><strong>证据</strong>：加拿大鹅2026财年营收同比增<strong>13.3%</strong>至<strong>15.28亿</strong>加元；Q4大中华区营收同比暴涨<strong>24.2%</strong>至<strong>1.72亿</strong>加元；全球门店总数达<strong>88家</strong>。</li>
+<li><strong>机制</strong>：品牌DTC战略深化（DTC营收增<strong>15.9%</strong>至<strong>11.57亿</strong>加元）叠加中国高端户外消费强劲复苏（Burberry大中华区同期增<strong>10%</strong>），验证高净值消费回归。</li>
+<li><strong>启示</strong>：中国高净值客群的户外消费复苏信号明确，DTC能力直接决定品牌对增长红利的捕获效率。</li>
+<li><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/A_fVEEC7McURmEHmKvTUOA">华丽志</a>）</span></li>
+</ul>
+
+<h2>③ <strong>运动鞋服代工厂“增收不增利”预警</strong>，成本压力传导至品牌端</h2>
+
+<ul>
+<li><strong>证据</strong>：14家代工企业10家营收增长，但仅1家净利润增长；中杰利润下滑<strong>68.61%</strong>；越南最低工资2026年上调<strong>7.2%</strong>；申洲国际柬埔寨新工厂生产效率仅为正常水平的<strong>85%</strong>。</li>
+<li><strong>机制</strong>：品牌方强势压价与新兴市场劳动力成本攀升形成<strong>剪刀差</strong>，代工厂利润被双向挤压。大客户集中度下降（华利前五大客户占比降至<strong>72.55%</strong>）或折射品牌对供应链的议价博弈加剧。</li>
+<li><strong>启示</strong>：上游利润挤压将推高品牌采购成本，对缺乏定价权的中端品牌构成中期压力测试。</li>
+<li><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/LGofW_4kcM8cDZL_zfAPGQ">懒熊体育</a>）</span></li>
+</ul>
+
+<h2>④ <strong>奢侈品牌密集出售非核心资产</strong>，行业整合进入深水区</h2>
+
+<ul>
+<li><strong>证据</strong>：LVMH以约<strong>9.25亿</strong>美元出售Marc Jacobs给WHP/G-III；Shein以约<strong>1亿</strong>美元收购Everlane；Kontoor启动Lee品牌出售程序，预估成交价<strong>6亿</strong>美元以上。</li>
+<li><strong>机制</strong>：奢侈品集团加速<strong>品牌组合优化</strong>，聚焦核心盈利能力（开云要求亏损品牌两年内盈利）；ABG/WHP等品牌管理公司通过规模效应承接成熟品牌实现<strong>轻资产运营</strong>。</li>
+<li><strong>启示</strong>：品牌资产的战略价值加速分化，头部集团的品牌筛选逻辑从“规模优先”切换至“利润护城河优先”。</li>
+<li><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/_0iMKFIQUSO4hVNLbIjyqA">LADYMAX</a>）</span></li>
+</ul>
+
+<h2>⑤ <strong>Ralph Lauren中国市场增长超50%</strong>，奢侈消费向“安静奢华”倾斜</h2>
+
+<ul>
+<li><strong>证据</strong>：Ralph Lauren Q4营收增<strong>17%</strong>至<strong>19.8亿</strong>美元，中国市场增幅<strong>50%</strong>+；全年净收入增<strong>15%</strong>至<strong>81.15亿</strong>美元，净利润大涨<strong>27%</strong>至<strong>9.41亿</strong>美元。</li>
+<li><strong>机制</strong>：Ralph Lauren作为<strong>可触及的奢侈品</strong>（affordable luxury）捕捉了高净值消费降级与中产消费升级的双向红利，其“安静奢华”的美学基因与去logo化趋势高度吻合。</li>
+<li><strong>启示</strong>：奢侈品分化逻辑清晰——顶奢承压，中高端功能性品牌与生活方式品牌获得结构性增量。</li>
+<li><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/ydkYEow6kLVwwu0rMDfOCg">时尚商业Daily</a>）</span></li>
+</ul>
+
+<h2>⑥ <strong>ChatGPT级行业信号：GORE-TEX® 50周年与软壳服装标准制定</strong></h2>
+
+<ul>
+<li><strong>证据</strong>：GORE-TEX® 迎来<strong>50周年</strong>，推进ePE薄膜等可持续科技；《软壳类服装功能分级及评价规范》团体标准研讨会在京召开，<strong>30余家</strong>单位参与。</li>
+<li><strong>机制</strong>：面料科技巨头强化<strong>可持续叙事</strong>与功能认证壁垒；行业标准从空白到建立，有助于规范市场竞争，利好先发布局的功能品牌。</li>
+<li><strong>启示</strong>：面料科技与标准话语权正在成为高端户外品牌差异化竞争的核心资源，供应链技术认证将强化品牌壁垒。</li>
+<li><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/M6qLRhDudxk4VV5NDaQJaw">ISPO</a>）</span></li>
+</ul>
+
+<h2>⑦ <strong>京东有意收购英国电商平台The Very Group</strong>，全球化零售布局提速</h2>
+
+<ul>
+<li><strong>证据</strong>：京东评估以约<strong>20亿</strong>英镑收购The Very Group；后者年营收超<strong>20亿</strong>英镑，活跃客户约<strong>440万</strong>，EBITDA达<strong>3.07亿</strong>英镑（2025财年）。</li>
+<li><strong>机制</strong>：平台型企业通过与自身供应链能力互补的海外并购，寻求第二增长曲线。</li>
+<li><strong>启示</strong>：中国电商零售基础设施的全球化溢出加速，对国际品牌进入中国市场与本土品牌出海均有潜在影响。</li>
+<li><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/sD2Lqbsw_eVgqfeUxM00Wg">时尚商业Daily</a>）</span></li>
+</ul>
+
+<h2>⑧ <strong>高端奢侈品门店洗牌加剧</strong>，核心商圈聚集效应强化</h2>
+
+<ul>
+<li><strong>证据</strong>：Aesop深圳万象城店关闭，运营不足三年；老佛爷百货北京门店<strong>5月27日</strong>停业；同期上海兴业太古汇Q1增长<strong>82%</strong>，北京三里屯太古里增长<strong>56%</strong>。</li>
+<li><strong>机制</strong>：高端消费正从<strong>多点分布</strong>向超一线城市旗舰商圈<strong>高度集中</strong>，非核心区位的中低效门店面临淘汰加速。</li>
+<li><strong>启示</strong>：高端品牌渠道策略须押注核心商圈头部场域，低效扩张逻辑已失效。</li>
+<li><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/yD-XNUq1u0VFEvTrlNIlLg">LADYMAX</a>）</span></li>
+</ul>
+
+<h2>⑨ <strong>LIV Golf失去沙特主权基金资助</strong>，赛事商业化面临挑战</h2>
+
+<ul>
+<li><strong>证据</strong>：沙特PIF累计投入超<strong>50亿</strong>美元后决定仅资助至2026赛季结束；LIV 2024年净亏损<strong>4.618亿</strong>美元，月均净支出<strong>1亿</strong>美元；已有选手重返PGA Tour。</li>
+<li><strong>机制</strong>：沙特财政赤字压力（Q1达<strong>1257亿</strong>里亚尔）驱动PIF收紧非核心支出，LIV Golf被归类为<strong>不可持续的烧钱项目</strong>。</li>
+<li><strong>启示</strong>：赛事IP若不能在品牌端建立价格溢出效应，仅靠金主输血模式不可持续；头部运动员的价值迁移信号值得关注。</li>
+<li><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/GiI_wb5PlQ1jd25k9ub-kQ">懒熊体育</a>）</span></li>
+</ul>
+
+<h2>⑩ <strong>五一高端消费客流“温而不热”</strong>，消费分化信号明确</h2>
+
+<ul>
+<li><strong>证据</strong>：五一全国消费销售额增<strong>14.3%</strong>，核心高端商场客流较2025春节国庆均值提升<strong>36%</strong>，但较2026春节回落<strong>5%</strong>；LV/Chanel/Dior客流最强势；人均旅游消费下降。</li>
+<li><strong>机制</strong>：高端消费恢复但热度递减，呈现<strong>旺季不旺、常态化分化</strong>特征；消费整体复苏但向高汇率品牌集中。</li>
+<li><strong>启示</strong>：高端品牌需警惕假日消费的<strong>脉冲效应衰减</strong>，日常经营能力和会员复购将比旺季冲刺更重要。</li>
+<li><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/lmqNvK0VyOsWBw9qAH-UoA">时尚商业Daily</a>）</span></li>
+</ul>
+
+<h4>其他值得关注信号</h4>
+
+<ul>
+<li><strong>猛犸象社群扩张</strong>：MAMMUT LIFE社群2025年至今落地<strong>60余场</strong>活动，吸引<strong>2000+</strong>人参与；2026年计划增至<strong>150场</strong>。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/_y4snmt0W17H-_3QAH3jnA">华丽志</a>）</span></li>
+<li><strong>HOKA杭州门店焕新 + 赛事合作</strong>：推出SPEEDGOAT 7越野跑鞋，作为UTMB首席合作伙伴支持莫干山赛事。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/KI4HtlhAEaTiFhav56qU6Q">华丽志</a>）</span></li>
+<li><strong>Swatch×爱彼联名怀表引爆全球抢购</strong>：单价<strong>400-420美元</strong>，二级市场数小时内翻倍至<strong>1000欧元</strong>+；迪拜门店因安全考量取消发售。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fGNHXne3wdSyOnDZnplJlA">华丽志</a>）</span></li>
+<li><strong>DIOR推出高定康养系列</strong>：围绕温和运动、正念与睡眠三大支柱，包含阻力带、瑜伽垫、真丝枕套等产品。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/2fS9ZpCnZDW7HOUSikYBaw">华丽志</a>）</span></li>
+<li><strong>Burberry推出首个专业运动系列Burberry Activewear</strong>：正式进军运动服饰市场。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/E5e3m5DMtu0s1-HCuUUE0w">LADYMAX</a>）</span></li>
+<li><strong>波司登AI赋能研发</strong>：头样开发时间从<strong>100天</strong>压缩至<strong>27天</strong>，样衣开发成本降低<strong>60%</strong>+。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/0KRF0EUj6mqDumQyxAt72A">中服圈</a>）</span></li>
+<li><strong>攀岩社群运营案例</strong>：“打卡-教学-赛事”三级体系使复购率提升<strong>3倍</strong>。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/nr0mdHwLpwuL4bgK-blkDQ">营销竞技场</a>）</span></li>
+</ul>
+
+<hr />
+</div>
+</div>
+
+<div class="section-card" id="section-2">
+  <div class="section-header">
+    <div class="section-icon">📈</div>
+    <div class="section-title">关键数据速查</div>
+  </div>
+  <div class="content-body"><table>
+<thead>
+<tr>
+  <th style="text-align:left;">主体</th>
+  <th style="text-align:left;">指标域</th>
+  <th style="text-align:left;">指标明细（尽量量化）</th>
+  <th style="text-align:left;">时间/口径</th>
+  <th style="text-align:center;">重要性</th>
+  <th style="text-align:left;">来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:left;"><strong>ASICS集团</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">净销售额：<strong>2702亿日元</strong>（+<strong>29.7%</strong>）；归母净利润：<strong>465亿日元</strong>（+<strong>47.2%</strong>）；大中华区：<strong>372亿日元</strong>（+<strong>28%</strong>）</td>
+  <td style="text-align:left;">2026FY Q1</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/hWsoY18rjYLhryOigsI_VA">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>On昂跑</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">净销售额：<strong>8.32亿瑞郎</strong>（+<strong>14.5%</strong>）；净利润：<strong>1.03亿瑞郎</strong>（+<strong>82.2%</strong>）；毛利率：<strong>64.2%</strong>；亚太增速：<strong>44.4%</strong></td>
+  <td style="text-align:left;">2026FY Q1</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/mqc22NMkclrsFHw211t3Sg">中服圈</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Canada Goose</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">全年营收：<strong>15.28亿加元</strong>（+<strong>13.3%</strong>）；大中华区Q4：<strong>1.72亿加元</strong>（+<strong>24.2%</strong>）；门店：<strong>88家</strong></td>
+  <td style="text-align:left;">2026FY</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/A_fVEEC7McURmEHmKvTUOA">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Ralph Lauren</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">Q4营收：<strong>19.8亿美元</strong>（+<strong>17%</strong>）；中国市场增速：<strong>50%</strong>+；全年净收入：<strong>81.15亿美元</strong>（+<strong>15%</strong>）</td>
+  <td style="text-align:left;">Q4&amp;2026FY</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/ydkYEow6kLVwwu0rMDfOCg">时尚商业Daily</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Burberry</strong></td>
+  <td style="text-align:left;">增长结构</td>
+  <td style="text-align:left;">全年营收：<strong>24.2亿英镑</strong>（-<strong>2%</strong>）；调整后经营利润：<strong>1.6亿英镑</strong>（+<strong>528%</strong>）；大中华区H2：+<strong>8%</strong></td>
+  <td style="text-align:left;">2026FY</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/NKMOjUpLdAHNzUh9CUH_rg">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>历峰集团</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">全年销售额：<strong>224亿欧元</strong>（+<strong>11%</strong>）；经营利润：<strong>45亿欧元</strong>（+<strong>23%</strong>）；珠宝部营收：<strong>165.4亿</strong>（+<strong>14%</strong>）</td>
+  <td style="text-align:left;">2026FY</td>
+  <td style="text-align:center;">高</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/DNu4EsQouA8V_QuuAEPCLQ">LADYMAX</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Ferragamo</strong></td>
+  <td style="text-align:left;">增长结构</td>
+  <td style="text-align:left;">总营收：<strong>2.09亿欧元</strong>（-<strong>5.5%</strong>）；DTC：<strong>1.61亿欧元</strong>（+<strong>5.5%</strong>固汇）；批发：<strong>4200万欧元</strong>（-<strong>21.8%</strong>）</td>
+  <td style="text-align:left;">2026Q1</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/R5H3Y9XpdUlHgzLV1qDGqQ">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Under Armour</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">全年营收：<strong>49.7亿美元</strong>（-<strong>4%</strong>）；净亏损：<strong>4.96亿美元</strong>；国际市场：<strong>21亿美元</strong>（+<strong>4%</strong>）</td>
+  <td style="text-align:left;">2026FY</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/t3gm7y_jBsoRGGQS0Oc8mQ">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>安踏集团</strong></td>
+  <td style="text-align:left;">规模结果</td>
+  <td style="text-align:left;">2025年营收：<strong>802亿元</strong>（+<strong>43.4%</strong>）；毛利率：<strong>62.1%</strong></td>
+  <td style="text-align:left;">2025FY</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/9Hh_feNaMDCcr2cQlHytRg">哥德巴赫的思考</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>探路者</strong></td>
+  <td style="text-align:left;">增长结构</td>
+  <td style="text-align:left;">2026Q1营收：<strong>4.96亿元</strong>（+<strong>39.41%</strong>）；2025FY营收：<strong>13.81亿元</strong>（-<strong>13.25%</strong>）</td>
+  <td style="text-align:left;">2026Q1/2025FY</td>
+  <td style="text-align:center;">中</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/eunYOnk-hq6jWGu04mu1zw">中服圈</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>海澜之家</strong></td>
+  <td style="text-align:left;">组织策略</td>
+  <td style="text-align:left;">营收：<strong>66.61亿元</strong>（+<strong>7.66%</strong>）；存货<strong>93亿</strong>降<strong>14.1%</strong>；周转天数<strong>248.48天</strong>；团购暴跌<strong>37.3%</strong></td>
+  <td style="text-align:left;">2026Q1</td>
+  <td style="text-align:center;">低</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/8bR3AuIwSdDE46jvGmo4fg">艾林华尚</a>）</span></td>
+</tr>
+</tbody>
+</table>
+
+<h4>补充数据</h4>
+
+<ul>
+<li><strong>京东</strong>：评估以约<strong>20亿英镑</strong>收购英国电商平台The Very Group<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/sD2Lqbsw_eVgqfeUxM00Wg">时尚商业Daily</a>）</span></li>
+<li><strong>Coach/Tapestry</strong>：Q3净销售额<strong>19.21亿美元</strong>（+<strong>21%</strong>）；大中华区<strong>4.322亿美元</strong>（+<strong>61%</strong>）<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/26K2ImGe50XU95FSBCLszw">时尚无国界</a>）</span></li>
+<li><strong>Kontoor Brands</strong>：Q1总营收<strong>8.08亿美元</strong>；持续经营业务<strong>6.13亿美元</strong>（+<strong>45%</strong>）；Lee出售流程启动<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/BJPEgU-4kIrhf280i1lFEg">华丽志</a>）</span></li>
+<li><strong>华利集团</strong>：New Balance跻身前五大客户；前五大以外客户收入增<strong>36.9%</strong><span class="source-inline">（来源：MDLINK_0）</span>（背景数据 / 2025）</li>
+<li><strong>LIV Golf</strong>：沙特PIF累计投入超<strong>50亿美元</strong>，月均净支出<strong>1亿美元</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/GiI_wb5PlQ1jd25k9ub-kQ">懒熊体育</a>）</span></li>
+</ul>
+
+<hr />
+</div>
+</div>
+
+<div class="section-card" id="section-3">
+  <div class="section-header">
+    <div class="section-icon">🧩</div>
+    <div class="section-title">行业深度洞察</div>
+  </div>
+  <div class="content-body"><h4>A. 行业与需求：<strong>高端运动消费持续分化</strong>，中国高净值需求复苏信号增强</h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> ASICS集团Q1净销售额<strong>2702亿日元</strong>（+<strong>29.7%</strong>），归母净利润创历史新高<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/hWsoY18rjYLhryOigsI_VA">华丽志</a>）</span></li>
+<li><strong>②</strong> On昂跑Q1亚太市场增速<strong>44.4%</strong>，毛利率跃升至<strong>64.2%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/P3g_3184JQXZu34R876NLA">时尚无国界</a>）</span></li>
+<li><strong>③</strong> Canada Goose大中华区Q4增长<strong>24.2%</strong>，DTC驱动全球全年突破<strong>15亿加元</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/A_fVEEC7McURmEHmKvTUOA">华丽志</a>）</span></li>
+<li><strong>④</strong> 五一核心高端商场客流较春节回落<strong>5%</strong>，人均旅游消费下降<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/lmqNvK0VyOsWBw9qAH-UoA">时尚商业Daily</a>）</span></li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：中国高净值消费正从<strong>全面爆发</strong>过渡到<strong>结构性增长</strong>阶段。专业壁垒强、社交价值明确的品牌（ASICS、On）实现量价齐升；高层级消费回归超级城市旗舰商圈（兴业太古汇+<strong>82%</strong>、三里屯太古里+<strong>56%</strong>），边缘门店加速出清（Aesop撤深、老佛爷关京）。</li>
+<li><strong>Implication（对市场格局的含义）</strong>：
+<ul>
+<li>品牌端含义：具备<strong>技术溢价+社交货币</strong>双重属性的专业运动品牌将在存量竞争中持续跑赢。</li>
+<li>渠道端含义：高端零售正从“占盘”逻辑切换至“精品少铺”高坪效逻辑。</li>
+</ul></li>
+<li><strong>补充信号</strong>：
+<ul>
+<li>Birkenstock亚太市场收入增<strong>22%</strong>，固汇下增<strong>30%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Xos9NYroqlVQa7ec2GlOIg">华丽志</a>）</span></li>
+<li>Burberry中国Q4增<strong>10%</strong>，可比销售恢复增长<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/ZTMhEpL16gNL7ScN_okn_w">时尚无国界</a>）</span></li>
+</ul></li>
+</ul>
+
+<h4>B. 竞品与品牌：<strong>品牌资产重组加速</strong>，头部聚焦与轻资产化双线并进</h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> LVMH以<strong>9.25亿美元</strong>出售Marc Jacobs<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/-uz11qhSXhDs5E_Yd4H1IQ">华丽志</a>）</span></li>
+<li><strong>②</strong> Shein以<strong>1亿美元</strong>收购Everlane，价格较高峰大幅缩水<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/_0iMKFIQUSO4hVNLbIjyqA">LADYMAX</a>）</span></li>
+<li><strong>③</strong> Kontoor启动Lee品牌出售，预估成交价<strong>6亿美元</strong>+<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/V3PVP-seRKtStdsKgDkt0w">艾林华尚</a>）</span></li>
+<li><strong>④</strong> Burberry推出首个专业运动系列，正式进军运动服饰<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/E5e3m5DMtu0s1-HCuUUE0w">LADYMAX</a>）</span></li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：奢侈品牌正经历<strong>价值重估周期</strong>——强品牌享受并购溢价，弱品牌被迫折价转让。LVMH等巨头加速出清非核心，而ABG/WHP等轻资产平台则通过规模化运营承接成熟品牌，形成“<strong>品牌运营外包</strong>”新模式。</li>
+<li><strong>Implication（对市场格局的含义）</strong>：
+<ul>
+<li>品牌端含义：没有技术壁垒或稀缺性护城河的品牌面临估值缩水风险。</li>
+<li>渠道端含义：奢侈品向运动领域的延伸（Burberry Activewear）预示“运动时尚化”赛道竞争将进一步升温。</li>
+</ul></li>
+<li><strong>补充信号</strong>：
+<ul>
+<li>阿玛尼或向LVMH/欧莱雅/依视路各出售<strong>5%</strong>股权<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/-WNaE-pSKP5mYw7anv63cQ">华丽志</a>）</span></li>
+<li>WHP/G-III计划将Marc Jacobs中国日本业务另行出售<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/-uz11qhSXhDs5E_Yd4H1IQ">华丽志</a>）</span></li>
+<li>Kontoor剥离Lee后聚焦Wrangler（+<strong>4%</strong>）和Helly Hansen（+<strong>16%</strong>）高速增长<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/V3PVP-seRKtStdsKgDkt0w">艾林华尚</a>）</span></li>
+</ul></li>
+</ul>
+
+<h4>D. 产品与科技：<strong>面料可持续技术</strong>与<strong>行业标准制定</strong>加速</h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> GORE-TEX® 迎来<strong>50周年</strong>，推进ePE薄膜技术实现可持续防护<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/x3A2xls5-3dJIN39jXKR8A">步外</a>）</span></li>
+<li><strong>②</strong> 《软壳类服装功能分级及评价规范》团体标准在京启动，<strong>30余家</strong>单位参与<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/M6qLRhDudxk4VV5NDaQJaw">ISPO</a>）</span></li>
+<li><strong>③</strong> SORONA®生物基材料：与尼龙6相比降低<strong>37%</strong>石油消耗、<strong>44%</strong>能源、<strong>59%</strong>温室气体排放<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/EWxmq11BYL8UqnpNUAhb7w">中服圈</a>）</span></li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：面料科技不再仅是功能性卖点，正升级为品牌<strong>可持续叙事</strong>与<strong>标准话语权</strong>的核心资源。软壳标准填补国内空白，利好早期投入标准建设的品牌获得品质背书先发优势。生物基材料（SORONA®被HALO/ANNA SUI ACTIVE采用）路径正成为差异化抓手。</li>
+<li><strong>Implication（对市场格局的含义）</strong>：
+<ul>
+<li>产品端含义：品牌在面料端的自主标准制定能力将成为下一阶段的核心竞争力。</li>
+<li>供应链端含义：可持续面料认证壁垒加持的品牌，消费者溢价接受度边际提高。</li>
+</ul></li>
+<li><strong>补充信号</strong>：
+<ul>
+<li>Outopia与法国骑行品牌Café du Cycliste推出2026春夏联名系列<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/x3A2xls5-3dJIN39jXKR8A">步外</a>）</span></li>
+<li>利郎牵头制定服装耐洗标准，耐洗POLO衫迭代至4.0版本<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/5lSjWutkTqB59KGjqBx0uA">华丽志</a>）</span></li>
+</ul></li>
+</ul>
+
+<h4>F. 供应链与履约：<strong>代工厂利润挤压</strong>或引发中期成本传导</h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> 2025年14家代工企业10家营收增长，仅1家净利润正增长；中杰利润下滑<strong>68.61%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/LGofW_4kcM8cDZL_zfAPGQ">懒熊体育</a>）</span></li>
+<li><strong>②</strong> 越南最低工资2026年上调约<strong>7.2%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/LGofW_4kcM8cDZL_zfAPGQ">懒熊体育</a>）</span></li>
+<li><strong>③</strong> 华利集团前五大客户收入占比降至<strong>72.55%</strong>，非前五大客户收入增<strong>36.9%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/LGofW_4kcM8cDZL_zfAPGQ">懒熊体育</a>）</span></li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：品牌端压价与劳动力成本上升形成<strong>剪刀差</strong>，代工厂利润严重承压。申洲国际柬埔寨新工厂效率仅达<strong>85%</strong>，显示产能转移不可一蹴而就。代工厂客户结构分散化（新品牌增速快）说明新兴品牌产能需求旺盛。</li>
+<li><strong>Implication（对市场格局的含义）</strong>：
+<ul>
+<li>供应链端含义：若代工厂利润持续无法修复，将倒逼品牌端接受温和涨价或交货周期延长。</li>
+<li>品牌端含义：有自有供应链或深度绑定的品牌享有更稳定的成本结构。</li>
+</ul></li>
+<li><strong>补充信号</strong>：
+<ul>
+<li>晶苑国际为唯一利润正增长代工厂（净利+<strong>12.5%</strong>）<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/LGofW_4kcM8cDZL_zfAPGQ">懒熊体育</a>）</span></li>
+<li>拉夏贝尔在荆州建<strong>6万平</strong>物流中心，日发货<strong>2万单</strong>+<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/1fnPtXaAjZBYmsxq-w1vIA">艾林华尚</a>）</span></li>
+</ul></li>
+</ul>
+
+<h4>G. 跨行业可迁移：<strong>奢侈品牌运动化延伸</strong>与<strong>高净值消费验证</strong></h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> Burberry推出Burberry Activewear系列，首次进军专业运动服饰<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/26K2ImGe50XU95FSBCLszw">时尚无国界</a>）</span></li>
+<li><strong>②</strong> DIOR推出高定康养系列，含阻力带、瑜伽垫、真丝枕套等<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/2fS9ZpCnZDW7HOUSikYBaw">华丽志</a>）</span></li>
+<li><strong>③</strong> 五一期间LV/Chanel/Dior位列高端商场客流前三；核心商场客流较2025均值+<strong>36%</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/lmqNvK0VyOsWBw9qAH-UoA">时尚商业Daily</a>）</span></li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：老牌奢侈品牌正在将品牌资产从<strong>服饰配件</strong>延伸至<strong>运动健康生活方式</strong>，以此触达更年轻的高净值客群并增加消费场景。该趋势与高净值人群对“高质量健康”的新消费偏好高度吻合。</li>
+<li><strong>Implication（对市场格局的含义）</strong>：
+<ul>
+<li>品牌端含义：奢侈品跨界运动验证了“高端运动生活方式”赛道的商业价值，该赛道的入场门槛与品牌资产要求均在抬升。</li>
+</ul></li>
+<li><strong>补充信号</strong>：
+<ul>
+<li>阿玛尼15%股权拆分出售方案初露端倪<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/01-3WS6AbwWhln3EURiLwg">时尚商业Daily</a>）</span></li>
+<li>佳士得珠宝拍卖：海洋之梦钻石<strong>1730万美元</strong>成交，拍卖总成交额<strong>6650万</strong>，<strong>99%</strong>成交率<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/ufUqKOBWv02X6ji6Abt1Vg">华丽志</a>）</span></li>
+<li>Chanel 2025财年营收<strong>193亿美元</strong>（+<strong>3%</strong>）<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/4Mh4-fd4uSZASUiYEst35Q">华丽志</a>）</span></li>
+</ul></li>
+</ul>
+
+<h4>H. 赛事与专业背书：<strong>LIV Golf金主撤退</strong>，<strong>攀岩世界杯商业化提速</strong></h4>
+
+<ul>
+<li><strong>Facts（引子）</strong>：
+<ul>
+<li><strong>①</strong> 沙特PIF停止资助LIV Golf，累计投入<strong>50亿美元</strong>，月均烧钱<strong>1亿美元</strong><span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/GiI_wb5PlQ1jd25k9ub-kQ">懒熊体育</a>）</span></li>
+<li><strong>②</strong> 选手Jon Rahm交<strong>250万英镑</strong>罚款保莱德杯资格；Koepka捐<strong>500万美元</strong>回PGA Tour<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/GiI_wb5PlQ1jd25k9ub-kQ">懒熊体育</a>）</span></li>
+<li><strong>③</strong> Vibram与World Climbing达成合作，攀岩世界杯中国站设换底工坊<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/9ktsOz9mxzfLmh52hnPpsQ">懒熊体育</a>）</span></li>
+</ul></li>
+<li><strong>Why（驱动机制）</strong>：赛事IP的商业可持续性取决于<strong>品牌端溢价能力</strong>而非金主输血。LIV虽吸引<strong>50家</strong>球队赞助商，营收翻倍，但烧钱速度远超商业变现能力。攀岩凭借年轻群体覆盖（<strong>4450万</strong>参与者，18-35超<strong>60%</strong>，女性<strong>55%</strong>）正成为品牌的高效渗透入口。</li>
+<li><strong>Implication（对市场格局的含义）</strong>：
+<ul>
+<li>品牌端含义：品牌对赛事的赞助需要严格评估商业ROI，攀岩等“参与型”赛事比“观赏型”赛事更易与品牌形成消费转化。</li>
+</ul></li>
+<li><strong>补充信号</strong>：
+<ul>
+<li>央视拿下2026/2030世界杯及2027/2031女足世界杯版权，联想居中斡旋<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/PXe4Mmxrq9UJzA9L8XrMtQ">懒熊体育</a>）</span></li>
+<li>李红：建立成熟巡回赛体系是高尔夫强国路径关键<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Efgw5tWQAEvJtYmA-MOr8w">高尔夫大师杂志</a>）</span></li>
+<li>全球攀岩装备市场预计从<strong>6.915亿</strong>增长至<strong>9.997亿美元</strong>（背景数据，2024）<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/9ktsOz9mxzfLmh52hnPpsQ">懒熊体育</a>）</span></li>
+</ul></li>
+</ul>
+
+<hr />
+</div>
+</div>
+
+<div class="section-card" id="section-4">
+  <div class="section-header">
+    <div class="section-icon">🥊</div>
+    <div class="section-title">竞品情报雷达</div>
+  </div>
+  <div class="content-body"><h4>核心竞品动作表</h4>
+
+<table>
+<thead>
+<tr>
+  <th style="text-align:left;">品牌</th>
+  <th style="text-align:left;">动作类型</th>
+  <th style="text-align:left;">具体动作</th>
+  <th style="text-align:left;">市场格局含义</th>
+  <th style="text-align:left;">来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:left;"><strong>On昂跑</strong></td>
+  <td style="text-align:left;"><strong>业绩</strong></td>
+  <td style="text-align:left;">Q1净销售额<strong>8.32亿瑞郎</strong>（+<strong>14.5%</strong>）；亚太增<strong>44.4%</strong>；毛利率<strong>64.2%</strong>；净利润暴涨<strong>82.2%</strong></td>
+  <td style="text-align:left;">高端化战略+亚太扩张双轮驱动，技术溢价构筑利润护城河</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/mqc22NMkclrsFHw211t3Sg">中服圈</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>始祖鸟/ASICS</strong></td>
+  <td style="text-align:left;"><strong>业绩</strong></td>
+  <td style="text-align:left;">ASICS集团Q1净销售额<strong>2702亿日元</strong>（+<strong>29.7%</strong>）；归母净利<strong>465亿日元</strong>创历史高；SportStyle增<strong>69.9%</strong></td>
+  <td style="text-align:left;">专业基因+潮流化变现能力，运动品牌的高端化天花板再次上移</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/hWsoY18rjYLhryOigsI_VA">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>迪桑特/安踏</strong></td>
+  <td style="text-align:left;"><strong>开店</strong></td>
+  <td style="text-align:left;">安踏西南ARENA店<strong>2000+平</strong>；迪桑特西安明日世界店近<strong>1200平</strong></td>
+  <td style="text-align:left;">运动品牌加速“大店”体验零售，下沉至区域核心城市抢位</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/cVh935CoEJAAdUCO2URZgw">华丽志</a>）</span>（背景数据，2026-04）</td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>猛犸象</strong></td>
+  <td style="text-align:left;"><strong>社群/营销</strong></td>
+  <td style="text-align:left;">2025年至今落地<strong>60+场</strong>活动；计划2026增至<strong>150场</strong>；张若昀出席飞拉达活动</td>
+  <td style="text-align:left;">社群体验型营销成为户外品牌核心获客和黏性手段</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/_y4snmt0W17H-_3QAH3jnA">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>加拿大鹅</strong></td>
+  <td style="text-align:left;"><strong>业绩</strong></td>
+  <td style="text-align:left;">全年营收<strong>15.28亿加元</strong>首破<strong>15亿</strong>；大中华区Q4<strong>24.2%</strong>增长；全球门店<strong>88家</strong></td>
+  <td style="text-align:left;">中国高端户外需求强劲复苏，DTC战略在关键市场拿到结果</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/A_fVEEC7McURmEHmKvTUOA">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>HOKA</strong></td>
+  <td style="text-align:left;"><strong>产品/赛事</strong></td>
+  <td style="text-align:left;">推出SPEEDGOAT 7；UTMB莫干山首席合作伙伴；杭州门店焕新</td>
+  <td style="text-align:left;">越野跑鞋深化迭代+顶级赛事绑定，巩固专业越野心智</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/KI4HtlhAEaTiFhav56qU6Q">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Burberry</strong></td>
+  <td style="text-align:left;"><strong>新品</strong></td>
+  <td style="text-align:left;">推出首个专业运动系列Activewear；大中华区Q4增<strong>10%</strong></td>
+  <td style="text-align:left;">奢侈品牌正式进入运动服饰赛道，需关注其定价带与品类策略</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/E5e3m5DMtu0s1-HCuUUE0w">LADYMAX</a>）</span></td>
+</tr>
+</tbody>
+</table>
+
+<h4>其他品牌动作速览</h4>
+
+<table>
+<thead>
+<tr>
+  <th style="text-align:left;">品牌</th>
+  <th style="text-align:left;">动作</th>
+  <th style="text-align:left;">关键信息</th>
+  <th style="text-align:left;">来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:left;"><strong>阿迪达斯</strong></td>
+  <td style="text-align:left;">退税/联名</td>
+  <td style="text-align:left;">有望获约<strong>22.78亿元</strong>美国关税退款；与SATISFY多季联名首发</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/fuXoq87aqMo3XXv_uHiFUg">中服圈</a><span class="source-sep"> / </span><a href="https:/mp.weixin.qq.com/s/x3A2xls5-3dJIN39jXKR8A">步外</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Nike</strong></td>
+  <td style="text-align:left;">裁员/整合</td>
+  <td style="text-align:left;">全球裁员约<strong>1400人</strong>，合并Nike App与SNKRS工程团队</td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/Bzhhjox8ZTRMZ1wtSIQDqQ">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>拉夏贝尔</strong></td>
+  <td style="text-align:left;">开店/渠道</td>
+  <td style="text-align:left;">开出超<strong>1000平</strong>大店；2026年计划<strong>60家</strong>，单价<strong>79-299元</strong></td>
+  <td style="text-align:left;"><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/1fnPtXaAjZBYmsxq-w1vIA">艾林华尚</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Miu Miu/Saint Laurent</strong></td>
+  <td style="text-align:left;">舆情</td>
+  <td style="text-align:left;">对杭州部分区域限购后迫于舆论解除<span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/0TEooUYC5tEH-ujyolaH-g">时尚商业Daily</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>坦博尔</strong></td>
+  <td style="text-align:left;">业绩/上市</td>
+  <td style="text-align:left;">2025年营收近<strong>22亿</strong>（+<strong>68%</strong>）；存货<strong>9.26亿</strong>，周转<strong>308.6天</strong><span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/zhMvs8cTBUUxqSLR64w91w">艾林华尚</a>）</span>（背景数据，2025）</td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>Nike ACG</strong></td>
+  <td style="text-align:left;">开店</td>
+  <td style="text-align:left;">全球第二家ACG大本营于南京万象天地开业<span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/cVh935CoEJAAdUCO2URZgw">华丽志</a>）</span></td>
+</tr>
+<tr>
+  <td style="text-align:left;"><strong>伯希和/奔赴自然</strong></td>
+  <td style="text-align:left;">更名</td>
+  <td style="text-align:left;">因商标争议更名为“奔赴自然”，品牌名仍保留“伯希和”<span class="source-inline">（来源：<a href="https:/mp.weixin.qq.com/s/DilFFZVwZfADKA_QY6O8bQ">营销竞技场</a>）</span></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+</div>
+</div>
+
+<div class="section-card" id="section-5">
+  <div class="section-header">
+    <div class="section-icon">🎯</div>
+    <div class="section-title">本周舆情温度</div>
+  </div>
+  <div class="content-body"><p><strong>😫 本周痛点</strong></p>
+
+<ul>
+<li><strong>①</strong> <strong>泰兰尼斯“送礼广告”翻车</strong> —— 将童鞋与职场送礼绑定，被批“畸形营销”，品牌广告已全渠道下架；对高客单价儿童消费品牌的营销边界提出警示。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/RmokpGWcc2E6bH2-5zYrhw">中服圈</a>）</span></li>
+</ul>
+
+<p><strong>😍 本周爽点</strong></p>
+
+<ul>
+<li><strong>①</strong> <strong>Swatch×爱彼联名引爆全球抢购</strong> —— 单价<strong>400美元</strong>的联名怀表，数小时内二级市场翻倍，迪拜店因安全问题取消发售，验证“低价入门奢侈品”的高社交货币属性。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/fGNHXne3wdSyOnDZnplJlA">华丽志</a>）</span></li>
+<li><strong>②</strong> <strong>Ralph Lauren中国逆势暴涨50%</strong> —— 安静奢华路线精准卡位去logo化消费趋势，股价飙升约<strong>14%</strong>至市值<strong>225亿美元</strong>。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/ydkYEow6kLVwwu0rMDfOCg">时尚商业Daily</a>）</span></li>
+</ul>
+
+<p><strong>⚠️ 本周风险信号</strong></p>
+
+<ul>
+<li><strong>①</strong> <strong>运动鞋服代工厂利润崩塌</strong> —— 14家中仅1家利润正增长，中杰利润暴跌<strong>68.61%</strong>；越南2026最低工资再涨<strong>7.2%</strong>，品控与交货成本上行压力将传导至品牌端。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/LGofW_4kcM8cDZL_zfAPGQ">懒熊体育</a>）</span></li>
+<li><strong>②</strong> <strong>高端消费“旺季不旺”</strong> —— 五一核心商场客流较春节回落<strong>5%</strong>，消费有从脉冲式向常态化回落趋势；依赖节假日冲量的品牌面临增长天花板。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/lmqNvK0VyOsWBw9qAH-UoA">时尚商业Daily</a>）</span></li>
+<li><strong>③</strong> <strong>奢侈品牌渠道收缩</strong> —— Aesop华南首店关闭；老佛爷百货北京倒闭；Gucci母公司意大利千人罢工，裁员<strong>54人</strong>，可能影响品牌产能与供应链稳定性。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/Pwr6xB6LrrIL2TgMQ4jf7Q">时尚商业Daily</a>）</span></li>
+</ul>
+
+<p><strong>低频舆情/运营提醒</strong></p>
+
+<ul>
+<li><strong>①</strong> <strong>Miu Miu×Saint Laurent区域限购事件</strong>：奢侈品牌天猫限购杭州部分区域，后因舆论解除，揭示高退货率（女装<strong>50-60%</strong>）下品牌与平台机制的结构性矛盾。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/0TEooUYC5tEH-ujyolaH-g">时尚商业Daily</a>）</span></li>
+<li><strong>②</strong> <strong>欧盟化妆品新规生效</strong>：美甲“银”成分禁用，特定香精防腐剂限值收紧，影响含相关成分的防晒/户外护肤品。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/bORT9VON3QayhZVJYfp7HQ">华丽志</a>）</span></li>
+<li><strong>③</strong> <strong>攀岩世界杯与Vibram合作</strong>：Vibram中国站设换底工坊，启动“珍惜始于修复”计划，品牌通过专业场景构建售后闭环。<span class="source-inline">（来源：<a href="https://mp.weixin.qq.com/s/9ktsOz9mxzfLmh52hnPpsQ">懒熊体育</a>）</span></li>
+</ul>
+
+<hr />
+
+<hr />
+</div>
+</div>
+
+<div class="section-card" id="section-6">
+  <div class="section-header">
+    <div class="section-icon">📚</div>
+    <div class="section-title">全量文章列表</div>
+  </div>
+  <div class="content-body"><div style="font-size:12px;color:#78716C;margin-bottom:10px">共 <strong>16</strong> 个来源 · <strong>247</strong> 篇文章</div><div class="article-groups"><div class="article-group"><div class="article-group-header"><span class="article-group-name">【华丽志】</span><span class="article-group-badge">58</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/KI4HtlhAEaTiFhav56qU6Q" target="_blank" rel="noopener">对话Deckers Brands中国区副总裁兼总经理：越野黄金十年，HOKA如何续写山野的初心？</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/-WNaE-pSKP5mYw7anv63cQ" target="_blank" rel="noopener">阿玛尼集团股权出售方案初露端倪：或向三家优选收购方各出售5%股权</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/BJPEgU-4kIrhf280i1lFEg" target="_blank" rel="noopener">美国牛仔和户外品牌集团 Kontoor 宣布启动 Lee 品牌的出售流程</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/bORT9VON3QayhZVJYfp7HQ" target="_blank" rel="noopener">欧盟化妆品新规生效：美甲“银”成分被禁用，特定香精、防腐剂的浓度受到严格限制</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/8b8SYKVhjca02A5L_32W4A" target="_blank" rel="noopener">意大利健身器械巨头 Technogym 泰诺健上季度营收同比增长10.1%至2.368亿欧元</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/cVh935CoEJAAdUCO2URZgw" target="_blank" rel="noopener">华丽观察 | 从西安到南京，运动户外品牌开出更多“大区首店”：安踏、迪桑特、万星威、ACG ...</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/MnFhdXM4uv5no19ynVV0Qw" target="_blank" rel="noopener">奢侈品人事动向｜Canali 创意总监；Paul Smith 总经理；Chrono24 首席执行官</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/Bzhhjox8ZTRMZ1wtSIQDqQ" target="_blank" rel="noopener">Nike 承诺将继续支持旗下球鞋发售应用 SNKRS</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/OxCdnK52DQqFmVWw4N2VAg" target="_blank" rel="noopener">三夫户外2025年营收增长19.14%，X-BIONIC 品牌增长35.85%</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/DO_jHaxxJzugHDtbEeREug" target="_blank" rel="noopener">第四届日默瓦设计大赛揭晓：从能识别“手语”的智能指环，到高效环保的“芦苇收割机”</a></li>
+<li><span class="art-num">11.</span><a href="https://mp.weixin.qq.com/s/3bYZ1WlvQXuOalcY7Kl8qg" target="_blank" rel="noopener">深度｜国际高端珠宝品牌如何应对中国的“黄金热”？</a></li>
+<li><span class="art-num">12.</span><a href="https://mp.weixin.qq.com/s/nqPrNTTG9Di3vaYLWzcSXw" target="_blank" rel="noopener">美国激进投资者争夺瑞士 Swatch集团董事席位再次落败</a></li>
+<li><span class="art-num">13.</span><a href="https://mp.weixin.qq.com/s/_vyTILV8o0RpQgU8ZqgJNA" target="_blank" rel="noopener">意大利青少年时装品牌 Subdued 2025年营收增长19.9%至近2亿欧元</a></li>
+<li><span class="art-num">14.</span><a href="https://mp.weixin.qq.com/s/Jkvuxf0DKrCaEIDyQXpmCw" target="_blank" rel="noopener">欧洲首家五星级“温泉露营地”将于今秋开业，坐落于意大利温泉名镇</a></li>
+<li><span class="art-num">15.</span><a href="https://mp.weixin.qq.com/s/t3gm7y_jBsoRGGQS0Oc8mQ" target="_blank" rel="noopener">Under Armour 上财年营收下滑4％至50亿美元</a></li>
+<li><span class="art-num">16.</span><a href="https://mp.weixin.qq.com/s/5lSjWutkTqB59KGjqBx0uA" target="_blank" rel="noopener">一件 POLO衫迭代四年，利郎如何做透“产品力”？</a></li>
+<li><span class="art-num">17.</span><a href="https://mp.weixin.qq.com/s/-aNkbXoF8is8vbzT0DKknw" target="_blank" rel="noopener">官宣：LVMH集团将 Marc Jacobs 出售给了品牌管理公司 WHP Global</a></li>
+<li><span class="art-num">18.</span><a href="https://mp.weixin.qq.com/s/z1Sp4KNZph0cIHzd1la0lg" target="_blank" rel="noopener">亚瑟士集团2025财年销售额增长19.5%至8000亿日元以上，连续五年增长</a></li>
+<li><span class="art-num">19.</span><a href="https://mp.weixin.qq.com/s/18BYa4qbc2SLFONFENR8Zg" target="_blank" rel="noopener">芬迪首席创意官 Maria Grazia Chiuri：高高在上的设计师已不复存在，建立人际联结和阅读至关重要</a></li>
+<li><span class="art-num">20.</span><a href="https://mp.weixin.qq.com/s/2fS9ZpCnZDW7HOUSikYBaw" target="_blank" rel="noopener">从阻力带到真丝枕套，DIOR 推出高定康养产品系列</a></li>
+<li><span class="art-num">21.</span><a href="https://mp.weixin.qq.com/s/3o4zb6SsJxmssIB3uCZZLg" target="_blank" rel="noopener">哪些运动户外品牌入选最新 TOP4？（2026年3月-4月）｜华丽智库</a></li>
+<li><span class="art-num">22.</span><a href="https://mp.weixin.qq.com/s/A_fVEEC7McURmEHmKvTUOA" target="_blank" rel="noopener">Canada Goose加拿大鹅最新年报：营收首破15亿加元大关，大中华区Q4同比劲增24.2%</a></li>
+<li><span class="art-num">23.</span><a href="https://mp.weixin.qq.com/s/NKMOjUpLdAHNzUh9CUH_rg" target="_blank" rel="noopener">Burberry最新年报：“可比销售”重回增长并大幅扭亏为盈，大中华区下半年恢复增长</a></li>
+<li><span class="art-num">24.</span><a href="https://mp.weixin.qq.com/s/R5H3Y9XpdUlHgzLV1qDGqQ" target="_blank" rel="noopener">菲拉格慕集团一季度营收同比下滑5.5%，亚太市场DTC业务持续向好</a></li>
+<li><span class="art-num">25.</span><a href="https://mp.weixin.qq.com/s/_y4snmt0W17H-_3QAH3jnA" target="_blank" rel="noopener">一场飞拉达的背后，猛犸象如何让户外走进大众生活？</a></li>
+<li><span class="art-num">26.</span><a href="https://mp.weixin.qq.com/s/ecfHsAsmqqy8LDChChTO-A" target="_blank" rel="noopener">全球酒店内精品店零售规模2026年预计将突破210亿美元 | 普华永道最新报告</a></li>
+<li><span class="art-num">27.</span><a href="https://mp.weixin.qq.com/s/fq6tWNxrls0U84tvtb6YHg" target="_blank" rel="noopener">华丽现场｜Vhernier、阿蒂仙之香、New Balance、上下、周生生</a></li>
+<li><span class="art-num">28.</span><a href="https://mp.weixin.qq.com/s/Xos9NYroqlVQa7ec2GlOIg" target="_blank" rel="noopener">Birkenstock上季度营收同比增长8%至6.18亿欧元，亚太市场增速遥遥领先</a></li>
+<li><span class="art-num">29.</span><a href="https://mp.weixin.qq.com/s/XnMmo8V-I_s_yc29tWwkOg" target="_blank" rel="noopener">Qeelin创始人深入侗寨采风，如何用“高珠”让文化遗产“传”下去？</a></li>
+<li><span class="art-num">30.</span><a href="https://mp.weixin.qq.com/s/fGNHXne3wdSyOnDZnplJlA" target="_blank" rel="noopener">斯沃琪和爱彼表的联名款引发全球抢购热潮，部分门店被迫取消发售活动</a></li>
+<li><span class="art-num">31.</span><a href="https://mp.weixin.qq.com/s/-ez7B-u3daJJciCPbbuTWw" target="_blank" rel="noopener">传：Shein 将从 L Catterton 处收购美国互联网时尚品牌 Everlane，估值约 1亿美元</a></li>
+<li><span class="art-num">32.</span><a href="https://mp.weixin.qq.com/s/b0OQLiQfJMZ9eXThc6ofFg" target="_blank" rel="noopener">西班牙高端婚纱集团 Pronovias 将被一家英国投资公司收购</a></li>
+<li><span class="art-num">33.</span><a href="https://mp.weixin.qq.com/s/hWsoY18rjYLhryOigsI_VA" target="_blank" rel="noopener">亚瑟士集团今年一季度销售额同比增长29.7%，盈利水平创历史新高</a></li>
+<li><span class="art-num">34.</span><a href="https://mp.weixin.qq.com/s/ERecDQ8sTejX7q74-Maf4g" target="_blank" rel="noopener">lululemon 首次公开与创始人的矛盾细节，称对方“观念已落伍”</a></li>
+<li><span class="art-num">35.</span><a href="https://mp.weixin.qq.com/s/gDdVz7_42Ka6-HdfiQwNlg" target="_blank" rel="noopener">华丽现场｜周大福全球首家旗舰店于香港开幕；爱马仕匠心工坊亮相上海</a></li>
+<li><span class="art-num">36.</span><a href="https://mp.weixin.qq.com/s/u1FCxgkQN_yfRkqFcsV9jQ" target="_blank" rel="noopener">贝克汉姆夫妇首次跻身英国“10亿英镑”量级富豪行列</a></li>
+<li><span class="art-num">37.</span><a href="https://mp.weixin.qq.com/s/8DCKwfEOcKuNDD-Vqhk39g" target="_blank" rel="noopener">传：法国奢华护肤品牌 Biologique Recherche宝黎研萃寻求出售</a></li>
+<li><span class="art-num">38.</span><a href="https://mp.weixin.qq.com/s/9GUD3agWxuL1RU6OoNGtyA" target="_blank" rel="noopener">米兰男装周6月官方日程出炉，Pronounce 将举办10周年特别活动</a></li>
+<li><span class="art-num">39.</span><a href="https://mp.weixin.qq.com/s/ucikghxJFhnpy_VSaF8pjg" target="_blank" rel="noopener">亚玛芬体育加速向前！一季度营收增长32%，大中华区大涨44.5%</a></li>
+<li><span class="art-num">40.</span><a href="https://mp.weixin.qq.com/s/4Mh4-fd4uSZASUiYEst35Q" target="_blank" rel="noopener">Chanel 最新年报：营收增长3%至193亿美元，中国市场回暖势头从去年四季度延续至今</a></li>
+<li><span class="art-num">41.</span><a href="https://mp.weixin.qq.com/s/RJ4QIm1pypcz_BANay8gEA" target="_blank" rel="noopener">H&M集团亚太洲际中心落户上海，东南亚总部将从新加坡迁往吉隆坡</a></li>
+<li><span class="art-num">42.</span><a href="https://mp.weixin.qq.com/s/ufUqKOBWv02X6ji6Abt1Vg" target="_blank" rel="noopener">全球最贵艳彩蓝绿色钻石以1730万美元在佳士得拍出</a></li>
+<li><span class="art-num">43.</span><a href="https://mp.weixin.qq.com/s/lJXx1njOeagKd7IAlyaRvA" target="_blank" rel="noopener">日本运动品牌 YONEX 上财年净销售额增长18.3%，中国羽毛球市场行情持续稳健</a></li>
+<li><span class="art-num">44.</span><a href="https://mp.weixin.qq.com/s/vv7BVKH8_taZ8sxQTMzgQQ" target="_blank" rel="noopener">理查米尔如何打造有人情味的“品牌挚友”大家庭？</a></li>
+<li><span class="art-num">45.</span><a href="https://mp.weixin.qq.com/s/jYc78hcqf6saFcPRz8PDVw" target="_blank" rel="noopener">深度 | 从温哥华出发，MANITO如何让奢华桑蚕丝的魅力厚积薄发？</a></li>
+<li><span class="art-num">46.</span><a href="https://mp.weixin.qq.com/s/9HGEsDwQJuoNrds8g2RLBQ" target="_blank" rel="noopener">Giambattista Valli 从开云集团的控股方处回购同名品牌的多数股权</a></li>
+<li><span class="art-num">47.</span><a href="https://mp.weixin.qq.com/s/S9z1G2nIAPuNZuCy55lK-w" target="_blank" rel="noopener">ABG 宣布旗下美国时尚品牌 GUESS 在中国大陆市场的核心被授权商</a></li>
+<li><span class="art-num">48.</span><a href="https://mp.weixin.qq.com/s/wHpXagnz_u2214XIaxv4AA" target="_blank" rel="noopener">人事六则｜Rent the Runway联合创始人退出；Gap集团、True Religion、Wolverine、Inspecs 等高管变动</a></li>
+<li><span class="art-num">49.</span><a href="https://mp.weixin.qq.com/s/bKwdcVp-l_n2lEWX5iFXGg" target="_blank" rel="noopener">放弃合并计划！雅诗兰黛公司与 Puig 集团终止谈判</a></li>
+<li><span class="art-num">50.</span><a href="https://mp.weixin.qq.com/s/n6-zZsylSqo_Km1Ws1y-1w" target="_blank" rel="noopener">美国牛仔品牌 Lee 被品牌管理公司ABG收购，交易价值最高可达10亿美元</a></li>
+<li><span class="art-num">51.</span><a href="https://mp.weixin.qq.com/s/dLf4kjIsiZ04P1sNI-KVYg" target="_blank" rel="noopener">VF集团三年来首次恢复增长，The North Face 和 Timberland 年增幅均达 8%</a></li>
+<li><span class="art-num">52.</span><a href="https://mp.weixin.qq.com/s/KXerVNoDYceAjcBZZWhu1Q" target="_blank" rel="noopener">意大利奢侈时装品牌 Roberto Cavalli 的多数股权被美国品牌管理公司 Marquee Brands 收购</a></li>
+<li><span class="art-num">53.</span><a href="https://mp.weixin.qq.com/s/1fG0PEJ5I1I17BhbrIHxPw" target="_blank" rel="noopener">年亏损超3亿欧元，西班牙高端婚纱集团 Pronovias 提交自愿破产申请，为所有权转移铺路</a></li>
+<li><span class="art-num">54.</span><a href="https://mp.weixin.qq.com/s/-uz11qhSXhDs5E_Yd4H1IQ" target="_blank" rel="noopener">Marc Jacobs品牌的交易金额与细节被披露，中国业务后续将被再次出售</a></li>
+<li><span class="art-num">55.</span><a href="https://mp.weixin.qq.com/s/1Nzi9j3pnktcLDGL_SzQsQ" target="_blank" rel="noopener">人事动向｜PVH集团中国总裁更迭；Ferragamo首席品牌官来自 Valentino；Burberry董事长更迭；法拉帝任命CEO</a></li>
+<li><span class="art-num">56.</span><a href="https://mp.weixin.qq.com/s/3nASCRxRs1k4nALAfiAofw" target="_blank" rel="noopener">日本户外运动集团高得运上财年净销售额增长3.9%，Goldwin品牌中国子公司实现盈利</a></li>
+<li><span class="art-num">57.</span><a href="https://mp.weixin.qq.com/s/cZ58Tm6L_8biKmOzPbr3jg" target="_blank" rel="noopener">人事动向｜ABG集团创始人卸任CEO；Gabriela Hearst、Joseph Altuzarra 入选 CFDA 董事会</a></li>
+<li><span class="art-num">58.</span><a href="https://mp.weixin.qq.com/s/1bOV3lIB-rMk1esqLPXzcA" target="_blank" rel="noopener">戴比尔斯集团一季度毛胚钻石销售额与产量双涨，钻石价格承压下行</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【中服圈】</span><span class="article-group-badge">30</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/RZJhW3-HbEDVRcHRiGuRqQ" target="_blank" rel="noopener">2025年8大女装上市品牌业绩与现金储备</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/eunYOnk-hq6jWGu04mu1zw" target="_blank" rel="noopener">探路者2025年营收13.8亿，门店净关61家</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/F8p61SOUEWIsnp-d6PP6OQ" target="_blank" rel="noopener">《2026年五一消费旅游报告》</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/0KRF0EUj6mqDumQyxAt72A" target="_blank" rel="noopener">五十年匠心启新程，传递中国品牌温暖力量：波司登亮相2026世界品牌莫干山大会</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/c027lP9KYLrF01EfjesWjA" target="_blank" rel="noopener">阿玛尼向LV等三家集团合计出让15%股份</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/8ywIcIiHHxoBkRzywMCZqw" target="_blank" rel="noopener">《2026年一季度中国海外投资概览》</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/WL2gGXGBf15EI0BaW66TgA" target="_blank" rel="noopener">奢侈品的“摆渡人”，歌力思投资的百秋尚美冲刺港股</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/tVN5PYmJyffKUNVSYurpaA" target="_blank" rel="noopener">伯希和更名，第三次冲刺港股</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/_PAYN9Rmc0VtEkaJ4b5M0w" target="_blank" rel="noopener">《快手体育营销趋势洞察》</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/_mNoosbnSbr7UQKfYx0tZQ" target="_blank" rel="noopener">百年牛仔或将再次易主，Lee启动出售程序</a></li>
+<li><span class="art-num">11.</span><a href="https://mp.weixin.qq.com/s/mqc22NMkclrsFHw211t3Sg" target="_blank" rel="noopener">昂跑单季营收首次突破8亿瑞郎大关</a></li>
+<li><span class="art-num">12.</span><a href="https://mp.weixin.qq.com/s/vg2-pvZC4drBfgZXvJ2BUQ" target="_blank" rel="noopener">《鞋服行业产品升级与增长机会白皮书》</a></li>
+<li><span class="art-num">13.</span><a href="https://mp.weixin.qq.com/s/9DHSMuUcUS6uzN_j6uyZjw" target="_blank" rel="noopener">法国创立53年的知名品牌宣布永久关闭</a></li>
+<li><span class="art-num">14.</span><a href="https://mp.weixin.qq.com/s/fuXoq87aqMo3XXv_uHiFUg" target="_blank" rel="noopener">阿迪达斯有望获得退税22.8亿元</a></li>
+<li><span class="art-num">15.</span><a href="https://mp.weixin.qq.com/s/N1RzGvJjNNGp36wSV3jZzg" target="_blank" rel="noopener">《2026动漫营销航海书》</a></li>
+<li><span class="art-num">16.</span><a href="https://mp.weixin.qq.com/s/RmokpGWcc2E6bH2-5zYrhw" target="_blank" rel="noopener">泰兰尼斯广告又翻车，这次是暗示送礼</a></li>
+<li><span class="art-num">17.</span><a href="https://mp.weixin.qq.com/s/5MzWQLvwTts1G9PS0ODEiQ" target="_blank" rel="noopener">LV以10亿美元出售Marc Jacobs</a></li>
+<li><span class="art-num">18.</span><a href="https://mp.weixin.qq.com/s/XILSCThmvKPnMXo7uhObZA" target="_blank" rel="noopener">《2026中国消费者洞察报告-确定性：Z世代的新坐标》</a></li>
+<li><span class="art-num">19.</span><a href="https://mp.weixin.qq.com/s/NWdmZHWg_UZDr9gRMDKtqg" target="_blank" rel="noopener">lululemon的竞争对手重返中国市场，曾被LVMH投资</a></li>
+<li><span class="art-num">20.</span><a href="https://mp.weixin.qq.com/s/tGOXjBYmpu1ofwrZ08AjCw" target="_blank" rel="noopener">加拿大鹅公布2026财年业绩</a></li>
+<li><span class="art-num">21.</span><a href="https://mp.weixin.qq.com/s/mwQ2as8_xfVV51LTuTMGsg" target="_blank" rel="noopener">《2026年亚太区红人营销趋势报告》</a></li>
+<li><span class="art-num">22.</span><a href="https://mp.weixin.qq.com/s/EWxmq11BYL8UqnpNUAhb7w" target="_blank" rel="noopener">HALO x SORONA®｜北欧极简主义，淬炼日常锋芒</a></li>
+<li><span class="art-num">23.</span><a href="https://mp.weixin.qq.com/s/SzG4-VrdULzjWVN-bH86FA" target="_blank" rel="noopener">ACG南京万象天地店单日销售破30万</a></li>
+<li><span class="art-num">24.</span><a href="https://mp.weixin.qq.com/s/JIWFKl5cbkPxV0o44TCF1w" target="_blank" rel="noopener">《2026中国大陆薪酬指南》</a></li>
+<li><span class="art-num">25.</span><a href="https://mp.weixin.qq.com/s/MVPucCX5lldvxTxNXQ5JJA" target="_blank" rel="noopener">波司登50周年丨半个世纪登峰路 一部精神传承史</a></li>
+<li><span class="art-num">26.</span><a href="https://mp.weixin.qq.com/s/4bHh8JPyEF_mSuanlpVhPA" target="_blank" rel="noopener">始祖鸟公司公布一季度业绩，中国营收大增四成</a></li>
+<li><span class="art-num">27.</span><a href="https://mp.weixin.qq.com/s/a9V3R2ZmvDf5vOWNBKsL9A" target="_blank" rel="noopener">《2026年天猫家居睡眠趋势洞察》</a></li>
+<li><span class="art-num">28.</span><a href="https://mp.weixin.qq.com/s/QaypVOXZ8-mpPTUCDcifyA" target="_blank" rel="noopener">ANNA SUI ACTIVE x SORONA®｜多巴胺夏天 · 梦幻律动</a></li>
+<li><span class="art-num">29.</span><a href="https://mp.weixin.qq.com/s/bOsRsOGh0MXcWEPoG4geFQ" target="_blank" rel="noopener">知名品牌Mango创始人之子被捕：涉嫌谋杀父亲</a></li>
+<li><span class="art-num">30.</span><a href="https://mp.weixin.qq.com/s/2rVHxh-D0lvk91MtzU7tgA" target="_blank" rel="noopener">《2026大中华区薪酬指南》</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【艾林华尚】</span><span class="article-group-badge">28</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/1fnPtXaAjZBYmsxq-w1vIA" target="_blank" rel="noopener">拉夏贝尔亮出线下重构底牌，能否撑起国民品牌回归？</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/gEsMx6SS9OxUdaVgwcwKwg" target="_blank" rel="noopener">Polo衫翻身：美马球协品牌营收27亿美元创纪录，中国“反手打马球”也在闷声发财</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/V3PVP-seRKtStdsKgDkt0w" target="_blank" rel="noopener">百年牛仔品牌Lee被“终止经营”：Kontoor为何急于将它甩卖？</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/wVWs6eZoSh0KtkxvTSNdtw" target="_blank" rel="noopener">一鲸落，鞋头生：Pane 点燃运动鞋美学的正面战场</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/tLbOL7ek6_skLt0qjJ9uOw" target="_blank" rel="noopener">2025男装业绩大盘点：12家上市企业冷暖分明，谁在裸泳？</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/kO1vcHYSBE7xE-3GPAvGtw" target="_blank" rel="noopener">三年做到TOP1、年入90亿，对话草本初色：内衣界“新王”如何炼成？</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/rX_4Vl7c75KDu02qSQvK5A" target="_blank" rel="noopener">年砸10亿营销，伯希和改名三闯港交所：能洗掉“网红”底色吗？</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/0orPMgVYcTwLpav-XFHS3Q" target="_blank" rel="noopener">年增速23.7%的赛道里，grounds凭什么靠一双“软糖鞋”开进深圳万象城？</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/zhMvs8cTBUUxqSLR64w91w" target="_blank" rel="noopener">国产户外的“船票时刻”：坦博尔与伯希和为何急于上市</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/-lnSH53rNwKY4KfVyjnEHw" target="_blank" rel="noopener">营收破百亿，净利不足3%：赛维时代的钱去哪了？</a></li>
+<li><span class="art-num">11.</span><a href="https://mp.weixin.qq.com/s/DZkOEFdggCWMkJp_dLaNyg" target="_blank" rel="noopener">卖掉Marc Jacobs，LVMH集团“瘦身”进入深水区</a></li>
+<li><span class="art-num">12.</span><a href="https://mp.weixin.qq.com/s/lNdbKYgFRfhsGkiay8OThg" target="_blank" rel="noopener">中美销售双双放缓，昂跑On遭遇首次危机时刻</a></li>
+<li><span class="art-num">13.</span><a href="https://mp.weixin.qq.com/s/mDODE0k403GY4S-BKcF1rA" target="_blank" rel="noopener">男装没有中间地带：利郎如何靠一件“耐洗”单品抢占商务男士的衣橱心智？</a></li>
+<li><span class="art-num">14.</span><a href="https://mp.weixin.qq.com/s/lCqhWlyVPNfjIq9VX5X2Aw" target="_blank" rel="noopener">史上首次突破15亿加元，加拿大鹅凭什么在大中华区反超？</a></li>
+<li><span class="art-num">15.</span><a href="https://mp.weixin.qq.com/s/t3h-X438YnAVei3t2bBqZg" target="_blank" rel="noopener">猛犸象如何用一场“飞拉达”，重新定义中产阶级的山野野心？</a></li>
+<li><span class="art-num">16.</span><a href="https://mp.weixin.qq.com/s/vbKeUjR66SDbzQf1Kqcjmg" target="_blank" rel="noopener">泰兰尼斯广告又翻车，这次是暗示送礼</a></li>
+<li><span class="art-num">17.</span><a href="https://mp.weixin.qq.com/s/gxd0FDng91hs9xLVO2v3Ew" target="_blank" rel="noopener">突发 | SHEIN 约1亿美元收购美国可持续服饰品牌Everlane</a></li>
+<li><span class="art-num">18.</span><a href="https://mp.weixin.qq.com/s/rt3q2xMG9TDjhXkwwOGx0A" target="_blank" rel="noopener">Lululemon与创始人彻底“决裂”：代理权谈判破裂，董事会直指理念“过时”</a></li>
+<li><span class="art-num">19.</span><a href="https://mp.weixin.qq.com/s/J_cYBwYNYCuTQsb8leoQ0w" target="_blank" rel="noopener">亚玛芬体育加速向前！一季度营收增长32%，大中华区大涨44.5%</a></li>
+<li><span class="art-num">20.</span><a href="https://mp.weixin.qq.com/s/g8rKeKfS3JhyDCDgu2fefg" target="_blank" rel="noopener">韩国潮牌Mardi重返中国市场，代理模式为何走不远？</a></li>
+<li><span class="art-num">21.</span><a href="https://mp.weixin.qq.com/s/8bR3AuIwSdDE46jvGmo4fg" target="_blank" rel="noopener">库存 93 亿、团购业务暴跌 37%，海澜之家一季报藏着什么变量？</a></li>
+<li><span class="art-num">22.</span><a href="https://mp.weixin.qq.com/s/j8aKuz9tIzcRQkAcbE_Zyg" target="_blank" rel="noopener">GMV破亿、12城排队：Champion靠一颗“茄子”跑通本土化新路径</a></li>
+<li><span class="art-num">23.</span><a href="https://mp.weixin.qq.com/s/mHp9V5lMG_YCZnxEtsc2Tg" target="_blank" rel="noopener">关店两个月，美国时尚品牌GUESS带着新“搭档”重返中国</a></li>
+<li><span class="art-num">24.</span><a href="https://mp.weixin.qq.com/s/-7YwoJO3gVPFv2hSC3nfzQ" target="_blank" rel="noopener">流量会走，用户会留：Amazing Song的12年品牌“慢”生长</a></li>
+<li><span class="art-num">25.</span><a href="https://mp.weixin.qq.com/s/iEweqVWqCoCPYKeXHy0Neg" target="_blank" rel="noopener">奢侈品寒冬里的一把火，Ralph Lauren凭什么在中国逆势大涨50%？</a></li>
+<li><span class="art-num">26.</span><a href="https://mp.weixin.qq.com/s/VDq-BFFe913HXvF4Y1xLIQ" target="_blank" rel="noopener">美国牛仔品牌 Lee 被品牌管理公司ABG收购，交易价值最高可达10亿美元</a></li>
+<li><span class="art-num">27.</span><a href="https://mp.weixin.qq.com/s/XQHuJpa1pIPjRdx6JT3B_Q" target="_blank" rel="noopener">主品牌失速，安踏摸着李宁过河？</a></li>
+<li><span class="art-num">28.</span><a href="https://mp.weixin.qq.com/s/NpwZlg_fNj1quZXjeKG_UA" target="_blank" rel="noopener">9.25亿美元易主！Marc Jacobs告别路易威登集团，中国业务或将由本土巨头接手？</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【LADYMAX】</span><span class="article-group-badge">23</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/E5e3m5DMtu0s1-HCuUUE0w" target="_blank" rel="noopener">深度 | 止血之后，Burberry将如何获得增长？</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/EbZ5OTnijMgXh0ugT4TscQ" target="_blank" rel="noopener">LV、Chanel、Dior成为五一期间客流表现最强势的三大品牌</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/cRrZ93fkhF7eY4spvy3LHQ" target="_blank" rel="noopener">奢侈品消费回暖，上海兴业太古汇第一季度销售额猛涨81%</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/1AYbI0i39oV7fpRnk2Iupg" target="_blank" rel="noopener">Coach的爆发，是奢侈品行业最危险的时刻</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/fxrGBb6K4TeBkg9Zd_ocUA" target="_blank" rel="noopener">深度 | 谁拥有报纸印花？</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/FEryNw2TC05ZK4-SE4urqQ" target="_blank" rel="noopener">阿玛尼15%股权拟分拆出售，三大巨头接盘在即</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/lZyq-QUNXpwcD7Cr8ITvYg" target="_blank" rel="noopener">深度 | 当皇家橡树变成包挂，爱彼犯错了吗?</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/4iYrc0Scu80EyHMkiyN6gA" target="_blank" rel="noopener">开业不足3年，Aesop伊索华南首店关闭</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/yD-XNUq1u0VFEvTrlNIlLg" target="_blank" rel="noopener">深度 | 奢侈品牌将不再相信二三线城市？</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/Y4bgTyO-YPE5FoibwdHH6A" target="_blank" rel="noopener">“中产拖鞋”抗周期样本也失效，股价大跌12%</a></li>
+<li><span class="art-num">11.</span><a href="https://mp.weixin.qq.com/s/FF1Gj4uZauhRU0ZwJud5fw" target="_blank" rel="noopener">要闻 | Zara强硬否认侵犯Jo Malone商标权；百年牛仔品牌Lee将被出售；安德玛交出最难看一季报</a></li>
+<li><span class="art-num">12.</span><a href="https://mp.weixin.qq.com/s/B_nPkLq3WNehszjV6fq7Ag" target="_blank" rel="noopener">深度 | 老佛爷北京闭店，高端百货为何越来越难做?</a></li>
+<li><span class="art-num">13.</span><a href="https://mp.weixin.qq.com/s/cLRTmQS_87lfcKgOmG2Yyw" target="_blank" rel="noopener">LVMH终于还是卖掉了 Marc Jacobs</a></li>
+<li><span class="art-num">14.</span><a href="https://mp.weixin.qq.com/s/4qAnMiW4GpSjam7UDF8eTg" target="_blank" rel="noopener">要闻 | 加拿大鹅全年营收破15亿加元，中国市场表现突出</a></li>
+<li><span class="art-num">15.</span><a href="https://mp.weixin.qq.com/s/zT6z9Ftdj7ofshITgYX58A" target="_blank" rel="noopener">深度 | 奢侈品危机下的三种现实</a></li>
+<li><span class="art-num">16.</span><a href="https://mp.weixin.qq.com/s/ulqsLUlJSxcuxUv9RjCNOw" target="_blank" rel="noopener">传统奢侈品规则的降维打击</a></li>
+<li><span class="art-num">17.</span><a href="https://mp.weixin.qq.com/s/_0iMKFIQUSO4hVNLbIjyqA" target="_blank" rel="noopener">突发 | 国内买家收购美国可持续服饰品牌Everlane</a></li>
+<li><span class="art-num">18.</span><a href="https://mp.weixin.qq.com/s/V_ohvPpSqXnrjwO23GavUw" target="_blank" rel="noopener">lululemon内战升级</a></li>
+<li><span class="art-num">19.</span><a href="https://mp.weixin.qq.com/s/5asabF1SYugHDOQuUJEM1Q" target="_blank" rel="noopener">深度 | Chanel触底反弹，但中国市场何时复苏？</a></li>
+<li><span class="art-num">20.</span><a href="https://mp.weixin.qq.com/s/sM7daCPkO7SGGqvJkBbVnw" target="_blank" rel="noopener">深度 | 普拉提热潮后，运动和奢侈品都变了</a></li>
+<li><span class="art-num">21.</span><a href="https://mp.weixin.qq.com/s/CK2dChWY-P_a8kCPGSsQ4g" target="_blank" rel="noopener">Gucci母公司意大利千人罢工</a></li>
+<li><span class="art-num">22.</span><a href="https://mp.weixin.qq.com/s/DNu4EsQouA8V_QuuAEPCLQ" target="_blank" rel="noopener">卡地亚继续赢，历峰董事长不担心中国市场</a></li>
+<li><span class="art-num">23.</span><a href="https://mp.weixin.qq.com/s/YlCufztvHtBaAzgAd4n8rA" target="_blank" rel="noopener">奢侈品行业最意外的增长出现了，Ralph Lauren中国市场猛涨50%</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【时尚商业Daily】</span><span class="article-group-badge">18</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/lmqNvK0VyOsWBw9qAH-UoA" target="_blank" rel="noopener">LV、Chanel、Dior成为五一期间客流表现最强势的三大品牌</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/0TEooUYC5tEH-ujyolaH-g" target="_blank" rel="noopener">Miu Miu取消杭州街道限购的无奈</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/01-3WS6AbwWhln3EURiLwg" target="_blank" rel="noopener">阿玛尼15%股权拟分拆出售，三大巨头接盘在即</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/Pwr6xB6LrrIL2TgMQ4jf7Q" target="_blank" rel="noopener">开业不足3年，Aesop伊索华南首店关闭</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/JZ93wUEUyQ0AdqPNXaXFAw" target="_blank" rel="noopener">“中产拖鞋”抗周期样本也失效，股价大跌12%</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/IO4MiJfHz7zAE5dnJE6qMQ" target="_blank" rel="noopener">要闻 | Zara强硬否认侵犯Jo Malone商标权；百年牛仔品牌Lee将被出售；安德玛交出最难看一季报</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/v8GF-50sh4roS3jsPt4oUA" target="_blank" rel="noopener">LVMH终于还是卖掉了 Marc Jacobs</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/WFIIpyZEN6WFrMuzO1UJiQ" target="_blank" rel="noopener">要闻 | 加拿大鹅全年营收破15亿加元，中国市场表现突出</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/8CxrqW6YPQo3jdncFlNa6A" target="_blank" rel="noopener">深度 | 当皇家橡树变成包挂，爱彼犯错了吗?</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/7fN5yC-FcDdE8ehHxlnwTg" target="_blank" rel="noopener">Coach的爆发，是奢侈品行业最危险的时刻</a></li>
+<li><span class="art-num">11.</span><a href="https://mp.weixin.qq.com/s/YaxTZGK5zFtsK3VMUdaKuA" target="_blank" rel="noopener">传统奢侈品规则的降维打击</a></li>
+<li><span class="art-num">12.</span><a href="https://mp.weixin.qq.com/s/wkrnu3Fx1LXAHBu6315ZvQ" target="_blank" rel="noopener">深度 | 奢侈品危机下的三种现实</a></li>
+<li><span class="art-num">13.</span><a href="https://mp.weixin.qq.com/s/xffEa7s2DrDBc_YJDoBBtw" target="_blank" rel="noopener">lululemon内战升级</a></li>
+<li><span class="art-num">14.</span><a href="https://mp.weixin.qq.com/s/KS5JL-89fJVEHCZAmqkEcQ" target="_blank" rel="noopener">业绩逆势反弹，Chanel找对了创意总监</a></li>
+<li><span class="art-num">15.</span><a href="https://mp.weixin.qq.com/s/vE3xpn_nr5YRQBBk8MLrrA" target="_blank" rel="noopener">Gucci母公司意大利千人罢工</a></li>
+<li><span class="art-num">16.</span><a href="https://mp.weixin.qq.com/s/ydkYEow6kLVwwu0rMDfOCg" target="_blank" rel="noopener">奢侈品行业最意外的增长出现了，Ralph Lauren中国市场猛涨50%</a></li>
+<li><span class="art-num">17.</span><a href="https://mp.weixin.qq.com/s/pTXjL8JAm4H0G0cNv2GJQA" target="_blank" rel="noopener">李寒穷接手的是一个失去年轻人的雅戈尔</a></li>
+<li><span class="art-num">18.</span><a href="https://mp.weixin.qq.com/s/sD2Lqbsw_eVgqfeUxM00Wg" target="_blank" rel="noopener">传京东20亿英镑收购英国时尚电商巨头</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【高尔夫大师杂志】</span><span class="article-group-badge">15</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/IGZ-XLG8JnHYc0SXbNjOiA" target="_blank" rel="noopener">殷若宁再获亚军，提提库夺赛季第2冠！南非新星14杆优势斩获DP首胜</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/ci06nUWLYdcRirC6s2v8mw" target="_blank" rel="noopener">林希妤：复出未定，但我报名了今年的美国女子公开赛</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/BgO485-qW3-You-gHN18eg" target="_blank" rel="noopener">一场跨越百年的改造，如何让本周PGA锦标赛举办球场重回巅峰？</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/RU6g8b58h5CFzHyPJyE_8A" target="_blank" rel="noopener">PGA锦标赛｜小麦明晚8:40出发，李昊桐1点</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/cS3U6ropDtlwuKQ7XB9tcg" target="_blank" rel="noopener">凌晨2点出发卫冕！一哥舍夫勒会在PGA锦标赛继续“无声的统治”吗？</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/YdHyO3IpZke86amcq_j6CQ" target="_blank" rel="noopener">匿名报告｜押中冠军的秘诀</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/6egMwUinBAqDt5oDD43t7w" target="_blank" rel="noopener">李昊桐71杆T49！舍夫勒领跑PGA锦标赛，小麦首轮74杆德尚博76杆</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/hmB5gyYwXB9b5fmDwnPY6w" target="_blank" rel="noopener">李昊桐T22顺利晋级！小麦T30！舍夫勒：这是我见过最刁钻的旗位</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/1OZbWJDtAat_VOIkbjLcDA" target="_blank" rel="noopener">李昊桐T44！小麦66杆反弹至T7！拉姆并列第二冲冠</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/ZBUd0x3YhfzMmui6UeaSrg" target="_blank" rel="noopener">亚伦·拉伊1鹰6鸟斩获大满贯首胜！拉姆T2！小麦T7李昊桐T35</a></li>
+<li><span class="art-num">11.</span><a href="https://mp.weixin.qq.com/s/Efgw5tWQAEvJtYmA-MOr8w" target="_blank" rel="noopener">李红：巡回赛更像一个“火车头”，牵引着整个行业前行</a></li>
+<li><span class="art-num">12.</span><a href="https://mp.weixin.qq.com/s/6m4M9Nx-o89bTay_R_3w6Q" target="_blank" rel="noopener">王继军：我始终相信，中国高尔夫运动终将走向成熟与强大</a></li>
+<li><span class="art-num">13.</span><a href="https://mp.weixin.qq.com/s/0m6Z4K7ysIcfVRLLSs3y0A" target="_blank" rel="noopener">刘宇婕北京女子公开赛获个人第2冠！隋响第2</a></li>
+<li><span class="art-num">14.</span><a href="https://mp.weixin.qq.com/s/JPwKUptAyLHaIDz3gX5u-g" target="_blank" rel="noopener">克拉克单轮-11杆逆转夺冠希杰杯！南非老将结束欧巡13年冠军荒</a></li>
+<li><span class="art-num">15.</span><a href="https://mp.weixin.qq.com/s/vsqLZ1Zp3HYCEUmy2tyk0Q" target="_blank" rel="noopener">俄罗斯天才美少女！娜塔莉亚·古瑟娃正崛起于LPGA</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【懒熊体育】</span><span class="article-group-badge">14</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/GiI_wb5PlQ1jd25k9ub-kQ" target="_blank" rel="noopener">最大金主烧掉50亿美金后撤了，LIV高尔夫路在何方？</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/9ktsOz9mxzfLmh52hnPpsQ" target="_blank" rel="noopener">谁来给攀岩世界杯再添一把火？</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/LGofW_4kcM8cDZL_zfAPGQ" target="_blank" rel="noopener">2025年，运动鞋服代工厂的利润去哪了？ | Brandbeat</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/rqYyk0pyEb9CfEGh7wYf3A" target="_blank" rel="noopener">从“知道”到“⽤到”：⼀位体培教练如何用AI变革工作方式｜观点有效</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/PXe4Mmxrq9UJzA9L8XrMtQ" target="_blank" rel="noopener">央视签约世界杯背后：FIFA让了步，联想是关键协调者</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/LaU6XfnXp-pZ0kplk7FFZA" target="_blank" rel="noopener">王石再创业：深潜十二年，我攀顽石｜长聊</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/cEmXtPvyNbaiYmlRZsJq3Q" target="_blank" rel="noopener">TCL站枪手VS海尔挺PSG：欧冠决赛连续第二年“中国家电德比” | DEAL</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/HOiKn3zafyGD57z9D0Z59g" target="_blank" rel="noopener">身家11.85亿英镑，贝克汉姆成全英第一个10亿体育富豪</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/gTPVtOyCggA_ct4mEqFKTA" target="_blank" rel="noopener">5月上半国内外主要体育营销事件｜DEAL</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/RJbKv2_lG0wtWatQ-cw_AA" target="_blank" rel="noopener">为什么都讨厌阿森纳？｜颜强专栏</a></li>
+<li><span class="art-num">11.</span><a href="https://mp.weixin.qq.com/s/9-qd0L6T3YvAO0zU884SAQ" target="_blank" rel="noopener">打了十年拳，写了21万字，一个职业拳手的两个擂台</a></li>
+<li><span class="art-num">12.</span><a href="https://mp.weixin.qq.com/s/SsoEEramd_ZgVmnh9HnDWA" target="_blank" rel="noopener">从铁三赛场出发，高端运动品牌如何升级专业叙事</a></li>
+<li><span class="art-num">13.</span><a href="https://mp.weixin.qq.com/s/JrbyYRzug6KRmOZK0-htYw" target="_blank" rel="noopener">U17国足拿到亚军后，有比喊主帅下课更该关注的事｜观点有效</a></li>
+<li><span class="art-num">14.</span><a href="https://mp.weixin.qq.com/s/dKIglikWOdyBQwbd0QVMTg" target="_blank" rel="noopener">阿森纳“进化论”：足球、投资、商业与DNA传承的四重奏｜观点有效</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【哥德巴赫的思考】</span><span class="article-group-badge">13</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/9Hh_feNaMDCcr2cQlHytRg" target="_blank" rel="noopener">安踏凭什么比李宁多赚500亿？答案藏在5年前</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/tsHtwF66OWKw8ixWCf83Tg" target="_blank" rel="noopener">未来五年，运动品牌的“躺赢时代”正式结束</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/iYyb-APZC3uWqP1IiQVD5w" target="_blank" rel="noopener">运动品牌的“大逃杀”：从现在开始，倒计时十年</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/cstp1TOOVBglV5Avm_8alw" target="_blank" rel="noopener">始祖鸟排队、FILA关店：安踏的多品牌棋局，谁赢谁输？</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/eb55TuXhrLzUIwWIBhxieQ" target="_blank" rel="noopener">耐克、安踏、FILA：三个被DTC“反噬”的巨头</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/6rX1dCoK7FIvzp39p2DCRw" target="_blank" rel="noopener">别再傻傻只盯着抖音了！你被平台坑了三年</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/Y04ieiy_kUBHQkcmMhAjsg" target="_blank" rel="noopener">品牌只是讲故事吗？那些一夜消失的网红美妆品牌</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/bFllwtQWfjGEBovVq13fAA" target="_blank" rel="noopener">洗护品牌15秒卖爆，功效护肤15秒被划走——差在哪？</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/FUMC1sKTqQOOrwfF7xv8TQ" target="_blank" rel="noopener">增速比不过上美，毛利比不过毛戈平，为什么珀莱雅还是国货美妆的顶流？</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/9FF_YsL5N540pCsw7VGwIw" target="_blank" rel="noopener">欧莱雅第一品牌只占15%，国货平均75%——谁的抗风险能力更强？</a></li>
+<li><span class="art-num">11.</span><a href="https://mp.weixin.qq.com/s/N7NwB8YS_F5r3L8miTyV7w" target="_blank" rel="noopener">当成分卷到尽头，下一个增长点在哪？答案是两个字：场景</a></li>
+<li><span class="art-num">12.</span><a href="https://mp.weixin.qq.com/s/4zgFft_XgLVdThJTWo7eAg" target="_blank" rel="noopener">浴见、观夏、毛戈平：那些让用户“为感觉买单”的品牌做对了什么</a></li>
+<li><span class="art-num">13.</span><a href="https://mp.weixin.qq.com/s/J_MQfqQ3y6P38xWt3lO8sw" target="_blank" rel="noopener">单品卖爆之后，下一步怎么走？90%的品牌都卡在这里</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【ISPO】</span><span class="article-group-badge">13</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/uqZi7EXmg73zkk2wffegCg" target="_blank" rel="noopener">重磅提醒｜三大奖项火热报名中，5 月 31 日截止！</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/UqCxJZ7Jte1ikgqn48ORhg" target="_blank" rel="noopener">陆家嘴运动生活节2026，上海城中运动盛宴即将开启！</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/TlFGqumxAh1TP8WOPhOBog" target="_blank" rel="noopener">增长卡住了？ISPO SHANGHAI 2026：在分化中，找到属于你的“确定性增长”</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/M6qLRhDudxk4VV5NDaQJaw" target="_blank" rel="noopener">共筑软壳服装标准，赋能户外产业升级 ——《软壳类服装功能分级及评价规范》团体标准研讨会在京召开</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/7u6JjJgSGl1IqPO41me1pw" target="_blank" rel="noopener">重磅官宣！ISPO SHANGHAI 2026观众预登记正式开启，福利抢先看！</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/kV6jZHlVLdBYWAwriKOHoA" target="_blank" rel="noopener">20+家品牌亮相ISPO SHANGHAI 2026品牌新势力展区和户外美学展区</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/3L_zQEMRQInia1NbwynbsA" target="_blank" rel="noopener">重磅官宣！ISPO SHANGHAI 2026观众预登记正式开启，福利抢先看！</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/GzfWkGp1gOV7iNn2lefZdg" target="_blank" rel="noopener">重磅官宣！ISPO SHANGHAI 2026观众预登记正式开启，福利抢先看！</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/2Nr-JT37MaOL0DwaJK_wlA" target="_blank" rel="noopener">超前剧透 | ISPO SHANGHAI 2026展商风采 · 第二弹</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/eh1O7mLbRFlbjS5p-F8ACw" target="_blank" rel="noopener">6月我们醒山去！2026北京西山森林嘉年华报名正式开启</a></li>
+<li><span class="art-num">11.</span><a href="https://mp.weixin.qq.com/s/KyhAdSEACwVU8GP-AaNclA" target="_blank" rel="noopener">展区和论坛特辑 | ISPO SHANGHAI 2026：助力产业破局与共生</a></li>
+<li><span class="art-num">12.</span><a href="https://mp.weixin.qq.com/s/JgxfGhzq2pUUQtnD-c9LxQ" target="_blank" rel="noopener">邀请好友报名参观ISPO SHANGHAI 2026，千元好礼等你解锁!</a></li>
+<li><span class="art-num">13.</span><a href="https://mp.weixin.qq.com/s/M0pDfXY3AqjQog94kSPFBw" target="_blank" rel="noopener">肯道尔影展「成都&上海」双城定档，震撼开票！｜2026肯道尔探险山地电影展</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【时尚无国界】</span><span class="article-group-badge">10</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/26K2ImGe50XU95FSBCLszw" target="_blank" rel="noopener">要闻速报｜传Armani集团正考虑出售15%股权；Nike重申将持续投入SNKRS平台；Burberry推出首个专业运动服饰系列</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/Sy6ZdVAvisgAlkxSrFC7tQ" target="_blank" rel="noopener">要闻速报｜牛仔品牌Lee正寻求出售；百年灵裁员应对行业需求放缓；adidas Originals高端支线正式发售</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/P3g_3184JQXZu34R876NLA" target="_blank" rel="noopener">要闻速报｜On昂跑第一季度销售额大涨14.5%；Under Armour年营收近50亿美元；Jimmy Choo官宣白鹿为品牌代言人；</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/rp0jznnh_oIYZ2kR5ku9ug" target="_blank" rel="noopener">要闻速报｜ASICS第一季度净销售额增长近30%；The Row推出2026夏季男装；牧衣游 × 菊城陶屋非遗文化共创推出「窑变霓裳」定制系列</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/ZTMhEpL16gNL7ScN_okn_w" target="_blank" rel="noopener">要闻速报｜Burberry年营收近220亿元；LVMH正式出售Marc Jacobs；LOEWE × On昂跑推出全新联名系列</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/00jlhF2DyhzKuaPqtHE6xw" target="_blank" rel="noopener">要闻速报｜Ferragamo第一财季营收超2亿欧元；太平鸟将于宁波举办30周年庆典活动；婚纱集团Pronovias被收购</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/TbBNyYhTHZ9UOfuI89duGg" target="_blank" rel="noopener">要闻速报｜Swatch与爱彼联名腕表引发抢购；Aerie年营收逼近20亿美元；Jellycat Dog Hotel狗狗酒店主题店登陆成都SKP</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/ZrB4bh8Zgd8sPyqQdtva9g" target="_blank" rel="noopener">要闻速报｜Chanel去年营收突破190亿美元；爱马仕男装创意总监正组建核心团队；Moschino母公司收到初步收购要约</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/Lmwd31WmsZ19I14zCUc6MQ" target="_blank" rel="noopener">要闻速报｜Salomon领跑！亚玛芬体育第一季度营收大涨32%；YONEX全年净销售额达70亿元创新高；福建汇星机械收购德国制造商Mayer & Cie业务</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/hVbEn1ctDNnJ4JWZn2PmbA" target="_blank" rel="noopener">要闻速报｜Ralph Lauren年收入突破80亿美元；珀莱雅集团正式控股彩妆花知晓；Puig终止与雅诗兰黛潜在合并谈判</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【中服网】</span><span class="article-group-badge">10</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/KvHeLsZqclpQhl-FjkpUaA" target="_blank" rel="noopener">惶恐！！！国内11家男装上市企业2025年度业绩</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/f6qerUjBE22aIifvbIsqKg" target="_blank" rel="noopener">内衣生意难做？国内四家内衣上市企业2025年度业绩</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/kGAvZ0zQ2ukLnwcuCyqYSQ" target="_blank" rel="noopener">七大童装品牌2025战报，巨头们的“冰与火之歌”</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/y30XdbmP-dRwWut15Tg-Bg" target="_blank" rel="noopener">天塌了！  老佛爷百货北京门店本月内结束营业！</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/0NMpk2XDvKZYLrGnqaTOgg" target="_blank" rel="noopener">350亿男装“帝国”换帅，49岁长女接班</a></li>
+<li><span class="art-num">6.</span><a href="https://mp.weixin.qq.com/s/w82qvdvtiXNlE71jsHQqAg" target="_blank" rel="noopener">再见了Minelli！法国知名鞋履品牌宣布永久关闭</a></li>
+<li><span class="art-num">7.</span><a href="https://mp.weixin.qq.com/s/BiXz4SBniQoJq9OQ_Q7p1Q" target="_blank" rel="noopener">五味杂陈！！九大女装巨头2025年度营收利润汇总</a></li>
+<li><span class="art-num">8.</span><a href="https://mp.weixin.qq.com/s/I4fCouWXDr4uPgSZkc4Hdg" target="_blank" rel="noopener">门店超5000家，一年狂赚近百亿：这个县城土牌，为何活成了女装界大黑马？</a></li>
+<li><span class="art-num">9.</span><a href="https://mp.weixin.qq.com/s/Ekp_m1Tfh2O3q5bstrjnww" target="_blank" rel="noopener">斯凯奇门店清零，知名上市鞋企失去第二曲线</a></li>
+<li><span class="art-num">10.</span><a href="https://mp.weixin.qq.com/s/B1MuoF1MWIMpgFqJmhZgGQ" target="_blank" rel="noopener">冰火两重天！国内女装八巨头2026首季残酷交卷</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【小鸟体育】</span><span class="article-group-badge">5</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/hMc9JK6uH1gagvWaWdEYrQ" target="_blank" rel="noopener">殷若宁：感觉会有好的事情发生</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/uJQBSU0KNDNmstFV9oZ77Q" target="_blank" rel="noopener">斐乐青少年厦门站落幕，8位冠军获“年度总决赛”入场券</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/MBUruHcUFH0JlELc6ZNvKg" target="_blank" rel="noopener">中国赛程：李昊桐再战大满贯，何沐妮变全卡</a></li>
+<li><span class="art-num">4.</span><a href="https://mp.weixin.qq.com/s/fbkNM0okAjfKmAxVGFsk7A" target="_blank" rel="noopener">PGA小报：二十年未有之大满贯争冠战！李昊桐拼一目标</a></li>
+<li><span class="art-num">5.</span><a href="https://mp.weixin.qq.com/s/jRwvbjQ-v1g5MJoCpEhQrw" target="_blank" rel="noopener">别克LPGA锦标赛移师上海佘山！</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【GOIF户外创新】</span><span class="article-group-badge">3</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/tdljq_D86S1_cd26xFLH_Q" target="_blank" rel="noopener">报告分享｜2025中国运动户外冲锋衣消费白皮书</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/nA2YhNT9pGjNHu5T-4r0Sw" target="_blank" rel="noopener">越野跑比赛，中年人卷疯了</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/vgFQhVTEFrSA6YtYwoptBw" target="_blank" rel="noopener">亚玛芬Q1营收大涨32%；Goldwin、亚瑟士财报均创历史新高；On昂跑联名LOEWE罗意威｜GOIF户外周报</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【营销竞技场】</span><span class="article-group-badge">3</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/DilFFZVwZfADKA_QY6O8bQ" target="_blank" rel="noopener">从乔丹败诉到伯希和更名，留给我们的教训是什么？</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/nr0mdHwLpwuL4bgK-blkDQ" target="_blank" rel="noopener">《大咖说》对话黎双富：大IP的营销小切口与小众运动的大机会</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/fQBbcJkH0AUb3I3dIjdpWw" target="_blank" rel="noopener">安踏凭什么能让始祖鸟萨洛蒙们蒸蒸日上？</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【步外】</span><span class="article-group-badge">3</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/cTq54eYOAaXlvNGW31Rl1w" target="_blank" rel="noopener">为什么说 Moulton 是自行车界独树一帜的存在？</a></li>
+<li><span class="art-num">2.</span><a href="https://mp.weixin.qq.com/s/GEKjZyVcXXBGLPW4y_1vGw" target="_blank" rel="noopener">On 昂跑携手 LOEWE、HOKA 联袂 XLIM，均释出重磅联名鞋款｜本周 PICK UP</a></li>
+<li><span class="art-num">3.</span><a href="https://mp.weixin.qq.com/s/x3A2xls5-3dJIN39jXKR8A" target="_blank" rel="noopener">GORE‑TEX® 品牌迎来 50 周年，adidas x SATISFY 开启多季联名｜本周 PICK UP</a></li>
+</ul></div></div><div class="article-group"><div class="article-group-header"><span class="article-group-name">【MC中外服饰品牌】</span><span class="article-group-badge">1</span><span class="group-arrow" style="margin-left:auto;font-size:10px;color:#9CA3AF">▼</span></div><div class="article-group-body"><ul class="article-list"><li><span class="art-num">1.</span><a href="https://mp.weixin.qq.com/s/vGG_2EvFZUUG9TQnYNnUAQ" target="_blank" rel="noopener">资讯：雅戈尔完成代际交接；阿迪达斯发布 2026/27赛季主场球衣；PINKO 2026年一季度业绩稳步增长</a></li>
+</ul></div></div></div></div>
+</div>
+</main>
+
+<!-- ④ Footer -->
+<footer class="report-footer">
+  <div class="footer-logo">DESCENTE · D-MOVERS BI</div>
+  <div>行业热点 / 市场动态 · 周报 &nbsp;·&nbsp; 仅供内部参考</div>
+</footer>
+
+</div><!-- /.page-wrap -->
+
+<!-- ⑤ 回顶按钮 -->
+<div id="back-top" role="button" aria-label="回到顶部" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── 阅读进度条 ── */
+  var bar = document.getElementById('read-progress');
+  function updateBar() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (max > 0 ? Math.min(100, window.scrollY / max * 100) : 0) + '%';
+  }
+
+  /* ── 回顶按钮 ── */
+  var bt = document.getElementById('back-top');
+  window.addEventListener('scroll', function () {
+    updateBar();
+    bt.classList.toggle('show', window.scrollY > 400);
+    updateActiveToc();
+  }, { passive: true });
+
+  /* ── TOC 平滑跳转 ── */
+  var toc = document.querySelector('.toc-sticky');
+  document.querySelectorAll('.toc-item a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      var el = document.querySelector(this.getAttribute('href'));
+      if (!el) return;
+      var tocH = toc ? toc.getBoundingClientRect().height : 50;
+      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - tocH - 8, behavior: 'smooth' });
+    });
+  });
+
+  /* ── TOC 高亮当前板块 ── */
+  var sectionEls = [1,2,3,4,5,6].map(function(i){ return document.getElementById('section-'+i); }).filter(Boolean);
+  var tocLinks = {};
+  document.querySelectorAll('.toc-item a[data-section]').forEach(function(a){
+    tocLinks[a.dataset.section] = a;
+  });
+
+  function updateActiveToc() {
+    var tocH = toc ? toc.getBoundingClientRect().height : 50;
+    var current = '';
+    sectionEls.forEach(function(el) {
+      var rect = el.getBoundingClientRect();
+      if (rect.top <= tocH + 20) current = el.id;
+    });
+    Object.keys(tocLinks).forEach(function(k) {
+      tocLinks[k].classList.toggle('active', k === current);
+    });
+  }
+  updateActiveToc();
+
+  /* ── 表格响应式包裹 ── */
+  function wrapTables() {
+    document.querySelectorAll('.section-card table').forEach(function (t) {
+      if (t.parentNode && !t.parentNode.classList.contains('table-wrapper')) {
+        var w = document.createElement('div');
+        w.className = 'table-wrapper';
+        t.parentNode.insertBefore(w, t);
+        w.appendChild(t);
+      }
+    });
+  }
+  wrapTables();
+
+  /* ── 文章列表折叠展开 ── */
+  document.querySelectorAll('.article-group-header').forEach(function(h) {
+    h.addEventListener('click', function() {
+      var body = this.parentNode.querySelector('.article-group-body');
+      if (!body) return;
+      var isOpen = body.style.display !== 'none';
+      body.style.display = isOpen ? 'none' : 'block';
+      var arrow = this.querySelector('.group-arrow');
+      if (arrow) arrow.textContent = isOpen ? '▶' : '▼';
+    });
+  });
+
+  /* ── 战略判断条目美化：给纯数字编号条目加徽章 ── */
+  (function styleStrategyItems() {
+    var sec1 = document.getElementById('section-1');
+    if (!sec1) return;
+    var items = sec1.querySelectorAll('li');
+    items.forEach(function(li, i) {
+      var num = document.createElement('span');
+      num.className = 'strategy-num';
+      num.textContent = i + 1;
+      li.prepend(num);
+    });
+  })();
+
+  updateBar();
+
+})();
+</script>
+
+</body>
+</html>
