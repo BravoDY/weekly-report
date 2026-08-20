@@ -273,8 +273,8 @@ td.num { font-family:ui-monospace,"SF Mono",monospace; font-weight:var(--fw-med)
 </div>
 
 <div class="chart-card col-12">
-  <div class="chart-title">公众号近 30 天趋势<span class="chart-subtitle" id="trend-subtitle">按阅读 · 30 天</span></div>
-  <div id="chart-account-trend" class="chart-canvas"></div>
+  <div class="chart-title">主题近 30 天趋势<span class="chart-subtitle" id="trend-subtitle">按阅读 · 30 天</span></div>
+  <div id="chart-topic-trend" class="chart-canvas"></div>
 </div>
 <div class="drill-inline" id="drill-trend" style="display:none"></div>
 
@@ -371,7 +371,7 @@ function renderInlineDrill(moduleId){
   let arr = data.filter(a => {
     let ok = true;
     if(account) ok = ok && a.a === account;
-    if(topic) ok = ok && a.tp === topic;
+    if(topic) ok = ok && (a.tp || '其他') === topic;
     return ok;
   });
   const m = STATE.metric;
@@ -479,14 +479,14 @@ function getFiltered(){
   return arr;
 }
 
-let chartAccountTrend, chartStack;
+let chartTopicTrend, chartStack;
 function initCharts(){
-  chartAccountTrend = echarts.init(document.getElementById('chart-account-trend'));
+  chartTopicTrend = echarts.init(document.getElementById('chart-topic-trend'));
   chartStack = echarts.init(document.getElementById('chart-stack'));
 }
 
-function renderAccountTrend(data){
-  const accounts = [...new Set(data.map(a=>a.a))];
+function renderTopicTrend(data){
+  const topics = [...new Set(data.map(a=>a.tp || '其他'))];
   const dateList = [];
   for(let i=29; i>=0; i--){
     const d = new Date(TODAY); d.setDate(d.getDate()-i);
@@ -494,11 +494,11 @@ function renderAccountTrend(data){
   }
   const m = STATE.metric;
   const hex = METRIC_HEX[m];
-  const series = accounts.map((acc, i) => {
-    const accArticles = data.filter(a => a.a === acc);
+  const series = topics.map((topic, i) => {
+    const topicArticles = data.filter(a => (a.tp || '其他') === topic);
     const daily = dateList.map((_, idx) => {
       const dayDate = new Date(TODAY); dayDate.setDate(dayDate.getDate() - (29 - idx));
-      return accArticles.reduce((sum, a) => {
+      return topicArticles.reduce((sum, a) => {
         const hist = genHistory(a);
         const daysSincePub = Math.floor((dayDate - new Date(a.d)) / 86400000);
         if(daysSincePub < 0) return sum;
@@ -507,9 +507,9 @@ function renderAccountTrend(data){
       }, 0);
     });
     const lineStyle = i === 0 ? { width: 2.5 } : { width: 1.2, type: 'dashed' };
-    return { name: acc, type: 'line', data: daily, smooth: true, symbol: 'none', lineStyle: { color: hex, ...lineStyle }, itemStyle: { color: hex }, emphasis: { focus: 'series', lineStyle: { width: 3 } } };
+    return { name: topic, type: 'line', data: daily, smooth: true, symbol: 'none', lineStyle: { color: hex, ...lineStyle }, itemStyle: { color: hex }, emphasis: { focus: 'series', lineStyle: { width: 3 } } };
   });
-  chartAccountTrend.setOption({
+  chartTopicTrend.setOption({
     tooltip: { trigger: 'axis', confine: true, formatter: p => {
       let h = p[0].axisValue + '<br/>';
       p.forEach(it => h += `${it.marker}${it.seriesName}: ${fmtNum(it.value)}<br/>`);
@@ -521,16 +521,15 @@ function renderAccountTrend(data){
     yAxis: { type: 'value', axisLine: { lineStyle: { color: 'var(--line)' } }, axisLabel: { color: 'var(--whisper)', fontSize: 10, formatter: v => fmtNum(v) }, splitLine: { lineStyle: { color: 'var(--line-subtle)' } } },
     series
   }, true);
-  document.getElementById('trend-subtitle').textContent = `按${METRIC_LABEL[m]} · 30 天 · 点击折线就地下钻`;
-  // v12: 点击折线就地下钻到该公众号所有文章
-  chartAccountTrend.off('click');
-  chartAccountTrend.on('click', (params) => {
+  document.getElementById('trend-subtitle').textContent = `按${METRIC_LABEL[m]} · 30 天 · 点击主题折线就地下钻`;
+  chartTopicTrend.off('click');
+  chartTopicTrend.on('click', (params) => {
     if(params.componentType !== 'series') return;
-    const acc = params.seriesName;
-    if(!acc) return;
+    const topic = params.seriesName;
+    if(!topic) return;
     const cur = STATE.inlineDrills && STATE.inlineDrills.trend;
-    if(cur && cur.account === acc && !cur.topic) closeInlineDrill('trend');
-    else openInlineDrill('trend', acc, null);
+    if(cur && cur.topic === topic && !cur.account) closeInlineDrill('trend');
+    else openInlineDrill('trend', null, topic);
   });
 }
 
@@ -849,7 +848,7 @@ function renderAccountChips(){
 function renderAll(){
   const data = getFiltered();
   renderKPI(data); renderAccountChips(); renderTopicFilter();
-  renderAccountTrend(data); renderTopicMatrix(data); renderStack(data); renderTable(data);
+  renderTopicTrend(data); renderTopicMatrix(data); renderStack(data); renderTable(data);
   // v12: 同步刷新所有已展开的 inline 下钻容器（切指标/时间窗时跟着更新）
   if(STATE.inlineDrills){
     Object.keys(STATE.inlineDrills).forEach(mid => renderInlineDrill(mid));
@@ -888,7 +887,7 @@ const bt = document.getElementById('back-top');
 window.addEventListener('scroll', ()=>{bt.classList.toggle('show',window.scrollY>400);},{passive:true});
 bt.onclick = ()=>window.scrollTo({top:0,behavior:'smooth'});
 let resizeTimer;
-window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{chartAccountTrend.resize();chartStack.resize();},150);});
+window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{chartTopicTrend.resize();chartStack.resize();},150);});
 
 initCharts(); renderAll();
 </script>
