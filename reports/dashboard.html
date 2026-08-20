@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>行业热点内容看板 · v10 (2026-08-11)</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+:root {
+  --ink:oklch(0.18 0.01 240); --ink-secondary:oklch(0.38 0.012 240); --whisper:oklch(0.55 0.008 240); --silence:oklch(0.7 0.005 240);
+  --parchment:oklch(0.98 0.003 60); --paper:oklch(1 0 0); --parchment-raised:oklch(0.96 0.005 60);
+  --line-subtle:oklch(0 0 0 / 0.04); --line:oklch(0 0 0 / 0.08); --line-strong:oklch(0 0 0 / 0.12);
+  --amber:oklch(0.65 0.15 65); --amber-soft:oklch(0.92 0.04 65);
+  --slate:oklch(0.38 0.012 240); --slate-deep:oklch(0.18 0.01 240);
+  --green:oklch(0.55 0.16 145); --red:oklch(0.55 0.18 25);
+  --m-read:var(--slate); --m-share:var(--amber); --m-like:var(--ink-secondary); --m-comment:var(--whisper);
+  --fs-xs:0.75rem; --fs-sm:0.8125rem; --fs-base:0.875rem; --fs-md:1rem; --fs-lg:1.125rem; --fs-xl:1.25rem; --fs-2xl:1.5rem;
+  --fw-reg:400; --fw-med:500; --fw-semi:600; --fw-bold:700;
+  --shadow-premium: 0 0 0 0.5px oklch(0 0 0 / 0.05), 0 1px 2px oklch(0 0 0 / 0.04), 0 2px 4px oklch(0 0 0 / 0.03), 0 4px 8px oklch(0 0 0 / 0.02);
+  --r-sm:4px; --r-md:8px; --r-lg:12px;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px;
+}
+[data-theme="dark"] {
+  --ink:oklch(0.93 0.005 240); --ink-secondary:oklch(0.75 0.008 240); --whisper:oklch(0.6 0.008 240); --silence:oklch(0.45 0.005 240);
+  --parchment:oklch(0.13 0.008 240); --paper:oklch(0.16 0.008 240); --parchment-raised:oklch(0.19 0.008 240);
+  --line-subtle:oklch(1 0 0 / 0.04); --line:oklch(1 0 0 / 0.08); --line-strong:oklch(1 0 0 / 0.12);
+  --amber:oklch(0.72 0.14 65); --amber-soft:oklch(0.25 0.04 65);
+  --slate:oklch(0.7 0.008 240); --slate-deep:oklch(0.85 0.005 240);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { font-size:var(--fs-base); -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent; }
+body { font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--parchment); color:var(--ink); line-height:1.5; min-height:100vh; font-variant-numeric:tabular-nums; overflow-x:hidden; }
+a { color:var(--slate); text-decoration:none; }
+a:hover, a:active { color:var(--amber); }
+.page-wrap { max-width:1280px; margin:0 auto; padding:var(--s-3); }
+
+.report-header { background:var(--paper); border-radius:var(--r-lg); padding:var(--s-4); margin-bottom:var(--s-3); box-shadow:var(--shadow-premium); border:0.5px solid var(--line-subtle); border-top:3px solid var(--amber); }
+.header-row { display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s-3); flex-wrap:wrap; }
+.header-left { flex:1; min-width:0; }
+.header-badge { display:inline-flex; align-items:center; gap:var(--s-1); background:var(--amber-soft); color:var(--amber); font-size:var(--fs-xs); font-weight:var(--fw-bold); letter-spacing:var(--ls-wider); padding:3px var(--s-3); border-radius:var(--r-sm); margin-bottom:var(--s-2); text-transform:uppercase; }
+.report-header h1 { font-size:var(--fs-xl); font-weight:var(--fw-bold); color:var(--ink); line-height:1.25; margin-bottom:var(--s-2); letter-spacing:var(--ls-tight); }
+.header-meta { font-size:var(--fs-sm); color:var(--whisper); }
+.header-actions { display:flex; gap:var(--s-2); align-items:center; flex-shrink:0; }
+.icon-btn { display:inline-flex; align-items:center; gap:var(--s-1); padding:6px var(--s-3); min-height:36px; border:0.5px solid var(--line); border-radius:var(--r-sm); background:var(--paper); color:var(--whisper); font-size:var(--fs-sm); font-weight:var(--fw-med); letter-spacing:var(--ls-wide); cursor:pointer; text-decoration:none; transition:all 150ms ease; }
+.icon-btn:hover, .icon-btn:active { border-color:var(--amber); color:var(--amber); }
+.icon-btn:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
+.icon-btn .icon { font-size:14px; line-height:1; }
+.icon-btn.active { border-color:var(--amber); color:var(--amber); background:var(--paper-soft); }
+
+.toolbar { display:flex; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; align-items:flex-start; }
+.toolbar-group { display:flex; gap:var(--s-1); align-items:center; flex-wrap:wrap; max-width:100%; }
+.toolbar-label { font-size:var(--fs-xs); color:var(--whisper); font-weight:var(--fw-bold); letter-spacing:var(--ls-wider); text-transform:uppercase; margin-right:var(--s-2); white-space:nowrap; flex-shrink:0; }
+.chip { padding:5px var(--s-2); border:0.5px solid var(--line); border-radius:var(--r-sm); background:var(--paper); color:var(--whisper); font-size:var(--fs-xs); font-weight:var(--fw-med); cursor:pointer; letter-spacing:var(--ls-wide); min-height:28px; white-space:nowrap; }
+.chip:hover, .chip:active { border-color:var(--amber); color:var(--amber); }
+.chip.active { background:var(--slate); color:var(--paper); border-color:var(--slate); }
+.chip.amber-active { background:var(--amber); color:var(--paper); border-color:var(--amber); }
+.chip-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; flex-wrap:nowrap !important; }
+.chip-scroll::-webkit-scrollbar { display:none; }
+
+/* v12: 就地下钻容器 */
+.drill-inline {
+  margin: var(--s-1) 0 var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--paper);
+  border-left: 3px solid var(--amber);
+  border-radius: var(--r-sm);
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.04);
+  animation: drillSlide 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes drillSlide { from { opacity:0; transform: translateY(-6px); } to { opacity:1; transform: translateY(0); } }
+.drill-header { display:flex; align-items:center; gap:var(--s-2); flex-wrap:wrap; margin-bottom:var(--s-3); padding-bottom:var(--s-2); border-bottom:0.5px solid var(--line); font-size:13px; }
+.drill-header b { color:var(--amber); font-weight:var(--fw-bold); }
+.drill-header .drill-close { margin-left:auto; padding:3px 10px; border:0.5px solid var(--amber); background:transparent; color:var(--amber); border-radius:var(--r-sm); cursor:pointer; font-size:12px; font-weight:var(--fw-semi); letter-spacing:var(--ls-wide); }
+.drill-header .drill-close:hover { background:var(--amber); color:var(--paper); }
+.drill-mini-table { width:100%; border-collapse:collapse; font-size:12px; }
+.drill-mini-table th { text-align:left; padding:6px 8px; color:var(--whisper); font-weight:var(--fw-med); border-bottom:0.5px solid var(--line); font-size:11px; letter-spacing:var(--ls-wide); }
+.drill-mini-table td { padding:7px 8px; border-bottom:0.5px solid var(--line-subtle); color:var(--ink); }
+.drill-mini-table td.num { text-align:right; font-family:ui-monospace, monospace; font-variant-numeric:tabular-nums; color:var(--ink); font-weight:var(--fw-med); }
+.drill-mini-table tr:hover td { background:var(--paper-soft); }
+.drill-mini-table .title-cell { max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.drill-mini-table .topic-tag { padding:1px 6px; border-radius:3px; font-size:10px; font-weight:var(--fw-semi); background:var(--paper-soft); color:var(--ink-secondary); }
+
+.kpi-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-3); margin-bottom:var(--s-3); }
+.kpi-card { background:var(--paper); border-radius:var(--r-md); padding:var(--s-3) var(--s-4); box-shadow:var(--shadow-premium); border:0.5px solid var(--line-subtle); cursor:pointer; transition:all .15s; position:relative; overflow:hidden; display:flex; flex-direction:column; }
+.kpi-card:hover, .kpi-card:active { box-shadow:var(--shadow-premium-hover); transform:translateY(-1px); }
+.kpi-card.active { border-color:var(--amber); box-shadow:var(--shadow-premium-hover), 0 0 0 2px var(--amber-soft); }
+.kpi-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
+.kpi-card[data-metric="read"]::before { background:var(--m-read); }
+.kpi-card[data-metric="share"]::before { background:var(--m-share); }
+.kpi-card[data-metric="like"]::before { background:var(--m-like); }
+.kpi-card[data-metric="comment"]::before { background:var(--m-comment); }
+.kpi-card.active::before { background:var(--amber); }
+.kpi-label { font-size:10px; color:var(--whisper); font-weight:var(--fw-bold); letter-spacing:var(--ls-wider); text-transform:uppercase; margin-bottom:var(--s-1); }
+.kpi-value-row { display:flex; align-items:baseline; gap:var(--s-1); flex-wrap:wrap; margin-bottom:var(--s-2); }
+.kpi-value { font-size:var(--fs-xl); font-weight:var(--fw-bold); color:var(--ink); line-height:1; letter-spacing:var(--ls-tighter); }
+.kpi-card[data-metric="read"] .kpi-value { color:var(--m-read); }
+.kpi-card[data-metric="share"] .kpi-value { color:var(--m-share); }
+.kpi-card[data-metric="like"] .kpi-value { color:var(--m-like); }
+.kpi-card[data-metric="comment"] .kpi-value { color:var(--m-comment); }
+.kpi-card.active .kpi-value { color:var(--amber); }
+.kpi-delta { font-size:10px; font-weight:var(--fw-bold); padding:1px var(--s-1); border-radius:var(--r-sm); }
+.kpi-delta.up { color:var(--green); background:oklch(0.55 0.16 145 / 0.1); }
+.kpi-delta.down { color:var(--red); background:oklch(0.55 0.18 25 / 0.1); }
+.kpi-spark-wrap { margin-top:auto; }
+.kpi-sparkline { height:22px; }
+.kpi-sparkline svg { width:100%; height:100%; display:block; }
+.spark-time { font-size:9px; color:var(--silence); margin-top:2px; display:flex; justify-content:space-between; font-family:ui-monospace,monospace; letter-spacing:var(--ls-wide); }
+
+.chart-grid { display:grid; grid-template-columns:repeat(12,1fr); gap:var(--s-3); margin-bottom:var(--s-3); }
+.chart-card { background:var(--paper); border-radius:var(--r-md); padding:var(--s-4); box-shadow:var(--shadow-premium); border:0.5px solid var(--line-subtle); }
+.chart-card.col-12 { grid-column:span 12; }
+.chart-title { font-size:var(--fs-base); font-weight:var(--fw-bold); color:var(--ink); margin-bottom:var(--s-2); letter-spacing:var(--ls-tight); display:flex; align-items:center; gap:var(--s-2); flex-wrap:wrap; }
+.chart-title::before { content:''; width:3px; height:14px; background:var(--amber); border-radius:1px; flex-shrink:0; }
+.chart-subtitle { font-size:var(--fs-xs); color:var(--whisper); font-weight:var(--fw-reg); margin-left:auto; }
+.chart-canvas { width:100%; height:300px; }
+
+.topic-matrix { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-2); }
+.topic-cell { padding:var(--s-2) var(--s-3); background:var(--parchment-raised); border:0.5px solid var(--line-subtle); border-radius:var(--r-sm); cursor:pointer; transition:all .15s; display:flex; flex-direction:column; }
+.topic-cell:hover, .topic-cell:active { border-color:var(--amber); box-shadow:var(--shadow-premium); }
+.topic-cell.active { border-color:var(--amber); background:var(--amber-soft); }
+.topic-cell-name { font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--ink); margin-bottom:2px; display:flex; justify-content:space-between; align-items:center; }
+.topic-cell-val { font-size:var(--fs-sm); font-family:ui-monospace,monospace; font-weight:var(--fw-bold); color:var(--ink-secondary); margin:2px 0; }
+.topic-cell-spark { height:24px; }
+.topic-cell-spark svg { width:100%; height:100%; display:block; }
+.topic-cell .spark-time { margin-top:3px; }
+
+.table-wrapper { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:var(--r-sm); border:0.5px solid var(--line); }
+table { width:100%; border-collapse:collapse; font-size:var(--fs-sm); min-width:700px; }
+thead th { padding:var(--s-2) var(--s-3); text-align:left; font-weight:var(--fw-bold); font-size:var(--fs-xs); color:var(--paper); background:var(--slate); letter-spacing:var(--ls-wider); text-transform:uppercase; cursor:pointer; user-select:none; white-space:nowrap; position:sticky; top:0; }
+thead th:hover, thead th:active { background:var(--slate-deep); }
+thead th.sort-active { background:var(--amber); }
+thead th .sort-arrow { margin-left:var(--s-1); font-size:10px; }
+tbody td { padding:var(--s-2) var(--s-3); border-bottom:0.5px solid var(--line-subtle); vertical-align:middle; word-break:break-word; }
+tbody tr:last-child td { border-bottom:none; }
+tbody tr:hover td, tbody tr:active td { background:var(--parchment-raised); }
+tbody tr.expanded td { background:var(--amber-soft); }
+td.title-cell { color:var(--slate); font-weight:var(--fw-med); max-width:240px; cursor:pointer; }
+td.title-cell:hover { color:var(--amber); }
+td.title-cell a { color:inherit; }
+td.num { font-family:ui-monospace,"SF Mono",monospace; font-weight:var(--fw-med); text-align:right; letter-spacing:var(--ls-tight); white-space:nowrap; }
+.heat-1 { color:oklch(0.7 0.05 65); }
+.heat-2 { color:oklch(0.6 0.1 65); font-weight:var(--fw-med); }
+.heat-3 { color:var(--amber); font-weight:var(--fw-bold); }
+.heat-4 { color:var(--amber); font-weight:var(--fw-bold); }
+.badge-topic { display:inline-block; font-size:var(--fs-xs); padding:1px var(--s-2); border-radius:var(--r-sm); background:var(--parchment-raised); color:var(--whisper); border:0.5px solid var(--line-subtle); font-weight:var(--fw-med); white-space:nowrap; }
+.badge-topic.active { background:var(--amber-soft); color:var(--amber); border-color:var(--amber); }
+.account-cell { color:var(--ink-secondary); font-size:var(--fs-xs); white-space:nowrap; }
+.spark-cell { width:110px; }
+.spark-cell-wrap { display:flex; flex-direction:column; gap:2px; }
+.spark-cell svg { width:100%; height:18px; display:block; }
+
+.expand-row td { padding:0 !important; background:var(--parchment-raised); }
+.expand-content { padding:var(--s-3); }
+.expand-title { font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--ink); margin-bottom:var(--s-2); letter-spacing:var(--ls-wide); }
+.expand-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-3); }
+.expand-cell { display:flex; flex-direction:column; }
+.expand-cell-head { display:flex; align-items:baseline; gap:var(--s-1); margin-bottom:2px; }
+.expand-metric-label { font-size:10px; color:var(--whisper); font-weight:var(--fw-bold); text-transform:uppercase; letter-spacing:var(--ls-wider); }
+.expand-metric-value { font-size:var(--fs-md); font-weight:var(--fw-bold); font-family:ui-monospace, monospace; font-variant-numeric:tabular-nums; margin-left:auto; }
+.expand-metric-spark { height:32px; overflow:hidden; }
+.expand-metric-spark svg { max-width:100%; height:32px; }
+.expand-metric-time { display:flex; justify-content:space-between; font-size:9px; color:var(--whisper); font-family:ui-monospace, monospace; letter-spacing:var(--ls-wide); margin-top:2px; }
+
+.report-footer { text-align:center; font-size:var(--fs-xs); color:var(--whisper); padding:var(--s-4) 0; border-top:0.5px solid var(--line-subtle); margin-top:var(--s-3); letter-spacing:var(--ls-wide); }
+.footer-logo { font-weight:var(--fw-bold); color:var(--slate); font-size:var(--fs-sm); letter-spacing:var(--ls-wider); text-transform:uppercase; }
+#back-top { position:fixed; right:var(--s-3); bottom:var(--s-4); width:40px; height:40px; background:var(--slate); color:var(--paper); font-size:18px; line-height:40px; text-align:center; border-radius:var(--r-sm); cursor:pointer; box-shadow:var(--shadow-premium-hover); opacity:0; pointer-events:none; transition:opacity .3s,transform .15s; z-index:500; border:0.5px solid var(--line-strong); }
+#back-top.show { opacity:1; pointer-events:auto; }
+#back-top:hover, #back-top:active { transform:translateY(-2px); background:var(--amber); }
+
+@media (max-width:768px) {
+  :root { --fs-base:0.9rem; }
+  .page-wrap { padding:var(--s-2); }
+  .report-header { padding:var(--s-3); }
+  .report-header h1 { font-size:var(--fs-lg); }
+  .header-meta { font-size:var(--fs-xs); }
+  .toolbar { gap:var(--s-2); }
+  .toolbar-group { width:100%; }
+  .kpi-bar { grid-template-columns:repeat(2,1fr); gap:var(--s-2); }
+  .kpi-card { padding:var(--s-2) var(--s-3); }
+  .kpi-value { font-size:var(--fs-lg); }
+  .kpi-sparkline { height:18px; }
+  .chart-grid { gap:var(--s-2); }
+  .chart-card { padding:var(--s-3); }
+  .chart-canvas { height:320px; }
+  .topic-matrix { grid-template-columns:repeat(2,1fr); }
+  .expand-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:480px) {
+  :root { --fs-base:0.875rem; }
+  .kpi-bar { grid-template-columns:1fr 1fr; gap:var(--s-1); }
+  .kpi-card { padding:var(--s-2) var(--s-3); border-radius:var(--r-sm); }
+  .kpi-value { font-size:var(--fs-base); }
+  .chart-card { padding:var(--s-2) var(--s-3); border-radius:var(--r-sm); }
+  .chart-canvas { height:300px; }
+  .topic-matrix { grid-template-columns:1fr; }
+  table { font-size:var(--fs-xs); min-width:580px; }
+  thead th, tbody td { padding:var(--s-1) var(--s-2); }
+  td.title-cell { max-width:140px; }
+  .spark-cell { width:80px; }
+  .expand-grid { grid-template-columns:1fr; }
+  #back-top { width:36px; height:36px; font-size:16px; line-height:36px; }
+}
+@media (hover:none) and (pointer:coarse) {
+  .chip, .icon-btn, .kpi-card, .topic-cell, td.title-cell { -webkit-tap-highlight-color:transparent; }
+  .chip:hover, .icon-btn:hover, .kpi-card:hover { transform:none; }
+  thead th { cursor:default; }
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<header class="report-header">
+  <div class="header-row">
+    <div class="header-left">
+      <div class="header-badge">内容看板 · v10</div>
+      <h1>公众号文章趋势分析</h1>
+      <div class="header-meta">公众号×主题改堆叠条形图 · 纵=公众号 横=主题分段 · 流向感更强</div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="theme-toggle" title="切换暗色模式" aria-label="切换暗色模式"><span class="icon">🌙</span><span>暗色</span></button>
+      <a class="icon-btn" href="demo_optimized_report.html" title="返回周报"><span class="icon">📰</span><span>周报</span></a>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-group">
+    <span class="toolbar-label">时间</span>
+    <div class="chip-scroll" style="display:flex;gap:4px">
+      <button class="chip" data-range="7">7 天</button>
+      <button class="chip active" data-range="14">14 天</button>
+      <button class="chip" data-range="30">30 天</button>
+      <button class="chip" data-range="all">全部</button>
+    </div>
+  </div>
+  <div class="toolbar-group">
+    <span class="toolbar-label">指标</span>
+    <div class="chip-scroll" style="display:flex;gap:4px">
+      <button class="chip metric-chip active" data-metric="read">阅读</button>
+      <button class="chip metric-chip" data-metric="share">分享</button>
+      <button class="chip metric-chip" data-metric="like">在看</button>
+      <button class="chip metric-chip" data-metric="comment">留言</button>
+    </div>
+  </div>
+  <div class="toolbar-group" style="width:100%">
+    <span class="toolbar-label">公众号</span>
+    <div class="chip-scroll" id="account-filter" style="display:flex;gap:4px;flex:1"></div>
+  </div>
+</div>
+
+<div class="kpi-bar" id="kpi-bar">
+  <div class="kpi-card active" data-metric="read">
+    <div class="kpi-label">总阅读</div>
+    <div class="kpi-value-row"><span class="kpi-value" id="kpi-read">—</span><span class="kpi-delta up" id="kpi-read-delta">—</span></div>
+    <div class="kpi-spark-wrap"><div class="kpi-sparkline" id="kpi-spark-read"></div><div class="spark-time" id="kpi-time-read"></div></div>
+  </div>
+  <div class="kpi-card" data-metric="share">
+    <div class="kpi-label">总分享</div>
+    <div class="kpi-value-row"><span class="kpi-value" id="kpi-share">—</span><span class="kpi-delta up" id="kpi-share-delta">—</span></div>
+    <div class="kpi-spark-wrap"><div class="kpi-sparkline" id="kpi-spark-share"></div><div class="spark-time" id="kpi-time-share"></div></div>
+  </div>
+  <div class="kpi-card" data-metric="like">
+    <div class="kpi-label">总在看</div>
+    <div class="kpi-value-row"><span class="kpi-value" id="kpi-like">—</span><span class="kpi-delta up" id="kpi-like-delta">—</span></div>
+    <div class="kpi-spark-wrap"><div class="kpi-sparkline" id="kpi-spark-like"></div><div class="spark-time" id="kpi-time-like"></div></div>
+  </div>
+  <div class="kpi-card" data-metric="comment">
+    <div class="kpi-label">总留言</div>
+    <div class="kpi-value-row"><span class="kpi-value" id="kpi-comment">—</span><span class="kpi-delta up" id="kpi-comment-delta">—</span></div>
+    <div class="kpi-spark-wrap"><div class="kpi-sparkline" id="kpi-spark-comment"></div><div class="spark-time" id="kpi-time-comment"></div></div>
+  </div>
+</div>
+
+<div class="chart-card col-12">
+  <div class="chart-title">公众号近 30 天趋势<span class="chart-subtitle" id="trend-subtitle">按阅读 · 30 天</span></div>
+  <div id="chart-account-trend" class="chart-canvas"></div>
+</div>
+<div class="drill-inline" id="drill-trend" style="display:none"></div>
+
+<div class="chart-card col-12">
+  <div class="chart-title">主题趋势矩阵<span class="chart-subtitle" id="matrix-subtitle">按阅读 · 30 天 · 点击筛选</span></div>
+  <div class="topic-matrix" id="topic-matrix"></div>
+</div>
+<div class="drill-inline" id="drill-matrix" style="display:none"></div>
+
+<!-- ════════ v11: 公众号 × 主题 堆叠条形图（纵=公众号，横=主题分段）══════ -->
+<div class="chart-card col-12">
+  <div class="chart-title">公众号 × 主题 流向分布<span class="chart-subtitle" id="stack-subtitle">按阅读 · 每行分段=主题</span></div>
+  <div id="chart-stack" class="chart-canvas" style="height:480px"></div>
+</div>
+<div class="drill-inline" id="drill-stack" style="display:none"></div>
+
+<div class="chart-card col-12">
+  <div class="chart-title">主体内 Top 文章<span class="chart-subtitle" id="table-subtitle">行内阅读 sparkline · 点击标题展开 4 维</span></div>
+  <div id="drill-status" style="margin-bottom:var(--s-2);display:none;padding:var(--s-2) var(--s-3);background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:4px;font-size:13px;"></div>
+  <div style="margin-bottom:var(--s-2);display:flex;gap:var(--s-1);flex-wrap:wrap" id="topic-filter"></div>
+  <div class="table-wrapper">
+    <table id="top-table">
+      <thead><tr>
+        <th>#</th><th>标题</th><th>号</th><th>主题</th>
+        <th>趋势</th>
+        <th data-sort="read" class="sort-active">阅读 <span class="sort-arrow">↓</span></th>
+        <th data-sort="share">分享</th>
+        <th data-sort="like">在看</th>
+        <th data-sort="comment">留言</th>
+      </tr></thead>
+      <tbody id="top-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<footer class="report-footer">
+  <div class="footer-logo">DESCENTE · D-MOVERS BI</div>
+  <div>内容看板 · v11 · 堆叠条形图替代热力图（流向感+数据双优）</div>
+</footer>
+
+</div>
+<div id="back-top" role="button" aria-label="回到顶部">↑</div>
+
+<script>
+var DATA = {"articles": [{"aid": "2247492546_1", "a": "哥德巴赫的思考", "link": "http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492546&idx=1&sn=a76dcfb71572d44335dcb0732ea5eaa2&chksm=f8516a8527b381ad9ae82ab867401935b58c7b56b2bdfb3acf3b4da8c1184e24a7433ec1d687&scene=27#wechat_redirect", "t": "AI时代，品牌越&quot;像品牌&quot;，越没人信——小红书种草大赏的&quot;自我消隐&quot;真相", "d": "2026-08-11", "r": 81, "l": 6, "ol": 2, "s": 9, "c": 0, "tp": "科技创新", "history": [{"captured_at": "2026-08-19 16:00", "read": 81, "like": 6, "share": 9, "comment": 0}]}, {"aid": "2650508704_1", "a": "懒熊体育", "link": "http://mp.weixin.qq.com/s?__biz=MzA4MjQzNDYyMQ==&mid=2650508704&idx=1&sn=854cf7010b1c3c0e76484b125b0465f1&chksm=860b297ca921f9bb9fe0f012436a150758408a61a349da7579b4f2d52a1d6bac6254b40be0dd&scene=27#wechat_redirect", "t": "对话香港金牛总经理：要突破“第21名”，也要为市场付出市场", "d": "2026-08-10", "r": 6398, "l": 26, "ol": 64, "s": 213, "c": 4, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 6398, "like": 26, "share": 213, "comment": 4}]}, {"aid": "2650460534_5", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460534&idx=5&sn=f13a7b219d2cc0eeaaabde0d6c60afb3&chksm=bfbc5eb1f4fa94e9b00cc76f7e37378cfe4174cd9c1dc2fcba5aa56d8221f87ddc147480fb30&scene=27#wechat_redirect", "t": "Sandro、Maje的母公司SMCP集团上半财年营收同比下滑0.7%，中国市场已显现积极复苏信号", "d": "2026-08-10", "r": 252, "l": 1, "ol": 1, "s": 6, "c": 0, "tp": "财报", "history": [{"captured_at": "2026-08-19 15:50", "read": 252, "like": 1, "share": 6, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 252, "like": 1, "share": 6, "comment": 0}]}, {"aid": "2650460534_4", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460534&idx=4&sn=f902ffe5ec7303dadb605c2005eaf252&chksm=bff25bb653fd8b5b77b9232c326ebc056d9c50f57f0b2e14c9b21c854a7456fd53d67780d922&scene=27#wechat_redirect", "t": "Manolo Blahnik 上财年营收下滑 3％，婚鞋销售大增44％", "d": "2026-08-10", "r": 103, "l": 1, "ol": 1, "s": 6, "c": 0, "tp": "财报", "history": [{"captured_at": "2026-08-19 15:50", "read": 103, "like": 1, "share": 6, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 103, "like": 1, "share": 6, "comment": 0}]}, {"aid": "2650460534_3", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460534&idx=3&sn=60d18da4e8ab47115308faafe8590e00&chksm=bf66acfc37d2c40a04810a503db8ef949424a28ea0e1120541a543f4c750ad5f854597cb097b&scene=27#wechat_redirect", "t": "华丽现场｜凯乐石全球未登峰计划20周年庆；Marshall中国首场大型音乐文化活动；李宁发布亚运会中国队领奖装备；优衣库秋冬新品发布会", "d": "2026-08-10", "r": 164, "l": 1, "ol": 0, "s": 5, "c": 0, "tp": "赛事营销", "history": [{"captured_at": "2026-08-19 15:50", "read": 164, "like": 1, "share": 5, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 164, "like": 1, "share": 5, "comment": 0}]}, {"aid": "2650460534_2", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460534&idx=2&sn=7152b48a6d1c4dc2138fc6283a8add4d&chksm=bf6334ec8de59bf32370204416b2c134a7decad81b28e16aa201509c8b746373d5e01e5c59b1&scene=27#wechat_redirect", "t": "PRADA集团CEO：成功的时候，对90%的外部提案都应该说不！", "d": "2026-08-10", "r": 661, "l": 5, "ol": 11, "s": 34, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 15:50", "read": 661, "like": 5, "share": 34, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 661, "like": 5, "share": 34, "comment": 0}]}, {"aid": "2650460534_1", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460534&idx=1&sn=3c39647624425418ef8dbc7ab0febec6&chksm=bf6b373c7582ece7da3d02ae19f30cda09c07fbaacd9c782a9055e9414619dd228e6d808d655&scene=27#wechat_redirect", "t": "从马尔代夫起飞，全球首家高端休闲航司 beOnd 如何打造私人飞机的“平替”?", "d": "2026-08-10", "r": 810, "l": 6, "ol": 7, "s": 39, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 15:50", "read": 810, "like": 6, "share": 39, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 810, "like": 6, "share": 39, "comment": 0}]}, {"aid": "2652367591_4", "a": "LADYMAX", "link": "http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367591&idx=4&sn=b0fa40c07d699608db3269b7b85d0d90&chksm=bc651edf198a86e373b1d4e878a2d68e10f27ba6bfe0f8c62799d4ff9bd7f3255bb34a0e3039&scene=27#wechat_redirect", "t": "百年钻石帝国跌落神坛，戴比尔斯拟以约10亿美元易主", "d": "2026-08-10", "r": 307, "l": 1, "ol": 1, "s": 1, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 307, "like": 1, "share": 1, "comment": 0}]}, {"aid": "2652367591_3", "a": "LADYMAX", "link": "http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367591&idx=3&sn=d6c8dcf9a7bf75c768fe4f4ef88153fc&chksm=bc23182a213fc3f7ea180823d319f6d66d08595bf0311e9a614913395f25a4ce88f6972c58c8&scene=27#wechat_redirect", "t": "上海兴业太古汇销售额暴涨82%", "d": "2026-08-10", "r": 708, "l": 0, "ol": 1, "s": 7, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 708, "like": 0, "share": 7, "comment": 0}]}, {"aid": "2652367591_2", "a": "LADYMAX", "link": "http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367591&idx=2&sn=9dabd1f0b64c5764d313ca07cae018b4&chksm=bcd9cc39236355403d77a405c9d78fb7f00507982c54cfc42ef4767030e48eeabb8745c96df1&scene=27#wechat_redirect", "t": "Alo将开设天猫旗舰店", "d": "2026-08-10", "r": 2187, "l": 1, "ol": 2, "s": 31, "c": 0, "tp": "渠道", "history": [{"captured_at": "2026-08-19 16:00", "read": 2187, "like": 1, "share": 31, "comment": 0}]}, {"aid": "2652367591_1", "a": "LADYMAX", "link": "http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367591&idx=1&sn=a53c5884d05768625ad23a306301a075&chksm=bc4c7fce2c8184fe8200216e020de201befea0898b27764d7ede331ccaf3153d05843951cae6&scene=27#wechat_redirect", "t": "深度 | 关店越多，Zegna在中国卖得越好？", "d": "2026-08-10", "r": 6797, "l": 15, "ol": 33, "s": 205, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 16:00", "read": 6797, "like": 15, "share": 205, "comment": 0}]}, {"aid": "2654471121_1", "a": "中服网", "link": "http://mp.weixin.qq.com/s?__biz=MjM5OTA0MjE0MQ==&mid=2654471121&idx=1&sn=12a5758ae9fd0121b8432354668823a2&chksm=bc27fb7e0989fb3238dc2f191ddc72c0f0c84a79b0df940b4344d88a627b446b313215117d61&scene=27#wechat_redirect", "t": "营收狂跌28.88% ！曾经的“皮鞋大王”发布半年报数据", "d": "2026-08-10", "r": 1025, "l": 2, "ol": 2, "s": 19, "c": 0, "tp": "财报", "history": [{"captured_at": "2026-08-19 16:00", "read": 1025, "like": 2, "share": 19, "comment": 0}]}, {"aid": "2685928263_2", "a": "艾林华尚", "link": "http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928263&idx=2&sn=b0e7419fc26f4094b34e2b6d1d2babeb&chksm=ce4442ae077058ea7101f39f3e93715e5a2fa2438e6cab327446915ae7b96e79c4ec62927afd&scene=27#wechat_redirect", "t": "LV、Goyard的老对手被收购，法国“老钱风”皮具牌迎来新东家", "d": "2026-08-10", "r": 40, "l": 1, "ol": 1, "s": 2, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 16:00", "read": 40, "like": 1, "share": 2, "comment": 0}]}, {"aid": "2685928263_1", "a": "艾林华尚", "link": "http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928263&idx=1&sn=417a5c8867df6eace18af998ac9f544f&chksm=ce5a1ea1bd0e534336583161c615b9ae3c7245d60a54810a9dcaee7b6feee3350540191bb701&scene=27#wechat_redirect", "t": "营收净利双增，却半年关店60家，卡宾的财报里藏着多少隐忧？", "d": "2026-08-10", "r": 201, "l": 3, "ol": 4, "s": 11, "c": 0, "tp": "财报", "history": [{"captured_at": "2026-08-19 16:00", "read": 201, "like": 3, "share": 11, "comment": 0}]}, {"aid": "2650587025_3", "a": "中服圈", "link": "http://mp.weixin.qq.com/s?__biz=MjM5NDg3MjYyMA==&mid=2650587025&idx=3&sn=5d39f2efae2f670f93f4520c8af7be7a&chksm=bfbfa4ee1be735a257f95af5b6bcbb9b3bec1fe492656b67a0b2ac3782632b7bdcfefb606f0a&scene=27#wechat_redirect", "t": "《2026年7月抖音电商营销月报》", "d": "2026-08-10", "r": 30, "l": 0, "ol": 0, "s": 2, "c": 0, "tp": "渠道", "history": [{"captured_at": "2026-08-19 16:00", "read": 30, "like": 0, "share": 2, "comment": 0}]}, {"aid": "2650587025_2", "a": "中服圈", "link": "http://mp.weixin.qq.com/s?__biz=MjM5NDg3MjYyMA==&mid=2650587025&idx=2&sn=1ff5d11ff1785a62064ea789662ceca7&chksm=bf3e3b36fea008125e9a4ff418201b7c001332c1b6d3b985ddd4c945737c4225d5a9117df27d&scene=27#wechat_redirect", "t": "海澜之家开设香港首家旗舰店", "d": "2026-08-10", "r": 176, "l": 0, "ol": 0, "s": 8, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 176, "like": 0, "share": 8, "comment": 0}]}, {"aid": "2650587025_1", "a": "中服圈", "link": "http://mp.weixin.qq.com/s?__biz=MjM5NDg3MjYyMA==&mid=2650587025&idx=1&sn=42af4aa30f7ddf68a3348aa5d478730c&chksm=bfc94d94e562033ea42c0e360ef299b5c3153a5d761b85ae99df790a95f8e3dd0e9bc000a239&scene=27#wechat_redirect", "t": "不止于功能，更关乎创新：FTS创新专区为服装品牌储备下一季灵感！", "d": "2026-08-10", "r": 3177, "l": 3, "ol": 3, "s": 2, "c": 0, "tp": "科技创新", "history": [{"captured_at": "2026-08-19 16:00", "read": 3177, "like": 3, "share": 2, "comment": 0}]}, {"aid": "2247581907_1", "a": "时尚无国界", "link": "http://mp.weixin.qq.com/s?__biz=MzYzNTI1NzU2NQ==&mid=2247581907&idx=1&sn=0bdd86a97044c962860308abb2c32c68&chksm=f149aad25159790a267d692480d1afcd68f3fac181db9dcc91de18f245db14ba1b5fa0641baf&scene=27#wechat_redirect", "t": "要闻速报｜卡宾上半年营收净利双增长；观夏上海首家「观夏香铺」启幕；CHARLES &amp; KEITH于成都打造特别活动", "d": "2026-08-10", "r": 0, "l": 0, "ol": 0, "s": 0, "c": 0, "tp": "财报", "history": []}, {"aid": "2247625375_1", "a": "时尚商业Daily", "link": "http://mp.weixin.qq.com/s?__biz=MzI5MDM4NzIzNg==&mid=2247625375&idx=1&sn=33ae4cec64e391ba8dd52f1f2842026e&chksm=ed84ad20af746de30a35e602da905cea356b0b477c5cb904787de464292e8b1664ee6dd033fe&scene=27#wechat_redirect", "t": "Alo将开设天猫旗舰店", "d": "2026-08-10", "r": 6161, "l": 6, "ol": 25, "s": 481, "c": 1, "tp": "科技创新", "history": [{"captured_at": "2026-08-19 16:00", "read": 6161, "like": 6, "share": 481, "comment": 1}]}, {"aid": "2655008329_1", "a": "高尔夫大师杂志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5ODk4MjA1Mg==&mid=2655008329&idx=1&sn=ebec2fdb4101828597c5b9096b6c4cb3&chksm=bca97ad44b2f3ef585266991c10949b09a55db4cc4da6a0a4a21aa68117ff5f4c342efe1ca5a&scene=27#wechat_redirect", "t": "美巡常规赛结束！布伦南夺冠温德姆锦标赛", "d": "2026-08-10", "r": 926, "l": 3, "ol": 5, "s": 3, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 926, "like": 3, "share": 3, "comment": 0}]}, {"aid": "2247492545_1", "a": "哥德巴赫的思考", "link": "http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492545&idx=1&sn=87fb512051d044b5974318e7b3dd7bdb&chksm=f84c4ba160025283a6fce73aac225df66680832a828659e0b1a3cbe40caacbe9cdac8daa882f&scene=27#wechat_redirect", "t": "小红书种草大赏颁给的不是好内容，是5种&quot;会重组的公司&quot;", "d": "2026-08-10", "r": 168, "l": 1, "ol": 3, "s": 21, "c": 0, "tp": "渠道", "history": [{"captured_at": "2026-08-19 16:00", "read": 168, "like": 1, "share": 21, "comment": 0}]}, {"aid": "2650508676_1", "a": "懒熊体育", "link": "http://mp.weixin.qq.com/s?__biz=MzA4MjQzNDYyMQ==&mid=2650508676&idx=1&sn=c97ea7d8c0bc1fec9ad235d4c0c766f3&chksm=86f4a4cd6569d907b61d90a2b5f80e2c76530b7f740db4f68e3ed1068abdd47b3dc89f3ace66&scene=27#wechat_redirect", "t": "一座场馆到底该规划多少个座位？｜观点有效", "d": "2026-08-09", "r": 10049, "l": 36, "ol": 65, "s": 286, "c": 5, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 10049, "like": 36, "share": 286, "comment": 5}]}, {"aid": "2247570745_1", "a": "步外", "link": "http://mp.weixin.qq.com/s?__biz=MzkzOTU2NjUzMg==&mid=2247570745&idx=1&sn=d75b74d98ae4ee35aed3b62f1fd100e1&chksm=c357222054f4dd5f8bf0f44b6e4417a5b2661213d17d4fbf826e936328d9e8fab7745104f573&scene=27#wechat_redirect", "t": "Helinox 羽绒服获奖，ACG 新鞋曝光｜本周 PICK UP", "d": "2026-08-09", "r": 3490, "l": 53, "ol": 62, "s": 26, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 3490, "like": 53, "share": 26, "comment": 0}]}, {"aid": "2650460492_4", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460492&idx=4&sn=d8ff96859425391d908dca49a0048157&chksm=bf966ed7e0fbcba23a59bd4db97226e05d18c3d8495ab27c5ee05580c90f22ca824a6e874b78&scene=27#wechat_redirect", "t": "Quince，美国轻奢版“Shein”过去12个月营收突破20亿美元", "d": "2026-08-09", "r": 361, "l": 1, "ol": 3, "s": 27, "c": 0, "tp": "财报", "history": [{"captured_at": "2026-08-19 15:50", "read": 361, "like": 1, "share": 27, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 361, "like": 1, "share": 27, "comment": 0}]}, {"aid": "2650460492_3", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460492&idx=3&sn=d298fbb09a2ca92c219c6b0acf4a4929&chksm=bfd61d0e94fe6376a021d13f48f428800852503c5517bcd1ff0548823e6884c3eff393b9756d&scene=27#wechat_redirect", "t": "LVMH集团首席财务官：凡有财富创造的地方，就有对奢侈品的强烈需求", "d": "2026-08-09", "r": 495, "l": 3, "ol": 6, "s": 23, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 15:50", "read": 495, "like": 3, "share": 23, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 495, "like": 3, "share": 23, "comment": 0}]}, {"aid": "2650460492_2", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460492&idx=2&sn=277eaf1f6ba5aa701ff0abd2cdf27650&chksm=bfbf8a6243d4db8963ed97c2cc42f2dde84fc4c0e059918667c265763f77d4c6939848d2f056&scene=27#wechat_redirect", "t": "预告｜【华丽志运动户外品牌活力榜2026春夏】TOP名单即将揭晓", "d": "2026-08-09", "r": 344, "l": 7, "ol": 8, "s": 13, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 15:50", "read": 344, "like": 7, "share": 13, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 344, "like": 7, "share": 13, "comment": 0}]}, {"aid": "2650460492_1", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460492&idx=1&sn=1ad44f1aac6199c857f0e3c8208bdf67&chksm=bf2442f4f7d3d892cad6dcf7cd80c3262326c9f59435acf601173f9fbaa968bc534e66c23bde&scene=27#wechat_redirect", "t": "“从不直白袒露一切”，爱马仕如何做好一本品牌杂志？", "d": "2026-08-09", "r": 1018, "l": 20, "ol": 27, "s": 100, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 15:50", "read": 1018, "like": 20, "share": 100, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 1018, "like": 20, "share": 100, "comment": 0}]}, {"aid": "2247492496_1", "a": "哥德巴赫的思考", "link": "http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492496&idx=1&sn=a0239455c65c5ef122e57984d86043e3&chksm=f84415e4c41397d1ea71bd320efe983b9654416b94651f687de88f0c69da5675b2957e89351e&scene=27#wechat_redirect", "t": "我在小红书投了50万种草，最后成交却去了淘宝？", "d": "2026-08-09", "r": 528, "l": 8, "ol": 7, "s": 65, "c": 0, "tp": "渠道", "history": [{"captured_at": "2026-08-19 16:00", "read": 528, "like": 8, "share": 65, "comment": 0}]}, {"aid": "2247557877_2", "a": "小鸟体育", "link": "http://mp.weixin.qq.com/s?__biz=MzU1MTczMDgyMQ==&mid=2247557877&idx=2&sn=dcbec3c3f6b33dda5e52e1b469142bf9&chksm=fa9a9f8bf9dfd380bfc79d27eba9319a0fce907275e1010edabe6afc974fedfa067b54e8c7fd&scene=27#wechat_redirect", "t": "2026蓝湾青少年公开赛收官，李贽蔡慧珍A组夺冠", "d": "2026-08-09", "r": 269, "l": 5, "ol": 6, "s": 5, "c": 0, "tp": "赛事营销", "history": [{"captured_at": "2026-08-19 16:00", "read": 269, "like": 5, "share": 5, "comment": 0}]}, {"aid": "2247557877_1", "a": "小鸟体育", "link": "http://mp.weixin.qq.com/s?__biz=MzU1MTczMDgyMQ==&mid=2247557877&idx=1&sn=bc2bcee1e1e0b3598f9cf5f58ee190e8&chksm=fa244e2a12084b987ee90d69a1a979fa4b6066bc56a9faa363680f0ae3cd9575a04c9e9a0eb1&scene=27#wechat_redirect", "t": "无缘季后赛，对于李昊桐窦泽成意味着什么？", "d": "2026-08-09", "r": 3751, "l": 15, "ol": 32, "s": 45, "c": 18, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 3751, "like": 15, "share": 45, "comment": 18}]}, {"aid": "2650508675_1", "a": "懒熊体育", "link": "http://mp.weixin.qq.com/s?__biz=MzA4MjQzNDYyMQ==&mid=2650508675&idx=1&sn=ca784863f9827c83f524f5e282da05b8&chksm=8692d3baea2bb23058799eec01c4a376b6c0a34351eefebb36ffc64cb2d3b921becd41227a4b&scene=27#wechat_redirect", "t": "北京奥运的18年，我来京的第19年 | 韩牧专栏", "d": "2026-08-08", "r": 9483, "l": 34, "ol": 41, "s": 90, "c": 4, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 9483, "like": 34, "share": 90, "comment": 4}]}, {"aid": "2650460461_4", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460461&idx=4&sn=5bd7cd7e1d306164d83985df80f432bf&chksm=bfe475c94eaf5f42ef07564336dd77bdc0009cddc7eb007c8b7bc5499c30c86843c37e467123&scene=27#wechat_redirect", "t": "英国亿万富豪 Mike Ashley：挂牌出售的奢侈品百货公司 Harvey Nichols 正陷入“死亡螺旋”", "d": "2026-08-08", "r": 800, "l": 4, "ol": 5, "s": 11, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 15:50", "read": 800, "like": 4, "share": 11, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 800, "like": 4, "share": 11, "comment": 0}]}, {"aid": "2650460461_3", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460461&idx=3&sn=9bbcd20184c255db085143f3c1bb3737&chksm=bfb9499ab3ee75648ccac24fec6a6133b8d61d965ca0c92da7db7813fb2c2c09e98194ca7384&scene=27#wechat_redirect", "t": "多家奢侈品企业最新季报超预期，华丽志指数三连涨【华丽志奢侈品股票月报】2026年7月", "d": "2026-08-08", "r": 173, "l": 3, "ol": 3, "s": 3, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 15:50", "read": 173, "like": 3, "share": 3, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 173, "like": 3, "share": 3, "comment": 0}]}, {"aid": "2650460461_2", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460461&idx=2&sn=c7afb9e31950ce81d62e6f643d8d00d2&chksm=bfbc1a56c167910cf39ff59c89e37676109a41c575726742110cfb9358da9e7cca6e07292bb8&scene=27#wechat_redirect", "t": "挪威百年滑雪装备品牌 Madshus 的所有权易手", "d": "2026-08-08", "r": 583, "l": 6, "ol": 8, "s": 25, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 15:50", "read": 583, "like": 6, "share": 25, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 583, "like": 6, "share": 25, "comment": 0}]}, {"aid": "2650460461_1", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460461&idx=1&sn=c9eb25afe64c5fe4b428a82319ebf9cd&chksm=bf46e200388b689189c7ec29b970b34cb6afc7d3b7fdba88be516d608518d0f68f6cbdb3a94d&scene=27#wechat_redirect", "t": "曾与 LV 和 Goyard 齐名 ，法国百年皮具老牌 Moreau 的所有权易手", "d": "2026-08-08", "r": 3325, "l": 19, "ol": 23, "s": 65, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 15:50", "read": 3325, "like": 19, "share": 65, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 3325, "like": 19, "share": 65, "comment": 0}]}, {"aid": "2247625371_1", "a": "时尚商业Daily", "link": "http://mp.weixin.qq.com/s?__biz=MzI5MDM4NzIzNg==&mid=2247625371&idx=1&sn=5c6cf153e461c4062b409db80f98e041&chksm=ed57da74ead8f3c77cd057da2495fa05cd518fa77a85b3414b5fa0ff7a9c10f8fef09e00ea55&scene=27#wechat_redirect", "t": "Ralph Lauren在中国市场暴涨超40%", "d": "2026-08-08", "r": 2424, "l": 3, "ol": 5, "s": 51, "c": 0, "tp": "科技创新", "history": [{"captured_at": "2026-08-19 16:00", "read": 2424, "like": 3, "share": 51, "comment": 0}]}, {"aid": "2655008300_1", "a": "高尔夫大师杂志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5ODk4MjA1Mg==&mid=2655008300&idx=1&sn=facd3298db9cd1f06d7bdc937cd7e7a6&chksm=bcee2a8cdc9673923739ba87af4f95fcfdaa740a2f517e14e8de550498b70f9fe8060316dfc9&scene=27#wechat_redirect", "t": "刘宇婕闯入美国女子业余锦标赛16强！", "d": "2026-08-08", "r": 6635, "l": 23, "ol": 37, "s": 24, "c": 9, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 6635, "like": 23, "share": 24, "comment": 9}]}, {"aid": "2685928235_2", "a": "艾林华尚", "link": "http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928235&idx=2&sn=17192b719655020e4b4233334ac646a9&chksm=ce5a6670025ce2fce686d10b4bb4db462171c1c3e322166ffdd066d69e4299a7d3470fb9de2e&scene=27#wechat_redirect", "t": "Mardi Mercredi直营回归，韩系时尚在华进入“换挡期”", "d": "2026-08-08", "r": 127, "l": 2, "ol": 2, "s": 8, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 127, "like": 2, "share": 8, "comment": 0}]}, {"aid": "2685928235_1", "a": "艾林华尚", "link": "http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928235&idx=1&sn=3962d3dece9f23e4c89254cbb6eec6c6&chksm=ce2a1df24cb3dafeddda9628d1e11fb1a007e62c440cf3062d05d9a7ebd8cfcaa5b04d4dc2ed&scene=27#wechat_redirect", "t": "拉夫劳伦Ralph Lauren在中国市场暴涨超40%", "d": "2026-08-08", "r": 196, "l": 3, "ol": 5, "s": 9, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 196, "like": 3, "share": 9, "comment": 0}]}, {"aid": "2650508667_1", "a": "懒熊体育", "link": "http://mp.weixin.qq.com/s?__biz=MzA4MjQzNDYyMQ==&mid=2650508667&idx=1&sn=e77622fcdf60abf84fc1898984625430&chksm=86316015b9beaaec5e09409005ff1b76512296f09418de09849cd2d5c3d3313ce301f5806743&scene=27#wechat_redirect", "t": "请22万人免费观赛，改跨年赛制的J联赛用宝可梦打头阵｜CASE", "d": "2026-08-07", "r": 9212, "l": 8, "ol": 30, "s": 154, "c": 7, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 9212, "like": 8, "share": 154, "comment": 7}]}, {"aid": "2652367583_1", "a": "LADYMAX", "link": "http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367583&idx=1&sn=72386fa66f216972aa2d2704d3f2838f&chksm=bc3fb818ffbfec0280f0a03c1c16397c2325feac264988fc19b22f87e9050475b7e7d3e254a6&scene=27#wechat_redirect", "t": "财报速递 | Ralph Lauren在中国市场暴涨超40%", "d": "2026-08-07", "r": 12047, "l": 40, "ol": 85, "s": 825, "c": 0, "tp": "财报", "history": [{"captured_at": "2026-08-19 16:00", "read": 12047, "like": 40, "share": 825, "comment": 0}]}, {"aid": "2650587009_3", "a": "中服圈", "link": "http://mp.weixin.qq.com/s?__biz=MjM5NDg3MjYyMA==&mid=2650587009&idx=3&sn=12281c334a3d650acc2811b7386ec914&chksm=bfdb51dea9daf91345cf3a1d89b94e7766220c6ad29d2a2bb373deb98fb16f1e8e75b55b29e0&scene=27#wechat_redirect", "t": "《2026年二季度中国消费者消费意愿调查》", "d": "2026-08-07", "r": 73, "l": 0, "ol": 0, "s": 9, "c": 0, "tp": "舆情", "history": [{"captured_at": "2026-08-19 16:00", "read": 73, "like": 0, "share": 9, "comment": 0}]}, {"aid": "2650587009_2", "a": "中服圈", "link": "http://mp.weixin.qq.com/s?__biz=MjM5NDg3MjYyMA==&mid=2650587009&idx=2&sn=26fd80ca275e2a06bb5f9cb0706b5742&chksm=bf8e1a2d0fefdfce1d49d726152dd31acf66e02ddc6922df4b12072411492df38342549923ce&scene=27#wechat_redirect", "t": "迪桑特日本母公司公布2026财年第一季度财报，中国区增长42%", "d": "2026-08-07", "r": 496, "l": 2, "ol": 3, "s": 26, "c": 1, "tp": "财报", "history": [{"captured_at": "2026-08-19 16:00", "read": 496, "like": 2, "share": 26, "comment": 1}]}, {"aid": "2650587009_1", "a": "中服圈", "link": "http://mp.weixin.qq.com/s?__biz=MjM5NDg3MjYyMA==&mid=2650587009&idx=1&sn=c9fea2129e5463508861e936279dc599&chksm=bf9c0e45b0e2ab5df0045982ff17202547470d2c74446f3e6f4da552bfa227408266daf107c8&scene=27#wechat_redirect", "t": "SORONA®赋能棉的升级之路，“让自然新生”有了新的注解", "d": "2026-08-07", "r": 2181, "l": 2, "ol": 4, "s": 4, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 2181, "like": 2, "share": 4, "comment": 0}]}, {"aid": "2654471111_1", "a": "中服网", "link": "http://mp.weixin.qq.com/s?__biz=MjM5OTA0MjE0MQ==&mid=2654471111&idx=1&sn=0e56a2e8187037068f2696fe448a496a&chksm=bc908422f948e8aaf92d65c7f7c4d9eef6610203b1a9ff5c4f03b27259051278e13294af0cf7&scene=27#wechat_redirect", "t": "半年净关店近10%！国内头部设计师男装发布半年报", "d": "2026-08-07", "r": 1519, "l": 2, "ol": 2, "s": 18, "c": 0, "tp": "渠道", "history": [{"captured_at": "2026-08-19 16:00", "read": 1519, "like": 2, "share": 18, "comment": 0}]}, {"aid": "2650460432_4", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460432&idx=4&sn=b2d4925c1100b1a76383bdf17f478c99&chksm=bf8ccd3dd28ee864a4545d04bff003d737f2c84e73583cf49a0a71dadfeac38e63e7f6671e6b&scene=27#wechat_redirect", "t": "香港零售业连续第14个月录得增长，6月份珠宝钟表及名贵礼物销售同比升20.1%", "d": "2026-08-07", "r": 267, "l": 1, "ol": 2, "s": 9, "c": 0, "tp": "财报", "history": [{"captured_at": "2026-08-19 15:50", "read": 267, "like": 1, "share": 9, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 267, "like": 1, "share": 9, "comment": 0}]}, {"aid": "2650460432_3", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460432&idx=3&sn=502bc661edefb475010c38f9df4a7fd7&chksm=bf03abcfcd87c610819016a0363112577b5728dadb081dae017c141096e8d2c0e20085d288c3&scene=27#wechat_redirect", "t": "Zara 的母公司 Inditex集团市值超 1830亿欧元，创历史新高", "d": "2026-08-07", "r": 958, "l": 2, "ol": 4, "s": 37, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 15:50", "read": 958, "like": 2, "share": 37, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 958, "like": 2, "share": 37, "comment": 0}]}, {"aid": "2650460432_2", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460432&idx=2&sn=382be9133a3943fb304dfe2d2edfd8c8&chksm=bf409d409754e90a2aa88597b49dbd80bc52961bce7ce5d6b0b4b4b356f25f0185eca38a655b&scene=27#wechat_redirect", "t": "Ralph Lauren 最新季报：中国市场营收同比增长超40%，引领全球增长14%", "d": "2026-08-07", "r": 1823, "l": 7, "ol": 11, "s": 147, "c": 0, "tp": "财报", "history": [{"captured_at": "2026-08-19 15:50", "read": 1823, "like": 7, "share": 147, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 1823, "like": 7, "share": 147, "comment": 0}]}, {"aid": "2650460432_1", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460432&idx=1&sn=649eaaec039d3c632832b81e213e2bf6&chksm=bf72f8d5e56a6bb826d4be47f36b19e614c8d85230765ea04b0a08f7e1ed5f068997a6303dfe&scene=27#wechat_redirect", "t": "人事动向｜LVMH集团主席的家族投资公司任命CEO；恒隆集团任命行政总裁；Boss、Pandora 高管任命", "d": "2026-08-07", "r": 3891, "l": 3, "ol": 9, "s": 49, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 15:50", "read": 3891, "like": 3, "share": 49, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 3891, "like": 3, "share": 49, "comment": 0}]}, {"aid": "2247581877_1", "a": "时尚无国界", "link": "http://mp.weixin.qq.com/s?__biz=MzYzNTI1NzU2NQ==&mid=2247581877&idx=1&sn=f8bfba6531081979753afcda3702523d&chksm=f121aa3902bd9bd5bfd76fef7b978a1a2ac8efc8e660d85cf3e948b15fdf3403b10597805858&scene=27#wechat_redirect", "t": "要闻速报｜Ralph Lauren第一季度收入逼近20亿美元；Lisa个人服装品牌于上海开启首个线下快闪；加拿大鹅出售旗下鞋履品牌Baffin", "d": "2026-08-07", "r": 0, "l": 0, "ol": 0, "s": 0, "c": 0, "tp": "渠道", "history": []}, {"aid": "2247625369_1", "a": "时尚商业Daily", "link": "http://mp.weixin.qq.com/s?__biz=MzI5MDM4NzIzNg==&mid=2247625369&idx=1&sn=c00251bdd6f9a356dd19df0687b376c7&chksm=ed7b6c90e4fede4012a340e3bda3cd9b142447a1e4c848a8ab552fc6467c8a03ca5aaff77368&scene=27#wechat_redirect", "t": "百年钻石帝国跌落神坛，戴比尔斯拟以约10亿美元易主", "d": "2026-08-07", "r": 2988, "l": 4, "ol": 15, "s": 224, "c": 1, "tp": "科技创新", "history": [{"captured_at": "2026-08-19 16:00", "read": 2988, "like": 4, "share": 224, "comment": 1}]}, {"aid": "2685928219_2", "a": "艾林华尚", "link": "http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928219&idx=2&sn=1968c6b4ba2b6c5330e6edfa2cbf7091&chksm=ce56de388a5a99eb158609a4aff43d0fdd880020d25e430a0dad0d00e96373c3d2023769b40a&scene=27#wechat_redirect", "t": "BLACKPINK成员LISA个人品牌「LLOUD」大陆首店落地上海", "d": "2026-08-07", "r": 46, "l": 2, "ol": 1, "s": 4, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 46, "like": 2, "share": 4, "comment": 0}]}, {"aid": "2685928219_1", "a": "艾林华尚", "link": "http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928219&idx=1&sn=fa4fc5c350a616a970ead8b867ab854c&chksm=ce28711f4151c672de8d539186cd4e036d3200e30fbe904b595ee186fe2c63b8c6e9e27f1215&scene=27#wechat_redirect", "t": "韩国时尚的第三轮浪潮，不卖韩流，卖人群", "d": "2026-08-07", "r": 0, "l": 0, "ol": 0, "s": 0, "c": 0, "tp": "其他", "history": []}, {"aid": "2247507999_1", "a": "GOIF户外创新", "link": "http://mp.weixin.qq.com/s?__biz=MzkzMTk1ODIwNg==&mid=2247507999&idx=1&sn=3215caa1232e19e98387b84d5362cd3b&chksm=c30e5f469b67ea9df9488ca4dd14c615459d535ad25d9bfd1958caf60cf6e316c34c7cfcfc16&scene=27#wechat_redirect", "t": "阿迪达斯二季度业绩创历史新高；迪桑特中国区一季度营收大涨42%；可隆推出自研KUTITECH®防水科技｜GOIF户外周报", "d": "2026-08-07", "r": 2106, "l": 1, "ol": 2, "s": 13, "c": 0, "tp": "财报", "history": [{"captured_at": "2026-08-19 16:00", "read": 2106, "like": 1, "share": 13, "comment": 0}]}, {"aid": "2655008290_2", "a": "高尔夫大师杂志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5ODk4MjA1Mg==&mid=2655008290&idx=2&sn=c04f28be2e939952c7a8f85c97f9b1d9&chksm=bc4f1d6903f76bc81ecdd3aaa1fae0a30e8b050cfb42f59222c573ab16ef2fa8a1f054668e10&scene=27#wechat_redirect", "t": "上海林克司正式获得GEO环保认证", "d": "2026-08-07", "r": 1690, "l": 2, "ol": 3, "s": 3, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 1690, "like": 2, "share": 3, "comment": 0}]}, {"aid": "2655008290_1", "a": "高尔夫大师杂志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5ODk4MjA1Mg==&mid=2655008290&idx=1&sn=788bd7c377807623c851e513666cbddc&chksm=bcc571428ca33273d1f96ff97c8e4cc6fc33826c434db15fbe9094454d5806599863ba72a4a3&scene=27#wechat_redirect", "t": "温德姆锦标赛黑马61杆火热领跑！窦泽成69李昊桐71", "d": "2026-08-07", "r": 3560, "l": 20, "ol": 62, "s": 17, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 3560, "like": 20, "share": 17, "comment": 0}]}, {"aid": "2247492495_1", "a": "哥德巴赫的思考", "link": "http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492495&idx=1&sn=843e29baf5653e8df1331cd6760b6879&chksm=f89f750ddeb6def0f7ef53094b477ef71a027fd96e69ee7531a64cf04e0f073c66d69315c5d7&scene=27#wechat_redirect", "t": "电商越做越累，是平台的问题还是我的问题？", "d": "2026-08-07", "r": 204, "l": 2, "ol": 5, "s": 22, "c": 0, "tp": "渠道", "history": [{"captured_at": "2026-08-19 16:00", "read": 204, "like": 2, "share": 22, "comment": 0}]}, {"aid": "2247557841_1", "a": "小鸟体育", "link": "http://mp.weixin.qq.com/s?__biz=MzU1MTczMDgyMQ==&mid=2247557841&idx=1&sn=4273719975e1cc681495dff1d2e88743&chksm=fa8e1b6d4ddbb6a3cf655204e67ef762ee58825c8ec017d517f7696d41b41e3324a0ee3c92d5&scene=27#wechat_redirect", "t": "中国赛程：李窦冲刺季后赛，刘宇婕再战大赛", "d": "2026-08-06", "r": 1570, "l": 7, "ol": 14, "s": 10, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 1570, "like": 7, "share": 10, "comment": 0}]}, {"aid": "2650460400_5", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460400&idx=5&sn=8b0999a3ee6009edac77a009aada709e&chksm=bfcf88f448ce3087f8fec9ede76f400abc75b423b0508da0fc9ebce96c7d54bc4e7437ea6feb&scene=27#wechat_redirect", "t": "宝洁38亿美元收购营养补剂品牌 Thorne，私募基金 L Catterton 三年获利逾30亿美元", "d": "2026-08-06", "r": 563, "l": 4, "ol": 6, "s": 36, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 15:50", "read": 563, "like": 4, "share": 36, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 563, "like": 4, "share": 36, "comment": 0}]}, {"aid": "2650460400_4", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460400&idx=4&sn=ea583f412a596700bb5ffe8a7d997a47&chksm=bfb6c703227be9d8a35d1a5ae4935963367b540a38d34261cd9a69c3fbdb23386d0aca7d0f6b&scene=27#wechat_redirect", "t": "估值或达数亿美元，Abercrombie &amp; Fitch 考虑出售中国业务部分股权", "d": "2026-08-06", "r": 670, "l": 1, "ol": 2, "s": 40, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 15:50", "read": 670, "like": 1, "share": 40, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 670, "like": 1, "share": 40, "comment": 0}]}, {"aid": "2650460400_3", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460400&idx=3&sn=0bef6e357da7e305af20e7c47c0e0a5a&chksm=bf6eba88a964f3118a822531b354a96e804af635de814af0f57c8c577bfb4517da0738a7699d&scene=27#wechat_redirect", "t": "直播预约｜「奢侈品牌中国活力榜2026H1」线上解读会（8月7日，周五)", "d": "2026-08-06", "r": 110, "l": 1, "ol": 2, "s": 2, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 15:50", "read": 110, "like": 1, "share": 2, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 110, "like": 1, "share": 2, "comment": 0}]}, {"aid": "2650460400_2", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460400&idx=2&sn=717fbad8e4bb9e009b1fac21d13c88da&chksm=bf80f255339d8d15c7667b89b731eb0c8e626bb2645a4919a9334d55b9009a4fd218c9ba6bfe&scene=27#wechat_redirect", "t": "Capri集团上季度营收同比降3.5%，但好于预期；Michael Kors 在中国市场持续向好", "d": "2026-08-06", "r": 1033, "l": 6, "ol": 7, "s": 42, "c": 0, "tp": "财报", "history": [{"captured_at": "2026-08-19 15:50", "read": 1033, "like": 6, "share": 42, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 1033, "like": 6, "share": 42, "comment": 0}]}, {"aid": "2650460400_1", "a": "华丽志", "link": "http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460400&idx=1&sn=d182fd36080b4c8852b4e048f0dc1c1c&chksm=bfbf89229b79b03c5ffe95cd9eeb71911b53053623fad32feed73421d80e52ec4794bd65948b&scene=27#wechat_redirect", "t": "PRADA集团CEO谈中国市场：某些城市二店和三店不再有价值；继续翻新扩建重要门店", "d": "2026-08-06", "r": 4753, "l": 29, "ol": 35, "s": 208, "c": 0, "tp": "奢侈品", "history": [{"captured_at": "2026-08-19 15:50", "read": 4753, "like": 29, "share": 208, "comment": 0}, {"captured_at": "2026-08-19 16:00", "read": 4753, "like": 29, "share": 208, "comment": 0}]}, {"aid": "2650508644_1", "a": "懒熊体育", "link": "http://mp.weixin.qq.com/s?__biz=MzA4MjQzNDYyMQ==&mid=2650508644&idx=1&sn=eb86250f5bfd32b320910ca9ad789a28&chksm=8673c6be28e23a0e3c0d379be3cf9645c9fae272a6992c8a862d6b50835feea45495f3f0664f&scene=27#wechat_redirect", "t": "24小时健身房里，泡满了待业的年轻人｜有点意思", "d": "2026-08-06", "r": 17849, "l": 62, "ol": 110, "s": 477, "c": 9, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 17849, "like": 62, "share": 477, "comment": 9}]}, {"aid": "2652367578_2", "a": "LADYMAX", "link": "http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367578&idx=2&sn=5c6a1dd845a7cc2450310902148cb95e&chksm=bcde1bdb1ff03e241b590035912aa0f5a6eaafdfb27dee238a12ffca9ef7753df5a5f25d790e&scene=27#wechat_redirect", "t": "菲拉格慕两年来首次扭亏为盈", "d": "2026-08-06", "r": 1530, "l": 0, "ol": 0, "s": 5, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 1530, "like": 0, "share": 5, "comment": 0}]}, {"aid": "2652367578_1", "a": "LADYMAX", "link": "http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367578&idx=1&sn=573fa7074e41fe23c3f75a025f0fcf9d&chksm=bc9125aa68c07e3d35f2d1e4b57c856b5e264721631c49dde34fffe903228cbbdc0810bf0661&scene=27#wechat_redirect", "t": "深度 | Massimo Dutti凭什么空降热门品牌榜？", "d": "2026-08-06", "r": 22511, "l": 68, "ol": 146, "s": 920, "c": 14, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 22511, "like": 68, "share": 920, "comment": 14}]}, {"aid": "2654471103_1", "a": "中服网", "link": "http://mp.weixin.qq.com/s?__biz=MjM5OTA0MjE0MQ==&mid=2654471103&idx=1&sn=9ffd5509be5af3afa92baa0c65a00158&chksm=bc8d391dec83cdf97c9737d76dd8f752bf74111084da2891ea3c6ee0b83dd74ee62caae54fc5&scene=27#wechat_redirect", "t": "", "d": "2026-08-06", "r": 0, "l": 0, "ol": 0, "s": 0, "c": 0, "tp": "其他", "history": []}, {"aid": "2685928205_2", "a": "艾林华尚", "link": "http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928205&idx=2&sn=0b4159b516e035ce8ddad636bf65580f&chksm=ce4e06cdf43d5de3c28bcbe43c34336306971d6f2b976f630987ac21120ac2f3cd04631ffa1c&scene=27#wechat_redirect", "t": "传：香奈儿上半年大涨16%：潮水的方向，凭什么由它说了算？", "d": "2026-08-06", "r": 23, "l": 0, "ol": 1, "s": 2, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 23, "like": 0, "share": 2, "comment": 0}]}, {"aid": "2685928205_1", "a": "艾林华尚", "link": "http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928205&idx=1&sn=f7c2c18cf86a75a792b60e595bf885e5&chksm=ce547b0e3a0d54e555a068ce584efb59ceb46a758d12d414a727624d0b856ef556dcb68254d3&scene=27#wechat_redirect", "t": "A&amp;F要卖掉中国业务？肌肉男模终究敌不过中国速度", "d": "2026-08-06", "r": 155, "l": 2, "ol": 2, "s": 9, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 155, "like": 2, "share": 9, "comment": 0}]}, {"aid": "2247625365_1", "a": "时尚商业Daily", "link": "http://mp.weixin.qq.com/s?__biz=MzI5MDM4NzIzNg==&mid=2247625365&idx=1&sn=6e52fe8bf0695077bce4bda90e8b4728&chksm=edb1230b265160f9dd0cc8a8ffc24d5a90b9f2a89e4cd645004e6081e35a077ade6a9f0a6716&scene=27#wechat_redirect", "t": "菲拉格慕两年来首次扭亏为盈", "d": "2026-08-06", "r": 2615, "l": 0, "ol": 6, "s": 122, "c": 0, "tp": "科技创新", "history": [{"captured_at": "2026-08-19 16:00", "read": 2615, "like": 0, "share": 122, "comment": 0}]}, {"aid": "2650586980_3", "a": "中服圈", "link": "http://mp.weixin.qq.com/s?__biz=MjM5NDg3MjYyMA==&mid=2650586980&idx=3&sn=5a3c893ba4e35fae5b5519e60b120275&chksm=bf5c2c2844b9c7e937f138e79c1c46e6ece3116783a0cd14eb40175ad3f8cdc47724285d30be&scene=27#wechat_redirect", "t": "《2026全球并购趋势与中国并购市场展望》", "d": "2026-08-06", "r": 56, "l": 0, "ol": 0, "s": 1, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 56, "like": 0, "share": 1, "comment": 0}]}, {"aid": "2650586980_2", "a": "中服圈", "link": "http://mp.weixin.qq.com/s?__biz=MjM5NDg3MjYyMA==&mid=2650586980&idx=2&sn=d4595ee7690e0de86bba31bd045516eb&chksm=bf5ddf9f84729f663e1b67a37b94ff14642c57bc953a24bebf166c628dbccd63e7900c2fd26d&scene=27#wechat_redirect", "t": "VICTOR签约岳云鹏成为品牌大使", "d": "2026-08-06", "r": 899, "l": 0, "ol": 2, "s": 35, "c": 3, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 899, "like": 0, "share": 35, "comment": 3}]}, {"aid": "2650586980_1", "a": "中服圈", "link": "http://mp.weixin.qq.com/s?__biz=MjM5NDg3MjYyMA==&mid=2650586980&idx=1&sn=720548ae30a7520c15b1c82ed60e117e&chksm=bfbaa11f8662440b44db90ee30b1a7728129e10b7f58415e5bab376efb8b130862e8b80477f1&scene=27#wechat_redirect", "t": "曾靠男模出圈的 A&amp;F 考虑出售中国区业务", "d": "2026-08-06", "r": 1265, "l": 3, "ol": 4, "s": 73, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 1265, "like": 3, "share": 73, "comment": 0}]}, {"aid": "2247581852_1", "a": "时尚无国界", "link": "http://mp.weixin.qq.com/s?__biz=MzYzNTI1NzU2NQ==&mid=2247581852&idx=1&sn=99d3cd22a33650d7b2c2de0bc926e80e&chksm=f149788bee95d3d188cf2ab0166f87e32344823f9f4816005d310fc722f23947700c6d72bd15&scene=27#wechat_redirect", "t": "要闻速报｜Safilo上半年销售额超5亿欧元；Chanel蝉联Lyst最热门品牌榜首；传Abercrombie &amp; Fitch拟为中国业务引入投资者", "d": "2026-08-06", "r": 0, "l": 0, "ol": 0, "s": 0, "c": 0, "tp": "奢侈品", "history": []}, {"aid": "2247507974_1", "a": "GOIF户外创新", "link": "http://mp.weixin.qq.com/s?__biz=MzkzMTk1ODIwNg==&mid=2247507974&idx=1&sn=451e0080e2a744ca8e6536fedb3006ba&chksm=c39122112580b85678bf6064ca142b0ba522456d1fd2edfe3d9f22e5ffd1148f50a8b21ed3cf&scene=27#wechat_redirect", "t": "报告分享｜三夫户外深度研究报告", "d": "2026-08-06", "r": 2346, "l": 2, "ol": 2, "s": 28, "c": 0, "tp": "科技创新", "history": [{"captured_at": "2026-08-19 16:00", "read": 2346, "like": 2, "share": 28, "comment": 0}]}, {"aid": "2247492494_1", "a": "哥德巴赫的思考", "link": "http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492494&idx=1&sn=9dde09f9ac34536ae21c8a8c2d5d4ddb&chksm=f8763d31f5f35efca8e75acfa58b293ae4841c03d72e7547f4d0faa132385d01d87a06ee525e&scene=27#wechat_redirect", "t": "品牌入局GEO：从今天开始的30天行动清单", "d": "2026-08-06", "r": 221, "l": 4, "ol": 4, "s": 30, "c": 0, "tp": "其他", "history": [{"captured_at": "2026-08-19 16:00", "read": 221, "like": 4, "share": 30, "comment": 0}]}], "accounts": [{"name": "哥德巴赫的思考", "count": 5, "total_read": 1202, "total_share": 147}, {"name": "懒熊体育", "count": 5, "total_read": 52991, "total_share": 1220}, {"name": "华丽志", "count": 22, "total_read": 23157, "total_share": 927}, {"name": "LADYMAX", "count": 7, "total_read": 46087, "total_share": 1994}, {"name": "中服网", "count": 3, "total_read": 2544, "total_share": 37}, {"name": "艾林华尚", "count": 8, "total_read": 788, "total_share": 45}, {"name": "中服圈", "count": 9, "total_read": 8353, "total_share": 160}, {"name": "时尚无国界", "count": 3, "total_read": 0, "total_share": 0}, {"name": "时尚商业Daily", "count": 4, "total_read": 14188, "total_share": 878}, {"name": "高尔夫大师杂志", "count": 4, "total_read": 12811, "total_share": 47}, {"name": "步外", "count": 1, "total_read": 3490, "total_share": 26}, {"name": "小鸟体育", "count": 3, "total_read": 5590, "total_share": 60}, {"name": "GOIF户外创新", "count": 2, "total_read": 4452, "total_share": 41}], "topics": [{"name": "科技创新", "count": 7, "total_read": 19792, "total_share": 917}, {"name": "其他", "count": 35, "total_read": 108942, "total_share": 2654}, {"name": "财报", "count": 12, "total_read": 19714, "total_share": 1131}, {"name": "赛事营销", "count": 2, "total_read": 433, "total_share": 10}, {"name": "奢侈品", "count": 12, "total_read": 22063, "total_share": 702}, {"name": "渠道", "count": 7, "total_read": 4636, "total_share": 159}, {"name": "舆情", "count": 1, "total_read": 73, "total_share": 9}], "range_days": 14, "total_count": 76};
+
+const STATE = { range:14, metric:'read', sortMetric:'read', sortDir:'desc', accounts:new Set(), topicSelected:'all', expandedRow:null, drillAccount:null, drillTopic:null, inlineDrills:{}, inlineExpanded:{} };
+const METRIC_KEY = { read:'r', share:'s', like:'l', comment:'c' };
+const METRIC_LABEL = { read:'阅读', share:'分享', like:'在看', comment:'留言' };
+// 下钻清除：重置表格的下钻维度，回到全集
+function clearDrillDown(){
+  STATE.drillAccount = null;
+  STATE.drillTopic = null;
+  STATE.topicSelected = 'all';  // 同步 chips/矩阵的 active 状态
+  renderAll();
+}
+// 设置下钻并滚动到表格
+function drillTo(account, topic){
+  STATE.drillAccount = account || null;
+  STATE.drillTopic = topic || null;
+  STATE.topicSelected = topic || 'all';  // 同步 chips/矩阵高亮
+  renderAll();
+  setTimeout(() => {
+    const tbl = document.querySelector('.table-card') || document.getElementById('top-table');
+    if(tbl) tbl.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 50);
+}
+
+// v12: 就地下钻 - 在指定模块下方就地渲染 Top 文章（不跳到表格）
+// moduleId: 'trend' | 'matrix' | 'stack'，对应容器 #drill-{moduleId}
+function openInlineDrill(moduleId, account, topic){
+  if(!STATE.inlineDrills) STATE.inlineDrills = {};
+  STATE.inlineDrills[moduleId] = { account, topic };
+  renderInlineDrill(moduleId);
+}
+function closeInlineDrill(moduleId){
+  if(!STATE.inlineDrills) return;
+  delete STATE.inlineDrills[moduleId];
+  // 清掉该模块下的所有展开文章
+  if(STATE.inlineExpanded){
+    Object.keys(STATE.inlineExpanded).forEach(k => { if(k.startsWith(moduleId+'_')) delete STATE.inlineExpanded[k]; });
+  }
+  const el = document.getElementById('drill-' + moduleId);
+  if(el) el.style.display = 'none';
+}
+function renderInlineDrill(moduleId){
+  const drill = STATE.inlineDrills && STATE.inlineDrills[moduleId];
+  const el = document.getElementById('drill-' + moduleId);
+  if(!el) return;
+  if(!drill){ el.style.display = 'none'; return; }
+  const data = getFiltered();
+  const { account, topic } = drill;
+  let arr = data.filter(a => {
+    let ok = true;
+    if(account) ok = ok && a.a === account;
+    if(topic) ok = ok && a.tp === topic;
+    return ok;
+  });
+  const m = STATE.metric;
+  const metricKey = METRIC_KEY[m];
+  arr.sort((a,b) => (b[metricKey]||0) - (a[metricKey]||0));
+  arr = arr.slice(0, 10);  // 最多 10 篇
+  const dateRange = getRangeDates();
+  // 标题行
+  const parts = [];
+  if(account) parts.push(`公众号 <b>${account}</b>`);
+  if(topic) parts.push(`主题 <b>${topic}</b>`);
+  const label = parts.join(' <span style="color:var(--whisper);font-weight:400">×</span> ');
+  let html = `<div class="drill-header"><span style="color:var(--ink);font-weight:var(--fw-med)">📌 下钻：</span>${label}<span style="color:var(--whisper);margin-left:6px">· ${arr.length} 篇 · 按${METRIC_LABEL[m]}排序</span><button class="drill-close" onclick="closeInlineDrill('${moduleId}')">✕ 关闭</button></div>`;
+  if(arr.length === 0){
+    html += `<div style="padding:var(--s-3);text-align:center;color:var(--whisper);font-size:13px">该组合下无文章</div>`;
+  } else {
+    html += `<table class="drill-mini-table"><thead><tr><th>#</th><th>标题</th><th>公众号</th><th>主题</th><th class="num">阅读</th><th class="num">分享</th><th class="num">在看</th><th class="num">留言</th></tr></thead><tbody>`;
+    arr.forEach((a, i) => {
+      const isExp = STATE.inlineExpanded && STATE.inlineExpanded[`${moduleId}_${i}`];
+      html += `<tr class="drill-row"><td>${i+1}</td><td class="title-cell drill-title" onclick="toggleInlineArticle('${moduleId}', ${i})" style="cursor:pointer;color:var(--amber);font-weight:var(--fw-semi)" title="点击展开 4 维趋势">${isExp ? '▼' : '▶'} ${a.t}</td><td style="color:var(--ink-secondary)">${a.a}</td><td><span class="topic-tag">${a.tp}</span></td><td class="num">${a.r.toLocaleString()}</td><td class="num">${a.s}</td><td class="num">${a.l}</td><td class="num">${a.c}</td></tr>`;
+      if(isExp){
+        const hist = genHistory(a);
+        html += `<tr class="drill-detail"><td colspan="8"><div class="expand-grid" style="margin-top:var(--s-1);padding:var(--s-2) 0;border-top:0.5px solid var(--line)">${['read','share','like','comment'].map(k => {
+          const values = hist.map(h => h[k]);
+          const v = a[METRIC_KEY[k]];
+          return `<div class="expand-cell">
+            <div class="expand-cell-head">
+              <span class="expand-metric-label" style="color:${METRIC_COLOR[k]}">${METRIC_LABEL[k]}</span>
+              <span class="expand-metric-value" style="color:${METRIC_COLOR[k]}">${fmtNum(v)}</span>
+            </div>
+            <div class="expand-metric-spark">${miniSparkline(values, METRIC_COLOR[k], 200, 28)}</div>
+            <div class="expand-metric-time"><span>${dateRange[0]}</span><span>${dateRange[1]}</span></div>
+          </div>`;
+        }).join('')}</div></td></tr>`;
+      }
+    });
+    html += `</tbody></table>`;
+  }
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+// 切换 inline 下钻容器里某篇文章的 4 维展开
+function toggleInlineArticle(moduleId, idx){
+  if(!STATE.inlineExpanded) STATE.inlineExpanded = {};
+  const key = `${moduleId}_${idx}`;
+  STATE.inlineExpanded[key] = !STATE.inlineExpanded[key];
+  renderInlineDrill(moduleId);
+}
+const METRIC_HEX = { read:'#334155', share:'#D97706', like:'#475569', comment:'#64748B' };
+const METRIC_COLOR = { read:'var(--m-read)', share:'var(--m-share)', like:'var(--m-like)', comment:'var(--m-comment)' };
+const TODAY = new Date('2026-08-11');
+
+function fmtNum(n){ if(n>=10000) return (n/10000).toFixed(1)+'w'; if(n>=1000) return (n/1000).toFixed(1)+'k'; return String(Math.round(n)); }
+function fmtPct(n){ const sign = n>=0?'+':''; return sign + n.toFixed(0) + '%'; }
+function fmtDate(d){ return d.toISOString().slice(5,10); }
+function getRangeDates(){
+  if(STATE.range === 'all') return ['7/13', '8/11'];
+  const end = new Date(TODAY);
+  const start = new Date(TODAY); start.setDate(start.getDate() - STATE.range);
+  return [fmtDate(start), fmtDate(end)];
+}
+
+function genHistory(article){
+  const pubDate = new Date(article.d);
+  const daysSincePub = Math.max(1, Math.floor((TODAY - pubDate) / 86400000) + 1);
+  const totalDays = Math.min(30, daysSincePub);
+  const points = [];
+  for(let i=0; i<totalDays; i++){
+    const factor = Math.log(i + 2) / Math.log(totalDays + 1);
+    const noise = 1 + (Math.sin(i * 1.3 + article.r) * 0.05);
+    points.push({
+      day: i,
+      read: Math.max(0, Math.round(article.r * factor * noise)),
+      share: Math.max(0, Math.round(article.s * factor * noise)),
+      like: Math.max(0, Math.round(article.l * factor * noise)),
+      comment: Math.max(0, Math.round(article.c * factor * noise))
+    });
+  }
+  if(points.length) points[points.length-1] = { day: totalDays-1, read: article.r, share: article.s, like: article.l, comment: article.c };
+  return points;
+}
+
+function miniSparkline(values, color, w=80, h=18){
+  if(!values || values.length < 2) return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="width:100%;height:${h}px"></svg>`;
+  const max = Math.max(...values, 1);
+  const min = Math.min(...values);
+  const range = max - min || 1;
+  const stepX = w / (values.length - 1);
+  const pts = values.map((v, i) => `${(i*stepX).toFixed(1)},${(h-1-((v-min)/range)*(h-2)).toFixed(1)}`);
+  const lastX = ((values.length-1)*stepX).toFixed(1);
+  const lastY = (h-1-((values[values.length-1]-min)/range)*(h-2)).toFixed(1);
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="width:100%;height:${h}px;display:block">
+    <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${lastX}" cy="${lastY}" r="1.5" fill="${color}"/>
+  </svg>`;
+}
+
+function getFiltered(){
+  let arr = ARTICLES.slice();
+  if(STATE.range !== 'all'){
+    const cutoff = new Date(TODAY); cutoff.setDate(cutoff.getDate() - STATE.range);
+    const cs = cutoff.toISOString().slice(0,10); arr = arr.filter(a => a.d >= cs);
+  }
+  if(STATE.accounts.size > 0) arr = arr.filter(a => STATE.accounts.has(a.a));
+  return arr;
+}
+
+let chartAccountTrend, chartStack;
+function initCharts(){
+  chartAccountTrend = echarts.init(document.getElementById('chart-account-trend'));
+  chartStack = echarts.init(document.getElementById('chart-stack'));
+}
+
+function renderAccountTrend(data){
+  const accounts = [...new Set(data.map(a=>a.a))];
+  const dateList = [];
+  for(let i=29; i>=0; i--){
+    const d = new Date(TODAY); d.setDate(d.getDate()-i);
+    dateList.push(fmtDate(d));
+  }
+  const m = STATE.metric;
+  const hex = METRIC_HEX[m];
+  const series = accounts.map((acc, i) => {
+    const accArticles = data.filter(a => a.a === acc);
+    const daily = dateList.map((_, idx) => {
+      const dayDate = new Date(TODAY); dayDate.setDate(dayDate.getDate() - (29 - idx));
+      return accArticles.reduce((sum, a) => {
+        const hist = genHistory(a);
+        const daysSincePub = Math.floor((dayDate - new Date(a.d)) / 86400000);
+        if(daysSincePub < 0) return sum;
+        const histIdx = Math.min(daysSincePub, hist.length - 1);
+        return sum + (hist[histIdx]?.[m] || 0);
+      }, 0);
+    });
+    const lineStyle = i === 0 ? { width: 2.5 } : { width: 1.2, type: 'dashed' };
+    return { name: acc, type: 'line', data: daily, smooth: true, symbol: 'none', lineStyle: { color: hex, ...lineStyle }, itemStyle: { color: hex }, emphasis: { focus: 'series', lineStyle: { width: 3 } } };
+  });
+  chartAccountTrend.setOption({
+    tooltip: { trigger: 'axis', confine: true, formatter: p => {
+      let h = p[0].axisValue + '<br/>';
+      p.forEach(it => h += `${it.marker}${it.seriesName}: ${fmtNum(it.value)}<br/>`);
+      return h;
+    }},
+    legend: { top: 0, textStyle: { color: 'var(--whisper)', fontSize: 11 }, itemWidth: 12, itemHeight: 8, type: 'scroll' },
+    grid: { left: 45, right: 20, top: 35, bottom: 30 },
+    xAxis: { type: 'category', data: dateList, axisLine: { lineStyle: { color: 'var(--line)' } }, axisLabel: { color: 'var(--whisper)', fontSize: 10, rotate: 30 } },
+    yAxis: { type: 'value', axisLine: { lineStyle: { color: 'var(--line)' } }, axisLabel: { color: 'var(--whisper)', fontSize: 10, formatter: v => fmtNum(v) }, splitLine: { lineStyle: { color: 'var(--line-subtle)' } } },
+    series
+  }, true);
+  document.getElementById('trend-subtitle').textContent = `按${METRIC_LABEL[m]} · 30 天 · 点击折线就地下钻`;
+  // v12: 点击折线就地下钻到该公众号所有文章
+  chartAccountTrend.off('click');
+  chartAccountTrend.on('click', (params) => {
+    if(params.componentType !== 'series') return;
+    const acc = params.seriesName;
+    if(!acc) return;
+    const cur = STATE.inlineDrills && STATE.inlineDrills.trend;
+    if(cur && cur.account === acc && !cur.topic) closeInlineDrill('trend');
+    else openInlineDrill('trend', acc, null);
+  });
+}
+
+function renderTopicMatrix(data){
+  const byTopic = {};
+  data.forEach(a => { if(!byTopic[a.tp]) byTopic[a.tp] = []; byTopic[a.tp].push(a); });
+  const m = STATE.metric;
+  const color = METRIC_COLOR[m];
+  const container = document.getElementById('topic-matrix');
+  const topicEntries = Object.entries(byTopic);
+  container.innerHTML = topicEntries.map(([tp, arts], idx) => {
+    const daily = [];
+    for(let i=29; i>=0; i--){
+      const dayDate = new Date(TODAY); dayDate.setDate(dayDate.getDate()-i);
+      const total = arts.reduce((sum, a) => {
+        const hist = genHistory(a);
+        const daysSincePub = Math.floor((dayDate - new Date(a.d)) / 86400000);
+        if(daysSincePub < 0) return sum;
+        const i2 = Math.min(daysSincePub, hist.length - 1);
+        return sum + (hist[i2]?.[m] || 0);
+      }, 0);
+      daily.push(total);
+    }
+    const totalVal = arts.reduce((s,a)=>s+(a[METRIC_KEY[m]]||0), 0);
+    const isActive = STATE.drillTopic === tp && !STATE.drillAccount;  // v12: 兼容下钻 active
+    const [s, e] = getRangeDates();
+    return `<div class="topic-cell ${isActive?'active':''}" data-topic-idx="${idx}">
+      <div class="topic-cell-name">
+        <span>${tp}</span>
+        <span style="font-size:9px;color:var(--whisper);font-weight:400">${arts.length}篇</span>
+      </div>
+      <div class="topic-cell-val">${METRIC_LABEL[m]} ${fmtNum(totalVal)}</div>
+      <div class="topic-cell-spark">${miniSparkline(daily, isActive ? 'var(--amber)' : color, 100, 24)}</div>
+      <div class="spark-time"><span>${s}</span><span>${e}</span></div>
+    </div>`;
+  }).join('');
+  container.querySelectorAll('.topic-cell').forEach((cell, idx) => {
+    const [tp, arts] = topicEntries[idx];
+    cell.onclick = () => {
+      // v12: 就地下钻到主题，在矩阵下方展开
+      const cur = STATE.inlineDrills && STATE.inlineDrills.matrix;
+      if(cur && cur.topic === tp && !cur.account) closeInlineDrill('matrix');
+      else openInlineDrill('matrix', null, tp);
+    };
+    cell.style.cursor = 'pointer';
+  });
+  document.getElementById('matrix-subtitle').textContent = `按${METRIC_LABEL[m]} · 30 天 · 点击筛选`;
+}
+
+// 公众号×主题 横向堆叠条形图（v11 替代热力图，流向感更强）
+// Y 轴=公众号 Top10，每行堆叠分段=不同主题（颜色区分），长度=当前指标值
+const TOPIC_COLORS = [
+  '#334155','#D97706','#57534E','#0F766E','#4338CA',
+  '#C2410C','#047857','#0E7490','#6D28D9','#BE123C',
+  '#4D7C0F','#A21CAF','#0369A1','#A16207','#7C2D12'
+];
+function renderStack(data){
+  const m = STATE.metric;
+  const metricKey = METRIC_KEY[m];
+  // 计算公众号总值，按降序取 Top 10
+  const accTotal = {};
+  data.forEach(a => accTotal[a.a] = (accTotal[a.a] || 0) + (a[metricKey] || 0));
+  const topAccs = Object.entries(accTotal).sort((a,b)=>b[1]-a[1]).slice(0, 10).map(x=>x[0]);
+  // 计算主题总值，按降序取 Top 8（避免颜色过多）
+  const topicTotal = {};
+  data.forEach(a => topicTotal[a.tp] = (topicTotal[a.tp] || 0) + (a[metricKey] || 0));
+  const topTopics = Object.entries(topicTotal).sort((a,b)=>b[1]-a[1]).slice(0, 8).map((x,i)=>({name:x[0], color: TOPIC_COLORS[i % TOPIC_COLORS.length]}));
+  // 构造每个主题 series：data 数组按公众号顺序填充该主题值
+  const series = topTopics.map(t => {
+    const arr = topAccs.map(acc => {
+      const v = data.filter(a => a.a === acc && a.tp === t.name).reduce((s,a)=>s+(a[metricKey]||0), 0);
+      return v;
+    });
+    return {
+      name: t.name,
+      type: 'bar',
+      stack: 'total',
+      data: arr,
+      itemStyle: { color: t.color, borderColor: '#FAFAF9', borderWidth: 1 },
+      emphasis: { itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,0.25)', borderColor: '#1C1917', borderWidth: 1.5 } },
+      label: {
+        show: true,
+        color: '#FFFFFF',
+        fontSize: 10,
+        fontWeight: 600,
+        formatter: p => {
+          const v = p.value;
+          if(v === 0) return '';
+          if(v >= 10000) return (v/10000).toFixed(1)+'w';
+          if(v >= 1000) return (v/1000).toFixed(1)+'k';
+          return v;
+        }
+      }
+    };
+  });
+  // 反转公众号顺序（ECharts 横向条形图 Y 轴从下往上，反转后 Top1 在顶部）
+  const yAxisData = topAccs.slice().reverse();
+  const seriesReversed = series.map(s => ({...s, data: s.data.slice().reverse()}));
+  chartStack.setOption({
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E2E8F0',
+      borderWidth: 0.5,
+      textStyle: { color: '#1C1917', fontSize: 12 },
+      extraCssText: 'box-shadow: 0 8px 24px rgba(0,0,0,0.12); border-radius: 6px; padding: 8px 12px;',
+      formatter: p => {
+        const acc = topAccs.slice().reverse()[p.dimensionIndex];
+        const v = p.value;
+        if(v === 0) return `<b>${acc}</b> × <b>${p.seriesName}</b><br/><span style="color:#9CA3AF">无文章</span>`;
+        return `<b>${acc}</b> × <b>${p.seriesName}</b><br/>${METRIC_LABEL[m]}: <b style="color:${p.color}">${fmtNum(v)}</b>`;
+      }
+    },
+    legend: {
+      data: topTopics.map(t=>t.name),
+      top: 0,
+      type: 'scroll',
+      textStyle: { color: 'var(--ink-secondary)', fontSize: 11 },
+      itemWidth: 12,
+      itemHeight: 12,
+      itemGap: 12
+    },
+    grid: { left: 100, right: 30, top: 40, bottom: 30 },
+    xAxis: {
+      type: 'value',
+      axisLine: { lineStyle: { color: 'var(--line)' } },
+      axisLabel: { color: 'var(--ink-secondary)', fontSize: 10, formatter: v => fmtNum(v) },
+      splitLine: { lineStyle: { color: 'var(--line)', type: 'dashed' } }
+    },
+    yAxis: {
+      type: 'category',
+      data: yAxisData,
+      axisLine: { lineStyle: { color: 'var(--line)' } },
+      axisLabel: { color: 'var(--ink)', fontSize: 11, fontWeight: 600 },
+      axisTick: { show: false }
+    },
+    series: seriesReversed,
+    animationDuration: 600,
+    animationEasing: 'cubicOut'
+  }, true);
+  document.getElementById('stack-subtitle').textContent = `按${METRIC_LABEL[m]} · 每行分段=主题 · 点击分段就地下钻`;
+  // v12: 点击分段就地下钻（双维度：公众号×主题），用 params.name 取 Y 轴 category 值
+  chartStack.off('click');
+  chartStack.on('click', (params) => {
+    if(params.componentType !== 'series') return;
+    const acc = params.name;  // Y 轴 category 值 = 公众号名（修复 bug：之前用 dimensionIndex 错了）
+    const topic = params.seriesName;  // 系列名 = 主题
+    const v = params.value;
+    if(!acc || !topic || !v || v === 0) return;
+    openInlineDrill('stack', acc, topic);
+  });
+}
+
+function renderTable(data){
+  let arr = data.slice();
+  // 下钻维度优先（drillAccount + drillTopic 双维度下钻），降级用 topicSelected 单维度（chips 点击）
+  const drillStatus = document.getElementById('drill-status');
+  if(STATE.drillAccount || STATE.drillTopic){
+    arr = arr.filter(a => {
+      let ok = true;
+      if(STATE.drillAccount) ok = ok && a.a === STATE.drillAccount;
+      if(STATE.drillTopic) ok = ok && a.tp === STATE.drillTopic;
+      return ok;
+    });
+    const parts = [];
+    if(STATE.drillAccount) parts.push(`公众号 <b style="color:var(--amber)">${STATE.drillAccount}</b>`);
+    if(STATE.drillTopic) parts.push(`主题 <b style="color:var(--amber)">${STATE.drillTopic}</b>`);
+    drillStatus.style.display = 'block';
+    drillStatus.innerHTML = `<span style="color:var(--ink)">📌 下钻：</span>${parts.join(' <span style="color:var(--whisper)">×</span> ')} <span style="color:var(--whisper);margin-left:6px">· 共 ${arr.length} 篇</span> <button onclick="clearDrillDown()" style="margin-left:12px;padding:3px 10px;border:1px solid var(--amber);background:transparent;color:var(--amber);border-radius:3px;cursor:pointer;font-size:12px;font-weight:600">✕ 清除下钻</button>`;
+  } else {
+    if(STATE.topicSelected !== 'all') arr = arr.filter(a => a.tp === STATE.topicSelected);
+    drillStatus.style.display = 'none';
+  }
+  const metric = METRIC_KEY[STATE.sortMetric];
+  arr.sort((a,b) => STATE.sortDir === 'desc' ? (b[metric]||0)-(a[metric]||0) : (a[metric]||0)-(b[metric]||0));
+  const sub = arr.slice(0, 50);  // 用过滤后的前 50 篇作为热力分级基线
+  const heatLevel = (k, v) => {
+    if(!sub.length || v === 0) return 0;
+    const allVals = sub.map(x => x[k] || 0).sort((a,b)=>a-b);
+    const pct = allVals.filter(x => x < v).length / allVals.length;
+    if(pct >= 0.8) return 4; if(pct >= 0.6) return 3; if(pct >= 0.4) return 2; if(pct >= 0.2) return 1; return 0;
+  };
+  const m = STATE.metric;
+  const sparkColor = METRIC_COLOR[m];
+  const [startD, endD] = getRangeDates();
+  const tbody = document.getElementById('top-tbody');
+  tbody.innerHTML = arr.slice(0, 20).map((a, i) => {
+    const hist = genHistory(a);
+    const sparkValues = hist.map(h => h[m]);
+    const isExpanded = STATE.expandedRow === i;
+    return `<tr data-row-idx="${i}" class="${isExpanded?'expanded':''}">
+      <td style="color:var(--whisper);font-weight:700">${i+1}</td>
+      <td class="title-cell" data-expand="${i}"><a href="#" onclick="return false">${a.t}</a></td>
+      <td class="account-cell">${a.a}</td>
+      <td><span class="badge-topic ${a.tp===STATE.drillTopic?'active':''}">${a.tp}</span></td>
+      <td class="spark-cell"><div class="spark-cell-wrap">${miniSparkline(sparkValues, sparkColor, 100, 18)}<div class="spark-time"><span>${startD}</span><span>${endD}</span></div></div></td>
+      <td class="num heat-${heatLevel('r', a.r)} ${STATE.sortMetric==='read'?'heat-4':''}">${a.r.toLocaleString()}</td>
+      <td class="num heat-${heatLevel('s', a.s)} ${STATE.sortMetric==='share'?'heat-4':''}">${a.s}</td>
+      <td class="num heat-${heatLevel('l', a.l)} ${STATE.sortMetric==='like'?'heat-4':''}">${a.l}</td>
+      <td class="num heat-${heatLevel('c', a.c)} ${STATE.sortMetric==='comment'?'heat-4':''}">${a.c}</td>
+    </tr>${isExpanded ? `<tr class="expand-row"><td colspan="9"><div class="expand-content" id="expand-content-${i}"></div></td></tr>` : ''}`;
+  }).join('');
+  document.querySelectorAll('thead th[data-sort]').forEach(th => {
+    th.classList.toggle('sort-active', th.dataset.sort === STATE.sortMetric);
+    const arrow = th.querySelector('.sort-arrow');
+    if(arrow) arrow.textContent = (th.dataset.sort === STATE.sortMetric) ? (STATE.sortDir === 'desc' ? '↓' : '↑') : '';
+  });
+  tbody.querySelectorAll('.title-cell').forEach(cell => {
+    cell.onclick = () => {
+      const idx = parseInt(cell.dataset.expand);
+      STATE.expandedRow = (STATE.expandedRow === idx) ? null : idx;
+      renderTable(getFiltered());
+      if(STATE.expandedRow === idx) setTimeout(() => renderExpand(arr[idx], idx), 30);
+    };
+  });
+  document.getElementById('table-subtitle').textContent = `行内${METRIC_LABEL[m]} · 点击标题展开 4 维`;
+}
+
+function renderExpand(article, idx){
+  const container = document.getElementById(`expand-content-${idx}`);
+  if(!container) return;
+  const hist = genHistory(article);
+  const dateRange = getRangeDates();
+  container.innerHTML = `
+    <div class="expand-title">${article.t} · ${article.a} · ${article.tp}</div>
+    <div class="expand-grid">
+      ${['read','share','like','comment'].map(k => {
+        const values = hist.map(h => h[k]);
+        const v = article[METRIC_KEY[k]];
+        return `<div class="expand-cell">
+          <div class="expand-cell-head">
+            <span class="expand-metric-label" style="color:${METRIC_COLOR[k]}">${METRIC_LABEL[k]}</span>
+            <span class="expand-metric-value" style="color:${METRIC_COLOR[k]}">${fmtNum(v)}</span>
+          </div>
+          <div class="expand-metric-spark">${miniSparkline(values, METRIC_COLOR[k], 220, 32)}</div>
+          <div class="expand-metric-time"><span>${dateRange[0]}</span><span>${dateRange[1]}</span></div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+function renderTopicFilter(){
+  const topics = [...new Set(ARTICLES.map(a=>a.tp))].sort();
+  const container = document.getElementById('topic-filter');
+  container.innerHTML = '';
+  const allChip = document.createElement('button');
+  allChip.className = 'chip' + (STATE.topicSelected === 'all' ? ' active' : '');
+  allChip.textContent = '全部'; allChip.onclick = () => { STATE.topicSelected = 'all'; STATE.drillTopic = null; STATE.drillAccount = null; renderAll(); };
+  container.appendChild(allChip);
+  topics.forEach(tp => {
+    const chip = document.createElement('button');
+    chip.className = 'chip' + (STATE.topicSelected === tp ? ' amber-active' : '');
+    chip.textContent = tp;
+    chip.onclick = () => {
+      // v12: chips 点击 = 全局表格筛选（不滚动，不影响 inline 下钻）
+      if(STATE.topicSelected === tp){
+        STATE.topicSelected = 'all';
+        STATE.drillTopic = null;
+      } else {
+        STATE.topicSelected = tp;
+        STATE.drillTopic = tp;
+        STATE.drillAccount = null;
+      }
+      renderAll();
+    };
+    container.appendChild(chip);
+  });
+}
+
+function renderKPI(data){
+  const metrics = ['read','share','like','comment'];
+  const [startD, endD] = getRangeDates();
+  metrics.forEach(m => {
+    const total = data.reduce((s,a)=>s+(a[METRIC_KEY[m]]||0),0);
+    document.getElementById('kpi-'+m).innerHTML = fmtNum(total);
+    const daily = [];
+    for(let i=29; i>=0; i--){
+      const dayDate = new Date(TODAY); dayDate.setDate(dayDate.getDate()-i);
+      const dayTotal = data.reduce((s, a) => {
+        const hist = genHistory(a);
+        const daysSincePub = Math.floor((dayDate - new Date(a.d)) / 86400000);
+        if(daysSincePub < 0) return s;
+        const idx = Math.min(daysSincePub, hist.length - 1);
+        return s + (hist[idx]?.[m] || 0);
+      }, 0);
+      daily.push(dayTotal);
+    }
+    const recent7 = daily.slice(-7).reduce((a,b)=>a+b,0)/7;
+    const prev7 = daily.slice(-14, -7).reduce((a,b)=>a+b,0)/7;
+    const delta = prev7 > 0 ? ((recent7 - prev7) / prev7 * 100) : 0;
+    const deltaEl = document.getElementById('kpi-'+m+'-delta');
+    deltaEl.textContent = fmtPct(delta);
+    deltaEl.className = 'kpi-delta ' + (delta >= 0 ? 'up' : 'down');
+    document.getElementById('kpi-spark-'+m).innerHTML = miniSparkline(daily, METRIC_COLOR[m], 220, 22);
+    document.getElementById('kpi-time-'+m).innerHTML = `<span>${startD}</span><span>${endD}</span>`;
+  });
+}
+
+function renderAccountChips(){
+  const accounts = [...new Set(ARTICLES.map(a=>a.a))].sort();
+  const c = document.getElementById('account-filter');
+  c.innerHTML = '';
+  const allChip = document.createElement('button');
+  allChip.className = 'chip' + (STATE.accounts.size===0?' active':'');
+  allChip.textContent='全部'; allChip.onclick=()=>{STATE.accounts.clear();renderAll();}; c.appendChild(allChip);
+  accounts.forEach(acc => {
+    const chip = document.createElement('button');
+    chip.className = 'chip' + (STATE.accounts.has(acc) ? ' amber-active' : '');
+    chip.textContent = acc; chip.style.fontSize = 'var(--fs-xs)';
+    chip.onclick = () => { if(STATE.accounts.has(acc)) STATE.accounts.delete(acc); else STATE.accounts.add(acc); renderAll(); };
+    c.appendChild(chip);
+  });
+}
+
+function renderAll(){
+  const data = getFiltered();
+  renderKPI(data); renderAccountChips(); renderTopicFilter();
+  renderAccountTrend(data); renderTopicMatrix(data); renderStack(data); renderTable(data);
+  // v12: 同步刷新所有已展开的 inline 下钻容器（切指标/时间窗时跟着更新）
+  if(STATE.inlineDrills){
+    Object.keys(STATE.inlineDrills).forEach(mid => renderInlineDrill(mid));
+  }
+  document.querySelectorAll('.metric-chip').forEach(c => c.classList.toggle('active', c.dataset.metric === STATE.metric));
+  document.querySelectorAll('.kpi-card').forEach(c => c.classList.toggle('active', c.dataset.metric === STATE.metric));
+}
+
+document.querySelectorAll('.chip[data-range]').forEach(chip => {
+  chip.onclick = () => { document.querySelectorAll('.chip[data-range]').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); STATE.range = chip.dataset.range==='all'?'all':parseInt(chip.dataset.range); renderAll(); };
+});
+document.querySelectorAll('.metric-chip').forEach(chip => {
+  chip.onclick = () => { STATE.metric = chip.dataset.metric; STATE.sortMetric = chip.dataset.metric; STATE.sortDir='desc'; renderAll(); };
+});
+document.querySelectorAll('.kpi-card').forEach(card => {
+  card.onclick = () => { STATE.metric = card.dataset.metric; STATE.sortMetric = card.dataset.metric; STATE.sortDir='desc'; renderAll(); };
+});
+document.querySelectorAll('thead th[data-sort]').forEach(th => {
+  th.onclick = () => {
+    const m = th.dataset.sort;
+    if(STATE.sortMetric===m) STATE.sortDir = STATE.sortDir==='desc'?'asc':'desc';
+    else { STATE.sortMetric=m; STATE.sortDir='desc'; }
+    STATE.metric = m; renderAll();
+  };
+});
+const themeBtn = document.getElementById('theme-toggle');
+const savedTheme = localStorage.getItem('dashboard-theme');
+if(savedTheme==='dark'){document.documentElement.setAttribute('data-theme','dark');themeBtn.textContent='☀️';}
+themeBtn.onclick = () => {
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  if(isDark){document.documentElement.removeAttribute('data-theme');themeBtn.textContent='🌙';localStorage.setItem('dashboard-theme','light');}
+  else {document.documentElement.setAttribute('data-theme','dark');themeBtn.textContent='☀️';localStorage.setItem('dashboard-theme','dark');}
+  setTimeout(()=>renderAll(),50);
+};
+const bt = document.getElementById('back-top');
+window.addEventListener('scroll', ()=>{bt.classList.toggle('show',window.scrollY>400);},{passive:true});
+bt.onclick = ()=>window.scrollTo({top:0,behavior:'smooth'});
+let resizeTimer;
+window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{chartAccountTrend.resize();chartStack.resize();},150);});
+
+initCharts(); renderAll();
+</script>
+</body>
+</html>
