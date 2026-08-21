@@ -89,7 +89,7 @@ a:hover { color:var(--amber); text-decoration:underline; text-underline-offset:2
   opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap;
 }
 #chapter-tooltip.show { opacity:1; }
-.page-wrap { max-width:1120px; margin:0 auto; padding:var(--s-4) var(--s-4) var(--s-7); }
+.page-wrap { max-width:1440px; margin:0 auto; padding:var(--s-4) var(--s-4) var(--s-7); }
 .report-header {
   background:var(--paper); border-radius:var(--r-lg); padding:var(--s-5) var(--s-5) var(--s-4);
   margin-bottom:var(--s-3); box-shadow:var(--shadow-premium);
@@ -173,7 +173,7 @@ a:hover { color:var(--amber); text-decoration:underline; text-underline-offset:2
   border-bottom:0.5px solid var(--line); padding:var(--s-2) var(--s-4); margin-bottom:var(--s-3);
   margin-left:-var(--s-4); margin-right:-var(--s-4);
 }
-.toc-inner { max-width:1120px; margin:0 auto; display:flex; align-items:center; gap:var(--s-1); overflow-x:auto; scrollbar-width:none; }
+.toc-inner { max-width:1440px; margin:0 auto; display:flex; align-items:center; gap:var(--s-1); overflow-x:auto; scrollbar-width:none; }
 .toc-inner::-webkit-scrollbar { display:none; }
 .toc-label { font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--whisper); letter-spacing:var(--ls-wider); white-space:nowrap; margin-right:var(--s-1); flex-shrink:0; text-transform:uppercase; }
 .toc-item { flex-shrink:0; }
@@ -231,31 +231,27 @@ a:hover { color:var(--amber); text-decoration:underline; text-underline-offset:2
 #section-3 .content-body > h4 + ul > li:last-child { margin-bottom:0; }
 #section-3 .content-body > h4 + ul ul { padding-left:var(--s-4); margin:var(--s-1) 0 0; }
 .source-line {
-  display:inline-flex; flex-wrap:wrap; align-items:center; gap:5px 6px;
-  max-width:100%; box-sizing:border-box;
+  display:inline-flex; flex-wrap:wrap; align-items:center; gap:4px 8px;
+  width:max-content; max-width:100%; box-sizing:border-box;
   font-size:var(--fs-xs); color:var(--whisper); margin-top:var(--s-2);
-  padding:4px 8px; line-height:1.35;
+  padding:3px 8px; line-height:1.35;
   background:var(--paper); border:0.5px solid var(--line-subtle); border-radius:var(--r-sm);
 }
-/* 多源单行：账号+读/分享 | 账号+读/分享；窄屏才换行 */
-.source-line.source-multi {
-  display:inline-flex; flex-direction:row; flex-wrap:wrap; align-items:center;
-  gap:4px 8px; width:auto; max-width:100%;
-}
+.source-line.source-multi { flex-direction:row; }
 .source-line.source-multi > .source-label { margin:0; }
 .source-line .source-rows {
-  display:inline-flex; flex-wrap:wrap; align-items:center; gap:4px 8px;
-  min-width:0; max-width:100%;
+  display:contents;
 }
 .source-line .source-row {
-  display:inline-flex; align-items:center; gap:4px; min-width:0; width:auto;
+  display:inline-flex; flex-wrap:nowrap; align-items:center; gap:4px;
+  flex:0 0 auto; white-space:nowrap;
 }
 .source-line .source-pipe {
   color:var(--line-strong); flex-shrink:0; font-size:11px; line-height:1;
   user-select:none;
 }
 .source-line .source-row-name {
-  flex:0 1 auto; min-width:0; max-width:11em;
+  flex:0 0 auto; max-width:11em;
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   color:var(--slate-deep); font-weight:var(--fw-semi); text-decoration:none;
 }
@@ -264,13 +260,13 @@ a:hover { color:var(--amber); text-decoration:underline; text-underline-offset:2
   flex:0 0 auto; margin-left:0; flex-wrap:nowrap;
 }
 .source-line .source-group {
-  display:inline-flex; align-items:baseline; gap:4px; min-width:0; flex-shrink:0;
+  display:inline-flex; align-items:baseline; gap:4px; flex:0 0 auto; white-space:nowrap;
 }
 .source-line .source-label {
   color:var(--silence); font-weight:var(--fw-med); flex-shrink:0;
   font-size:10px; letter-spacing:var(--ls-wide);
 }
-.source-line .source-names { display:inline; min-width:0; }
+.source-line .source-names { display:inline; white-space:nowrap; }
 .source-line .source-names a,
 .source-line .source-name-sep + a {
   color:var(--slate-deep); font-weight:var(--fw-semi); text-decoration:none;
@@ -283,9 +279,10 @@ a:hover { color:var(--amber); text-decoration:underline; text-underline-offset:2
 .source-line .metrics-group,
 .article-card-meta .metrics-group,
 .top10-item-meta .metrics-group {
-  display:inline-flex; flex-wrap:wrap; align-items:center; gap:4px;
+  display:inline-flex; flex-wrap:nowrap; align-items:center; gap:4px;
   margin-left:0;
 }
+.section-card table .source-label { display:none; }
 .source-line .metrics-group > .sep,
 .article-card-meta .metrics-group > .sep,
 .top10-item-meta .metrics-group > .sep { display:none; }
@@ -371,11 +368,26 @@ a:hover { color:var(--amber); text-decoration:underline; text-underline-offset:2
   background:var(--slate); letter-spacing:var(--ls-wide); text-transform:uppercase;
 }
 #section-1 thead th, #section-4 thead th { background:var(--c-current); }
-.section-card tbody td { padding:var(--s-2) var(--s-3); border-bottom:0.5px solid var(--line-subtle); vertical-align:top; word-break:break-word; font-size:var(--fs-base); line-height:var(--lh-normal); }
+.section-card tbody td {
+  padding:var(--s-2) var(--s-3); border-bottom:0.5px solid var(--line-subtle);
+  vertical-align:top; overflow-wrap:break-word; word-break:normal;
+  font-size:var(--fs-base); line-height:var(--lh-normal);
+}
+.section-card table th:last-child,
+.section-card table td:last-child {
+  min-width:28em; width:28%;
+}
+.section-card table td:last-child .source-line {
+  margin-top:0; overflow-wrap:normal; word-break:normal;
+}
 .section-card tbody tr:last-child td { border-bottom:none; }
 .section-card tbody tr:hover td { background:var(--parchment-raised); }
 td[data-priority="low"] { color:var(--whisper); }
-@media (max-width:640px) { td[data-priority="low"], th[data-priority="low"] { display:none; } }
+@media (max-width:640px) {
+  td[data-priority="low"], th[data-priority="low"] { display:none; }
+  .section-card table th:last-child,
+  .section-card table td:last-child { min-width:0; width:auto; }
+}
 .tier-1 td:first-child { border-left:2px solid var(--slate-deep); }
 .tier-2 td:first-child { border-left:2px solid var(--whisper); }
 .tier-3 td:first-child { border-left:2px solid var(--silence); }
@@ -512,7 +524,7 @@ td[data-priority="low"] { color:var(--whisper); }
 <li><strong>证据</strong>：天猫官方旗舰店计划于 <strong>8月12日</strong> 上线，同步开通微信小程序商城；此前6月已注册微信公众号、微博、小红书，并在上海设立运营主体。</li>
 <li><strong>机制</strong>：高端瑜伽赛道竞争从线下门店延伸至<strong>电商渠道组合</strong>，天猫承接搜索与成交、小程序沉淀私域，形成"社媒种草→双渠道转化"的入华标准路径。</li>
 <li><strong>启示</strong>：高端运动生活方式品牌的中国渠道策略正在从单点落地升级为<strong>全链路同步铺设</strong>。</li>
-<li>来源：<div class="source-line source-multi"><span class="source-label">来源</span><span class="source-rows"><span class="source-row"><a class="source-row-name" href="http://mp.weixin.qq.com/s?__biz=MzI5MDM4NzIzNg==&mid=2247625375&idx=1&sn=33ae4cec64e391ba8dd52f1f2842026e&chksm=ed84ad20af746de30a35e602da905cea356b0b477c5cb904787de464292e8b1664ee6dd033fe&scene=27#wechat_redirect" target="_blank" rel="noopener" title="时尚商业Daily">时尚商业Daily</a><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">6.2k</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">481</span><span class="metric-key">分享</span></span></span></span><span class="source-pipe" aria-hidden="true">|</span><span class="source-row"><a class="source-row-name" href="http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367591&idx=2&sn=9dabd1f0b64c5764d313ca07cae018b4&chksm=bcd9cc39236355403d77a405c9d78fb7f00507982c54cfc42ef4767030e48eeabb8745c96df1&scene=27#wechat_redirect" target="_blank" rel="noopener" title="LADYMAX">LADYMAX</a><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">2.2k</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">31</span><span class="metric-key">分享</span></span></span></span></span></div></li>
+<li><div class="source-line source-multi"><span class="source-label">来源</span><span class="source-rows"><span class="source-row"><a class="source-row-name" href="http://mp.weixin.qq.com/s?__biz=MzI5MDM4NzIzNg==&mid=2247625375&idx=1&sn=33ae4cec64e391ba8dd52f1f2842026e&chksm=ed84ad20af746de30a35e602da905cea356b0b477c5cb904787de464292e8b1664ee6dd033fe&scene=27#wechat_redirect" target="_blank" rel="noopener" title="时尚商业Daily">时尚商业Daily</a><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">6.2k</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">481</span><span class="metric-key">分享</span></span></span></span><span class="source-pipe" aria-hidden="true">|</span><span class="source-row"><a class="source-row-name" href="http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367591&idx=2&sn=9dabd1f0b64c5764d313ca07cae018b4&chksm=bcd9cc39236355403d77a405c9d78fb7f00507982c54cfc42ef4767030e48eeabb8745c96df1&scene=27#wechat_redirect" target="_blank" rel="noopener" title="LADYMAX">LADYMAX</a><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">2.2k</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">31</span><span class="metric-key">分享</span></span></span></span></span></div></li>
 </ul>
 
 <h2>② <strong>可隆跑通小红书全链路</strong>：种草反哺选品与线下选址</h2>
@@ -521,7 +533,7 @@ td[data-priority="low"] { color:var(--whisper); }
 <li><strong>证据</strong>：MoveAlpha年搜索<strong>增长2600多倍</strong>、新客成交占比<strong>75%</strong>、线下归因占比从<strong>20%提升到52%</strong>，小红书贡献<strong>65%生意大盘</strong>、<strong>3.6亿+归因GMV</strong>。</li>
 <li><strong>机制</strong>：把种草数据变成<strong>选品雷达</strong>，按区域定制内容，甚至结合用户需求匹配线下选址——种草从流量工具升级为经营决策输入。</li>
 <li><strong>启示</strong>：高端户外品牌在小红书的运营重心正从"内容曝光"转向<strong>数据反哺线下零售网络</strong>。</li>
-<li>来源：<div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492545&idx=1&sn=87fb512051d044b5974318e7b3dd7bdb&chksm=f84c4ba160025283a6fce73aac225df66680832a828659e0b1a3cbe40caacbe9cdac8daa882f&scene=27#wechat_redirect" target="_blank" rel="noopener">哥德巴赫的思考</a></span></span><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">168</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">21</span><span class="metric-key">分享</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-like">1</span><span class="metric-key">在看</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-oldlike">3</span><span class="metric-key">赞</span></span></span></div></li>
+<li><div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492545&idx=1&sn=87fb512051d044b5974318e7b3dd7bdb&chksm=f84c4ba160025283a6fce73aac225df66680832a828659e0b1a3cbe40caacbe9cdac8daa882f&scene=27#wechat_redirect" target="_blank" rel="noopener">哥德巴赫的思考</a></span></span><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">168</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">21</span><span class="metric-key">分享</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-like">1</span><span class="metric-key">在看</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-oldlike">3</span><span class="metric-key">赞</span></span></span></div></li>
 </ul>
 
 <h2>③ <strong>小红书AI验证型搜索激增</strong>，用户边用AI边验证</h2>
@@ -530,7 +542,7 @@ td[data-priority="low"] { color:var(--whisper); }
 <li><strong>证据</strong>：小红书商业技术负责人现场数据：AI归因验证型搜索同比**+125%<strong>、AI工具类目日均有效搜索量</strong>+199%<strong>，9字以上长词搜索</strong>+16%<strong>、定义解释型搜索</strong>+17%**。</li>
 <li><strong>机制</strong>：用户先问AI再回社区验证，<strong>"验证型搜索"<strong>成为新决策链路，长词与定义类搜索的增长指向</strong>深度信息需求</strong>。</li>
 <li><strong>启示</strong>：品牌内容资产需要同时服务"AI引用"与"人工验证"两个场景，单一曝光型种草的效果边界正在显现。</li>
-<li>来源：<div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492546&idx=1&sn=a76dcfb71572d44335dcb0732ea5eaa2&chksm=f8516a8527b381ad9ae82ab867401935b58c7b56b2bdfb3acf3b4da8c1184e24a7433ec1d687&scene=27#wechat_redirect" target="_blank" rel="noopener">哥德巴赫的思考</a></span></span><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">81</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">9</span><span class="metric-key">分享</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-like">6</span><span class="metric-key">在看</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-oldlike">2</span><span class="metric-key">赞</span></span></span></div></li>
+<li><div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492546&idx=1&sn=a76dcfb71572d44335dcb0732ea5eaa2&chksm=f8516a8527b381ad9ae82ab867401935b58c7b56b2bdfb3acf3b4da8c1184e24a7433ec1d687&scene=27#wechat_redirect" target="_blank" rel="noopener">哥德巴赫的思考</a></span></span><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">81</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">9</span><span class="metric-key">分享</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-like">6</span><span class="metric-key">在看</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-oldlike">2</span><span class="metric-key">赞</span></span></span></div></li>
 </ul>
 
 <h2>④ <strong>Zegna中国Q2回暖</strong>，高端男装现局部复苏</h2>
@@ -539,7 +551,7 @@ td[data-priority="low"] { color:var(--whisper); }
 <li><strong>证据</strong>：第二季度中国市场收入<strong>增长12.2%<strong>至</strong>1.12亿欧元</strong>，有机增速由一季度<strong>5.3%<strong>提升至</strong>8.6%</strong>；管理层点名Su Misura量身定制与Triple Stitch便鞋为驱动因素。背景数据（2025）：全年中国收入曾<strong>下降14.6%</strong>。</li>
 <li><strong>机制</strong>：<strong>定制服务+标志性单品</strong>组合在高净值男性客群中率先回暖，与LVMH大盘持平形成对照，指向<strong>品类级复苏而非全面反弹</strong>。</li>
 <li><strong>启示</strong>：高端男装与高尔夫/商务场景客群高度重叠，定制化与经典单品策略对高净值需求的拉动作用值得关注。</li>
-<li>来源：<div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367591&idx=1&sn=a53c5884d05768625ad23a306301a075&chksm=bc4c7fce2c8184fe8200216e020de201befea0898b27764d7ede331ccaf3153d05843951cae6&scene=27#wechat_redirect" target="_blank" rel="noopener">LADYMAX</a></span></span><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">6.8k</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">205</span><span class="metric-key">分享</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-like">15</span><span class="metric-key">在看</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-oldlike">33</span><span class="metric-key">赞</span></span></span></div></li>
+<li><div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MjM5OTAxMTE4MA==&mid=2652367591&idx=1&sn=a53c5884d05768625ad23a306301a075&chksm=bc4c7fce2c8184fe8200216e020de201befea0898b27764d7ede331ccaf3153d05843951cae6&scene=27#wechat_redirect" target="_blank" rel="noopener">LADYMAX</a></span></span><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">6.8k</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">205</span><span class="metric-key">分享</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-like">15</span><span class="metric-key">在看</span></span><span class="metric-chip metric-secondary"><span class="metric-val num-oldlike">33</span><span class="metric-key">赞</span></span></span></div></li>
 </ul>
 
 <h2>⑤ <strong>LVMH中国客群需求持平</strong>，增长引擎移至美国</h2>
@@ -548,7 +560,7 @@ td[data-priority="low"] { color:var(--whisper); }
 <li><strong>证据</strong>：2026上半年中国本地与旅游客群需求合计同比<strong>持平</strong>；第二季度时装与皮具部门中国客群消费<strong>同比持平</strong>，当季增长主要来自<strong>美国客群高单位数增长</strong>。</li>
 <li><strong>机制</strong>：<strong>财富创造地转移</strong>——LVMH高管明确指出美国与韩国出现强烈需求，中国市场从增长引擎转为<strong>稳定基本盘</strong>。</li>
 <li><strong>启示</strong>：面向中国高净值人群的高端品牌，增长逻辑从"大盘普涨"切换为<strong>结构性深耕</strong>。</li>
-<li>来源：<div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460492&idx=3&sn=d298fbb09a2ca92c219c6b0acf4a4929&chksm=bfd61d0e94fe6376a021d13f48f428800852503c5517bcd1ff0548823e6884c3eff393b9756d&scene=27#wechat_redirect" target="_blank" rel="noopener">华丽志</a></span></span></div></li>
+<li><div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MTYwNjA0MQ==&mid=2650460492&idx=3&sn=d298fbb09a2ca92c219c6b0acf4a4929&chksm=bfd61d0e94fe6376a021d13f48f428800852503c5517bcd1ff0548823e6884c3eff393b9756d&scene=27#wechat_redirect" target="_blank" rel="noopener">华丽志</a></span></span></div></li>
 </ul>
 
 <h2>⑥ <strong>Under Armour扭亏为盈</strong>，转向质量增长</h2>
@@ -557,7 +569,7 @@ td[data-priority="low"] { color:var(--whisper); }
 <li><strong>证据</strong>：2027财年第一季度净收入<strong>同比下降3%<strong>至</strong>10.98亿美元</strong>，国际市场<strong>增长5%</strong>；毛利率增至<strong>54.1%</strong>，营业利润从<strong>330万美元</strong>增至<strong>4670万美元</strong>，净利润<strong>54.5万美元</strong>。</li>
 <li><strong>机制</strong>：<strong>库存管理与渠道结构优化</strong>驱动利润率修复，"规模优先"转向"质量增长"。</li>
 <li><strong>启示</strong>：中型运动品牌在营收收缩期通过<strong>盈利质量改善</strong>获得喘息，路径与高端化转型并行不悖。</li>
-<li>来源：<div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzYzNTI1NzU2NQ==&mid=2247581907&idx=1&sn=0bdd86a97044c962860308abb2c32c68&chksm=f149aad25159790a267d692480d1afcd68f3fac181db9dcc91de18f245db14ba1b5fa0641baf&scene=27#wechat_redirect" target="_blank" rel="noopener">时尚无国界</a></span></span></div></li>
+<li><div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzYzNTI1NzU2NQ==&mid=2247581907&idx=1&sn=0bdd86a97044c962860308abb2c32c68&chksm=f149aad25159790a267d692480d1afcd68f3fac181db9dcc91de18f245db14ba1b5fa0641baf&scene=27#wechat_redirect" target="_blank" rel="noopener">时尚无国界</a></span></span></div></li>
 </ul>
 
 <h2>⑦ <strong>小红书种草外溢效应显著</strong>，站内归因失真</h2>
@@ -566,7 +578,7 @@ td[data-priority="low"] { color:var(--whisper); }
 <li><strong>证据</strong>：某上半年投放案例：<strong>50万元</strong>预算投三个月，曝光<strong>300万+</strong>，站内直接转化不足<strong>5万元GMV</strong>、ROI仅<strong>0.1</strong>；但淘宝后台小红书来源搜索词占比从投放前<strong>2%<strong>涨至</strong>11%</strong>。艾瑞报告（背景数据，2025）：小红书种草外溢至天猫/京东的GMV是站内<strong>3到5倍</strong>，**80%**效果在站内报表不可见。</li>
 <li><strong>机制</strong>：<strong>种草与成交场分离</strong>是当前内容电商的结构性现实，"站内ROI"无法衡量真实外溢价值。</li>
 <li><strong>启示</strong>：品牌需要跨平台<strong>归因能力</strong>才能评估种草真实回报，单一平台数据口径存在系统性低估。</li>
-<li>来源：<div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492496&idx=1&sn=a0239455c65c5ef122e57984d86043e3&chksm=f84415e4c41397d1ea71bd320efe983b9654416b94651f687de88f0c69da5675b2957e89351e&scene=27#wechat_redirect" target="_blank" rel="noopener">哥德巴赫的思考</a></span></span></div></li>
+<li><div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzUxNzAzOTE4OA==&mid=2247492496&idx=1&sn=a0239455c65c5ef122e57984d86043e3&chksm=f84415e4c41397d1ea71bd320efe983b9654416b94651f687de88f0c69da5675b2957e89351e&scene=27#wechat_redirect" target="_blank" rel="noopener">哥德巴赫的思考</a></span></span></div></li>
 </ul>
 
 <h2>⑧ <strong>中端服饰承压</strong>：卡宾库存拉长、奥康扣非亏损</h2>
@@ -575,7 +587,7 @@ td[data-priority="low"] { color:var(--whisper); }
 <li><strong>证据</strong>：卡宾存货周转天数从<strong>208天</strong>拉长至<strong>246天</strong>（+<strong>38天</strong>），经营现金流净额**-4847.1万元**，零售网点半年净减<strong>60家</strong>；奥康国际营收<strong>同比下滑28.88%<strong>至</strong>7.69亿元</strong>，扣非归母净利润仍<strong>亏损660.70万元</strong>。</li>
 <li><strong>机制</strong>：<strong>大众中端服饰需求收缩</strong>与渠道出清并行，库存与现金流压力集中释放。</li>
 <li><strong>启示</strong>：消费分层下，中端价格带品牌进入<strong>调整周期</strong>，高端与大众两极的中间地带持续承压。</li>
-<li>来源：<div class="source-line source-multi"><span class="source-label">来源</span><span class="source-rows"><span class="source-row"><a class="source-row-name" href="http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928263&idx=1&sn=417a5c8867df6eace18af998ac9f544f&chksm=ce5a1ea1bd0e534336583161c615b9ae3c7245d60a54810a9dcaee7b6feee3350540191bb701&scene=27#wechat_redirect" target="_blank" rel="noopener" title="艾林华尚">艾林华尚</a><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">201</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">11</span><span class="metric-key">分享</span></span></span></span><span class="source-pipe" aria-hidden="true">|</span><span class="source-row"><a class="source-row-name" href="http://mp.weixin.qq.com/s?__biz=MjM5OTA0MjE0MQ==&mid=2654471121&idx=1&sn=12a5758ae9fd0121b8432354668823a2&chksm=bc27fb7e0989fb3238dc2f191ddc72c0f0c84a79b0df940b4344d88a627b446b313215117d61&scene=27#wechat_redirect" target="_blank" rel="noopener" title="中服网">中服网</a><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">1.0k</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">19</span><span class="metric-key">分享</span></span></span></span></span></div></li>
+<li><div class="source-line source-multi"><span class="source-label">来源</span><span class="source-rows"><span class="source-row"><a class="source-row-name" href="http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928263&idx=1&sn=417a5c8867df6eace18af998ac9f544f&chksm=ce5a1ea1bd0e534336583161c615b9ae3c7245d60a54810a9dcaee7b6feee3350540191bb701&scene=27#wechat_redirect" target="_blank" rel="noopener" title="艾林华尚">艾林华尚</a><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">201</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">11</span><span class="metric-key">分享</span></span></span></span><span class="source-pipe" aria-hidden="true">|</span><span class="source-row"><a class="source-row-name" href="http://mp.weixin.qq.com/s?__biz=MjM5OTA0MjE0MQ==&mid=2654471121&idx=1&sn=12a5758ae9fd0121b8432354668823a2&chksm=bc27fb7e0989fb3238dc2f191ddc72c0f0c84a79b0df940b4344d88a627b446b313215117d61&scene=27#wechat_redirect" target="_blank" rel="noopener" title="中服网">中服网</a><span class="metrics-group"><span class="metric-chip metric-primary"><span class="metric-val num-read">1.0k</span><span class="metric-key">读</span></span><span class="metric-chip metric-primary"><span class="metric-val num-share">19</span><span class="metric-key">分享</span></span></span></span></span></div></li>
 </ul>
 
 <h4>其他值得关注信号</h4>
@@ -599,7 +611,7 @@ td[data-priority="low"] { color:var(--whisper); }
     <div class="section-icon">📈</div>
     <div class="section-title">关键数据速查</div>
   </div>
-  <div class="content-body"><table>
+  <div class="content-body"><div class="table-wrapper"><table>
 <thead>
 <tr>
   <th style="text-align:left;">主体</th>
@@ -724,7 +736,7 @@ td[data-priority="low"] { color:var(--whisper); }
   <td style="text-align:left;"><div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzkzOTU2NjUzMg==&mid=2247570745&idx=1&sn=d75b74d98ae4ee35aed3b62f1fd100e1&chksm=c357222054f4dd5f8bf0f44b6e4417a5b2661213d17d4fbf826e936328d9e8fab7745104f573&scene=27#wechat_redirect" target="_blank" rel="noopener">步外</a></span></span></div></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 
 <h4>补充数据</h4>
 
@@ -833,7 +845,7 @@ td[data-priority="low"] { color:var(--whisper); }
   </div>
   <div class="content-body"><h4>核心竞品动作表</h4>
 
-<table>
+<div class="table-wrapper"><table>
 <thead>
 <tr>
   <th style="text-align:left;">品牌</th>
@@ -901,11 +913,11 @@ td[data-priority="low"] { color:var(--whisper); }
   <td style="text-align:left;"><div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzkzOTU2NjUzMg==&mid=2247570745&idx=1&sn=d75b74d98ae4ee35aed3b62f1fd100e1&chksm=c357222054f4dd5f8bf0f44b6e4417a5b2661213d17d4fbf826e936328d9e8fab7745104f573&scene=27#wechat_redirect" target="_blank" rel="noopener">步外</a></span></span></div></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 
 <h4>其他品牌动作速览</h4>
 
-<table>
+<div class="table-wrapper"><table>
 <thead>
 <tr>
   <th style="text-align:left;">品牌</th>
@@ -958,7 +970,7 @@ td[data-priority="low"] { color:var(--whisper); }
   <td style="text-align:left;"><div class="source-line"><span class="source-group"><span class="source-label">来源</span><span class="source-names"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MzEzNzY0Mw==&mid=2685928263&idx=2&sn=b0e7419fc26f4094b34e2b6d1d2babeb&chksm=ce4442ae077058ea7101f39f3e93715e5a2fa2438e6cab327446915ae7b96e79c4ec62927afd&scene=27#wechat_redirect" target="_blank" rel="noopener">艾林华尚</a></span></span><span class="metrics-group"><span class="metric-chip metric-seen"><span class="metric-val num-seen">40</span><span class="metric-key">已读</span></span></span></div></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 
 <hr />
 </div>
