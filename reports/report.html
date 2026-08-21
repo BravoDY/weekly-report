@@ -127,23 +127,16 @@ a:hover { color:var(--amber); text-decoration:underline; text-underline-offset:2
 .icon-btn .icon { font-size:14px; line-height:1; }
 .icon-btn.active { border-color:var(--amber); color:var(--amber); background:var(--paper-soft); }
 .page-switch-wrap {
-  display:flex; justify-content:center; margin:0 0 var(--s-3);
-}
-.page-switch {
-  display:flex; flex-direction:column; align-items:center; gap:6px;
-}
-.page-switch-hint {
-  font-size:10px; font-weight:var(--fw-bold); color:var(--whisper);
-  letter-spacing:var(--ls-wider); text-transform:uppercase;
+  display:flex; justify-content:center; margin:0 0 var(--s-2);
 }
 .page-switch-track {
-  display:inline-flex; padding:4px; gap:4px;
+  display:inline-flex; padding:2px; gap:2px;
   background:var(--paper); border:0.5px solid var(--line-strong);
   border-radius:var(--r-full); box-shadow:var(--shadow-premium);
 }
 .page-switch-item {
-  min-width:112px; padding:8px 28px; text-align:center;
-  font-size:var(--fs-base); font-weight:var(--fw-bold);
+  min-width:72px; padding:3px 16px; text-align:center; line-height:1.3;
+  font-size:var(--fs-sm); font-weight:var(--fw-bold);
   letter-spacing:var(--ls-wide); color:var(--whisper);
   border-radius:var(--r-full); text-decoration:none;
   transition:background 150ms ease, color 150ms ease, box-shadow 150ms ease;
@@ -469,12 +462,9 @@ td[data-priority="low"] { color:var(--whisper); }
 <div class="page-wrap">
 
 <nav class="page-switch-wrap" aria-label="在周报与看板之间切换">
-  <div class="page-switch">
-    <span class="page-switch-hint">点击切换视图</span>
-    <div class="page-switch-track">
-      <a class="page-switch-item is-active" href="report.html" aria-current="page">周报</a>
-      <a class="page-switch-item" href="dashboard.html">看板</a>
-    </div>
+  <div class="page-switch-track">
+    <a class="page-switch-item is-active" href="report.html" aria-current="page">周报</a>
+    <a class="page-switch-item" href="dashboard.html">看板</a>
   </div>
 </nav>
 
