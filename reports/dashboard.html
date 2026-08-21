@@ -18,7 +18,7 @@
   --fs-xs:0.75rem; --fs-sm:0.8125rem; --fs-base:0.875rem; --fs-md:1rem; --fs-lg:1.125rem; --fs-xl:1.25rem; --fs-2xl:1.5rem;
   --fw-reg:400; --fw-med:500; --fw-semi:600; --fw-bold:700;
   --shadow-premium: 0 0 0 0.5px oklch(0 0 0 / 0.05), 0 1px 2px oklch(0 0 0 / 0.04), 0 2px 4px oklch(0 0 0 / 0.03), 0 4px 8px oklch(0 0 0 / 0.02);
-  --r-sm:4px; --r-md:8px; --r-lg:12px;
+  --r-sm:4px; --r-md:8px; --r-lg:12px; --r-full:9999px;
   --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px;
 }
 [data-theme="dark"] {
@@ -48,6 +48,14 @@ a:hover, a:active { color:var(--amber); }
 .icon-btn:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
 .icon-btn .icon { font-size:14px; line-height:1; }
 .icon-btn.active { border-color:var(--amber); color:var(--amber); background:var(--paper-soft); }
+.page-switch-wrap { display:flex; justify-content:center; margin:0 0 var(--s-3); }
+.page-switch { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.page-switch-hint { font-size:10px; font-weight:var(--fw-bold); color:var(--whisper); letter-spacing:var(--ls-wider); text-transform:uppercase; }
+.page-switch-track { display:inline-flex; padding:4px; gap:4px; background:var(--paper); border:0.5px solid var(--line-strong); border-radius:var(--r-full); box-shadow:var(--shadow-premium); }
+.page-switch-item { min-width:112px; padding:8px 28px; text-align:center; font-size:var(--fs-base); font-weight:var(--fw-bold); letter-spacing:var(--ls-wide); color:var(--whisper); border-radius:var(--r-full); text-decoration:none; transition:background 150ms ease, color 150ms ease, box-shadow 150ms ease; }
+.page-switch-item:hover { color:var(--amber); background:var(--amber-soft); }
+.page-switch-item.is-active { background:var(--slate); color:var(--paper); box-shadow:0 1px 3px oklch(0 0 0 / 0.18); pointer-events:none; }
+.page-switch-item:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
 
 .toolbar { display:flex; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; align-items:flex-start; }
 .toolbar-group { display:flex; gap:var(--s-1); align-items:center; flex-wrap:wrap; max-width:100%; }
@@ -263,6 +271,16 @@ td.num { font-family:ui-monospace,"SF Mono",monospace; font-weight:var(--fw-med)
 <body>
 <div class="page-wrap">
 
+<nav class="page-switch-wrap" aria-label="在周报与看板之间切换">
+  <div class="page-switch">
+    <span class="page-switch-hint">点击切换视图</span>
+    <div class="page-switch-track">
+      <a class="page-switch-item" href="report.html">周报</a>
+      <a class="page-switch-item is-active" href="dashboard.html" aria-current="page">看板</a>
+    </div>
+  </div>
+</nav>
+
 <header class="report-header">
   <div class="header-row">
     <div class="header-left">
@@ -271,7 +289,6 @@ td.num { font-family:ui-monospace,"SF Mono",monospace; font-weight:var(--fw-med)
     </div>
     <div class="header-actions">
       <button class="icon-btn" id="theme-toggle" title="切换暗色模式" aria-label="切换暗色模式"><span class="icon">🌙</span><span>暗色</span></button>
-      <a class="icon-btn" href="report.html" title="返回最新周报"><span class="icon">📰</span><span>周报</span></a>
     </div>
   </div>
 </header>
