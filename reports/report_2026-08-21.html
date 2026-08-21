@@ -126,6 +126,37 @@ a:hover { color:var(--amber); text-decoration:underline; text-underline-offset:2
 .icon-btn:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
 .icon-btn .icon { font-size:14px; line-height:1; }
 .icon-btn.active { border-color:var(--amber); color:var(--amber); background:var(--paper-soft); }
+.page-switch-wrap {
+  display:flex; justify-content:center; margin:0 0 var(--s-3);
+}
+.page-switch {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+}
+.page-switch-hint {
+  font-size:10px; font-weight:var(--fw-bold); color:var(--whisper);
+  letter-spacing:var(--ls-wider); text-transform:uppercase;
+}
+.page-switch-track {
+  display:inline-flex; padding:4px; gap:4px;
+  background:var(--paper); border:0.5px solid var(--line-strong);
+  border-radius:var(--r-full); box-shadow:var(--shadow-premium);
+}
+.page-switch-item {
+  min-width:112px; padding:8px 28px; text-align:center;
+  font-size:var(--fs-base); font-weight:var(--fw-bold);
+  letter-spacing:var(--ls-wide); color:var(--whisper);
+  border-radius:var(--r-full); text-decoration:none;
+  transition:background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+.page-switch-item:hover {
+  color:var(--amber); background:var(--amber-soft);
+}
+.page-switch-item.is-active {
+  background:var(--slate); color:var(--paper);
+  box-shadow:0 1px 3px oklch(0 0 0 / 0.18);
+  pointer-events:none;
+}
+.page-switch-item:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
 .kpi-bar {
   display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-3);
   margin-top:var(--s-4); padding-top:var(--s-4); border-top:0.5px solid var(--line-subtle);
@@ -437,6 +468,16 @@ td[data-priority="low"] { color:var(--whisper); }
 <div id="chapter-tooltip"></div>
 <div class="page-wrap">
 
+<nav class="page-switch-wrap" aria-label="在周报与看板之间切换">
+  <div class="page-switch">
+    <span class="page-switch-hint">点击切换视图</span>
+    <div class="page-switch-track">
+      <a class="page-switch-item is-active" href="report.html" aria-current="page">周报</a>
+      <a class="page-switch-item" href="dashboard.html">看板</a>
+    </div>
+  </div>
+</nav>
+
 <header class="report-header">
   <div class="header-row">
     <div style="flex:1;min-width:0">
@@ -450,7 +491,6 @@ td[data-priority="low"] { color:var(--whisper); }
     <div class="header-actions">
       <button class="icon-btn" id="theme-toggle" title="切换暗色模式" aria-label="切换暗色模式"><span class="icon">🌙</span><span>暗色</span></button>
       <button class="icon-btn" id="share-btn" title="分享本期" aria-label="分享本期"><span class="icon">↗</span><span>分享</span></button>
-      <a class="icon-btn" href="dashboard.html" title="进入数据看板"><span class="icon">📊</span><span>看板</span></a>
     </div>
   </div>
   <div class="kpi-bar"><div class="kpi-item"><div class="kpi-label">本期文章</div><div class="kpi-value">21<span class="kpi-delta">篇</span></div></div><div class="kpi-item"><div class="kpi-label">总阅读</div><div class="kpi-value">3.0<span class="kpi-delta">万</span></div></div><div class="kpi-item"><div class="kpi-label">平均分享</div><div class="kpi-value">55</div></div><div class="kpi-item accent"><div class="kpi-label">Top 主题</div><div class="kpi-value">运动消费</div></div></div>
